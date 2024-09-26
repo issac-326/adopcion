@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export default function Home() {
+export default function Register() {
   return (
     <div>
       <div className="flex items-center flex-col mt-[220px] bg-white">
