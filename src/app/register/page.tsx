@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { signup } from './actions';
+
 
 export default function Register() {
   return (
@@ -8,27 +10,24 @@ export default function Register() {
         <p className="text-[12px] text-black">Create to your account</p>
       </div>
       <form className="flex flex-col items-center bg-white">
-        <label className="text-xs text-gray-400 bg-white rounded-[50px] pl-5 pt-2 mt-5 w-[330px] h-[35px] shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
-          Full name:
-          <input type="text" name="username" required />
-        </label>
+
         <label className="text-xs text-gray-400 bg-white rounded-[50px] pl-5 pt-2 mt-5 w-[330px] h-[35px] shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
           Email:
-          <input type="email" name="email" required />
+          <input type="email" name="email" id="email" required />
         </label>
         <label className="text-xs text-gray-400 bg-white rounded-[50px] pl-5 pt-2 mt-5 w-[330px] h-[35px] shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
           Password:
-          <input type="password" name="password" required minLength={6} />
+          <input type="password" name="password" id="password" required minLength={6} />
         </label>
         <label className="text-xs text-gray-400 bg-white rounded-[50px] pl-5 pt-2 mt-5 w-[330px] h-[35px] shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
           Confirm password:
-          <input type="password" name="password2" required minLength={6} />
+          <input type="password" name="confirmPassword" id="confirmPassword" required minLength={6} />
         </label>
         <label className="text-xs text-gray-400 bg-white rounded-[50px] pl-5 pt-2 mt-5 w-[330px] h-[35px] shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
           Phone:
-          <input type="text" name="phone" required minLength={6} />
+          <input type="text" name="phone" id="phone" required minLength={6} />
         </label>
-        <button className="mt-12 w-[270px] h-[40px] bg-[#FFA07A] rounded-[20px] text-sm text-white">
+        <button formAction={signup} className="mt-12 w-[270px] h-[40px] bg-[#FFA07A] rounded-[20px] text-sm text-white">
           Sign in
         </button>
       </form>
