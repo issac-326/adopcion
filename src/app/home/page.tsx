@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Home() {
     return (
@@ -12,7 +13,7 @@ export default function Home() {
                 Bell
             </div>
         </div>
-        <div id="imagen" className="h-[166px] w-[400px] bg-slate-200 ">
+        <div id="imagen" className="h-[166px] w-full bg-slate-200 ">
 
         </div>
         <div>
@@ -24,6 +25,20 @@ export default function Home() {
         <section>
             <h1>Adopt pet</h1>
         </section>
+        <footer className="fixed bottom-0 left-0 flex justify-around bg-yellow-500 h-[64px] w-full align-middle">
+            <div className="flex align-center">
+                <Image  src="/bell.svg" alt="Notification bell" width={25} height={25} />
+            </div>
+            <div className="flex align-center">
+                <Image  src="/bell.svg" alt="Notification bell" width={25} height={25} />
+            </div>
+            <div className="flex align-center">
+                <Image  src="/bell.svg" alt="Notification bell" width={25} height={25} />
+            </div>
+            <div className="flex align-center">
+                <Image  src="/bell.svg" alt="Notification bell" width={25} height={25} />
+            </div>
+        </footer>
       </div>
     );
   }
