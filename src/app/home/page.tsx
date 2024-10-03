@@ -1,4 +1,6 @@
+'use client'
 import Link from "next/link";
+import React, { useState } from 'react';
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +17,10 @@ import {
 
 
 export default function Home() {
+    // Define el tipo como string o null
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+    const categories = ['All', 'Dogs', 'Cats', 'Birds'];
+
     return (
       <div className="mx-2 text-[#03063a]">
 
@@ -26,7 +32,7 @@ export default function Home() {
             <div className="flex gap-2">
                 <span className="h-12 w-12 rounded-xl flex items-center justify-center bg-[#f7f7f8]"><FontAwesomeIcon icon={faMagnifyingGlass} className="w-6" /></span>
 
-                <span className="bg-white h-12 w-12 rounded-xl flex items-center justify-center bg-[#f7f7f8]"><FontAwesomeIcon icon={faBell} className="w-6"/></span>
+                <span className="h-12 w-12 rounded-xl flex items-center justify-center bg-[#f7f7f8]"><FontAwesomeIcon icon={faBell} className="w-6"/></span>
             </div>
         </div>
 
@@ -49,12 +55,23 @@ export default function Home() {
             </div>
         </div>
         <div className="mt-5">
-            <h2 className="font-semibold">Categories</h2>
-            <section className="flex gap-2">
-                <span className="h-14 w-14 rounded-xl flex items-center justify-center bg-[#f7f7f8]"><FontAwesomeIcon icon={faSliders} className="w-6"/></span>
-                <span className="h-14 w-14 rounded-xl flex items-center justify-center bg-[#f7f7f8]">All</span>
-                <span className="h-14 w-14 rounded-xl flex items-center justify-center bg-[#f7f7f8]">All</span>
-                <span className="h-14 w-14 rounded-xl flex items-center justify-center bg-[#f7f7f8]">All</span>
+            <h2 className="text-texto m-3 font-semibold">Categories</h2>
+            <section className="flex justify-around">
+                <span
+                    className={`h-14 w-14 rounded-xl flex items-center justify-center ${selectedCategory === null ? 'bg-[#FE8A5B] text-white' : 'bg-[#f7f7f8] text-black'}`}
+                    onClick={() => setSelectedCategory(null)} // Esto solo cambiará su estilo
+                >
+                    <FontAwesomeIcon icon={faSliders} className="w-6" />
+                </span>
+                {categories.map((category, index) => (
+                    <span
+                        key={index}
+                        className={`h-14 w-14 rounded-xl flex items-center justify-center ${selectedCategory === category ? 'bg-[#FE8A5B] text-white' : 'bg-[#f7f7f8] text-black'}`}
+                        onClick={() => setSelectedCategory(category)}
+                    >
+                        {category}
+                    </span>
+                ))}
             </section>
 
 
