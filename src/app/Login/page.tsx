@@ -1,23 +1,52 @@
+'use client'
+
 import Link from "next/link";
-import { login } from './actions'
+import { loginValidator } from "@/validations/login";
+import InputField from "@/components/ui/InputField";
+import React, { useState } from 'react';
 
 export default function Login() {
+  const [errors, setErrors] = useState<string[]>([]);
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
+
+  function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  }
+
+  function handleSubmitClick(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault(); 
+    const form = new FormData(e.currentTarget); 
+    const errorsLoginValidation = loginValidator(form); // Valida los datos del formulario
+    setErrors(errorsLoginValidation); // Actualiza los errores
+  }
+
+
     return (
-      <form>
+      <form onSubmit={handleSubmitClick}>
         <div className="flex items-center flex-col mt-[220px] bg-white">
           <p className="text-[24px] font-bold text-black">Welcome back!</p>
           <p className="text-[12px] text-black">Login to your account</p>
         </div>
         <div className="flex flex-col items-center bg-white">
-          <label className="text-xs text-gray-400 bg-white rounded-[50px] pl-5 pt-2 mt-5 w-[330px] h-[35px] shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
-            Email:
-            <input id="email" name="email" type="email" required />
-          </label>
-          <label className="text-xs text-gray-400 bg-white rounded-[50px] pl-5 pt-2 mt-5 w-[330px] h-[35px] shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
-            Password:
-            <input id="password" name="password" type="password" required minLength={6} />
-          </label>
-          <button formAction={login} className="mt-12 w-[270px] h-[40px] bg-[#FFA07A] rounded-[20px] text-sm text-white">
+
+          <InputField id="email" name="email" type="email" placeholder="Email" value={formData.email} onChange={handleInputChange}/>
+          <InputField id="password" name="password" type="password" placeholder="Password" value={formData.password} onChange={handleInputChange} />
+
+          <div className="mt-5">
+            {errors.map((error, index) => (
+              <p key={index} className="text-red-500 text-xs">{error}</p>
+            ))}
+
+          </div>
+
+          <button type="submit" className="mt-12 w-[270px] h-[40px] bg-[#FFA07A] rounded-[20px] text-sm text-white">
             Login
           </button>
         </div>

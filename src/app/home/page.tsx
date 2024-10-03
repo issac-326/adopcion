@@ -9,20 +9,28 @@ import {
     CardHeader,
     CardTitle,
   } from "@/components/ui/card"
-  
+  import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+  import {faMagnifyingGlass, faChevronDown, faSliders} from '@fortawesome/free-solid-svg-icons'
+  import {faBell} from '@fortawesome/free-regular-svg-icons'
+
 
 export default function Home() {
     return (
-      <div className="bg-gray-900">
+      <div className="mx-2 text-[#03063a]">
 
-        <div id="encabezado">
-            <div>
-                Lupita
+        <div id="encabezado" className="mt-10 mb-2 flex justify-between text-[#03063a]">
+            <div>  
+                <div className="flex gap-2 text-sm text-gray-400">Location <FontAwesomeIcon icon={faChevronDown} className="w-3"/></div>  
+                <div><span className="font-extrabold">TGU,</span> HN</div>        
             </div>
-            <div>
-                Bell
+            <div className="flex gap-2">
+                <span className="h-12 w-12 rounded-xl flex items-center justify-center bg-[#f7f7f8]"><FontAwesomeIcon icon={faMagnifyingGlass} className="w-6" /></span>
+
+                <span className="bg-white h-12 w-12 rounded-xl flex items-center justify-center bg-[#f7f7f8]"><FontAwesomeIcon icon={faBell} className="w-6"/></span>
             </div>
         </div>
+
+
         <div className="flex justify-center">
             <div id="imagen" className="h-[166px] w-[380px] bg-[#FE8A5B] rounded-[20px] grid grid-cols-2">
                 <div className=" bg-[#FE8A5B] rounded-l-[20px] ">
@@ -40,17 +48,22 @@ export default function Home() {
                 </div>
             </div>
         </div>
-        <div className="flex">
-            <h1>Categoria</h1>
-            <div>Cats</div>
-            <div>Dogs</div>
-            <div>Birds</div>
+        <div className="mt-5">
+            <h2 className="font-semibold">Categories</h2>
+            <section className="flex gap-2">
+                <span className="h-14 w-14 rounded-xl flex items-center justify-center bg-[#f7f7f8]"><FontAwesomeIcon icon={faSliders} className="w-6"/></span>
+                <span className="h-14 w-14 rounded-xl flex items-center justify-center bg-[#f7f7f8]">All</span>
+                <span className="h-14 w-14 rounded-xl flex items-center justify-center bg-[#f7f7f8]">All</span>
+                <span className="h-14 w-14 rounded-xl flex items-center justify-center bg-[#f7f7f8]">All</span>
+            </section>
+
+
         </div>
-        <section>
-            <h1>Adopt pet</h1>
+        <section className="mt-5">
+            <h2 className="font-semibold">Adopt pet</h2>
         </section>
-        <section className="grid grid-cols-2 gap-4 m-3 ">
-            <Card className="bg-[#ADD8E6] h-[200px] rounded-2xl">
+        <section className="grid grid-cols-2 gap-4 mt-2">
+            <Card className="bg-[#ADD8E6] h-[200px] rounded-[10px 10px 10px 10px / 15px 15px 15px 15px]">
                 <CardHeader>
                     <div className="grid grid-cols-2">
                         <div>
