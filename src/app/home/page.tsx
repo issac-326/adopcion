@@ -10,8 +10,8 @@ import {
     CardTitle,
   } from "@/components/ui/card"
   import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-  import {faMagnifyingGlass, faChevronDown, faSliders} from '@fortawesome/free-solid-svg-icons'
-  import {faBell} from '@fortawesome/free-regular-svg-icons'
+  import {faMagnifyingGlass, faChevronDown, faSliders, faGear, faChevronRight} from '@fortawesome/free-solid-svg-icons'
+  import {faBell, faUser, faHeart, faCommentDots, } from '@fortawesome/free-regular-svg-icons'
 
 
 export default function Home() {
@@ -59,8 +59,14 @@ export default function Home() {
 
 
         </div>
-        <section className="mt-5">
+        <section className="mt-5 flex justify-between">
             <h2 className="font-semibold">Adopt pet</h2>
+            <div className="text-[#FE8A5B] flex gap-2">
+                <div className="flex text-xs">View All</div>
+                <div className="bg-[#FE8A5B] w-4 h-4 rounded-sm flex items-center justify-center">
+                    <FontAwesomeIcon icon={faChevronRight} className="w-1 text-white" />
+                </div>
+            </div>
         </section>
         <section className="grid grid-cols-2 gap-4 mt-2">
             <Card className="bg-[#ADD8E6] h-[200px] rounded-[10px 10px 10px 10px / 15px 15px 15px 15px]">
@@ -145,19 +151,11 @@ export default function Home() {
                 </CardContent>
             </Card>
         </section>
-        <footer className="fixed bottom-0 left-0 flex justify-around align-center bg-[#FE8A5B] h-[64px] w-full">
-            <div className="flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#4B5563"><path d="M160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Zm320-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z"/></svg>
-            </div>
-            <div className="flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#4B5563"><path d="M160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Zm320-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z"/></svg>
-            </div>
-            <div className="flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#4B5563"><path d="M160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Zm320-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z"/></svg>
-            </div>
-            <div className="flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#4B5563"><path d="M160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Zm320-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z"/></svg>
-            </div>
+        <footer className="fixed bottom-0 left-0 flex justify-around align-center bg-white h-[64px] w-full text-gray-400">
+            <FontAwesomeIcon icon={faUser} className="w-5 text-[#03063a]" />
+            <FontAwesomeIcon icon={faHeart} className="w-5" />
+            <FontAwesomeIcon icon={faCommentDots} className="w-5" />
+            <FontAwesomeIcon icon={faGear} className="w-5" />
         </footer>
       </div>
     );
