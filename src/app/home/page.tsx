@@ -55,8 +55,8 @@ export default function Home() {
             </div>
         </div>
         <div className="mt-5">
-            <h2 className="text-texto m-3 font-semibold">Categories</h2>
-            <section className="flex justify-around">
+            <h2 className="text-texto my-3 font-semibold">Categories</h2>
+            <section className="flex justify-between">
                 <span
                     className={`h-14 w-14 rounded-xl flex items-center justify-center ${selectedCategory === null ? 'bg-[#FE8A5B] text-white' : 'bg-[#f7f7f8] text-black'}`}
                     onClick={() => setSelectedCategory(null)} // Esto solo cambiará su estilo
@@ -76,7 +76,7 @@ export default function Home() {
 
 
         </div>
-        <section className="mt-5 flex justify-between">
+        <section className="mt-5 flex justify-between items-center">
             <h2 className="font-semibold">Adopt pet</h2>
             <div className="text-[#FE8A5B] flex gap-2">
                 <div className="flex text-xs">View All</div>
@@ -168,11 +168,11 @@ export default function Home() {
                 </CardContent>
             </Card>
         </section>
-        <footer className="fixed bottom-0 left-0 flex justify-around align-center bg-white h-[64px] w-full text-gray-400">
-            <FontAwesomeIcon icon={faUser} className="w-5 text-[#03063a]" />
-            <FontAwesomeIcon icon={faHeart} className="w-5" />
-            <FontAwesomeIcon icon={faCommentDots} className="w-5" />
-            <FontAwesomeIcon icon={faGear} className="w-5" />
+        <footer className="fixed bottom-0 left-0 flex justify-around items-center bg-white h-[64px] w-full text-gray-400 shadow-inner border-t border-gray-300">
+            <FontAwesomeIcon icon={faUser} className="w-5 h-5 text-[#03063a]" />
+            <FontAwesomeIcon icon={faHeart} className="w-5 h-5" />
+            <FontAwesomeIcon icon={faCommentDots} className="w-5 h-5" />
+            <FontAwesomeIcon icon={faGear} className="w-5 h-5" />
         </footer>
       </div>
     );
