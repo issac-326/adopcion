@@ -1,13 +1,15 @@
 export function loginValidator(formData: FormData) {
-    const errors = []
+    let isValid = true
+    const errors = {message: ''};
   
     const email = formData.get('email') as string
     const password = formData.get('password') as string
 
     if (email === '' || password === '') {
-        errors.push('Email and password are required')
+        errors.message = 'Wrong Credentials'
+        isValid = false
     }
 
-    return errors
+    return {isValid, errors}
   }
   

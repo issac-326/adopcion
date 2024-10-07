@@ -1,39 +1,64 @@
 export function signupValidator(formData: FormData) {
-    const errors = []
+    const errors = {email: '', password: '', confirmPassword: '', phone: ''};
   
     // Obtén los valores de los campos
     const email = formData.get('email') as string
     const password = formData.get('password') as string
     const confirmPassword = formData.get('confirmPassword') as string // confirmación de contraseña
     const phone = formData.get('phone') as string
+
+    let isValid = true
   
     // Verifica que la contraseña y su confirmación coincidan
     if (email === '') {
-      errors.push('Email is required')
+      errors.email = 'Email is required'
+      isValid= false
+    }
+
+    if(email){
+      const emailRegexp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if(!emailRegexp.test(email)){
+        errors.email = 'Email is not valid'
+        isValid= false
+      }
+
     }
   
     if (password === '') {
-      errors.push('Password is required')
+      errors.password = 'Password is required'
+      isValid= false
     }
   
     if (phone === '') {
-      errors.push('Phone is required')
+      errors.phone = 'Phone is required'
+      isValid= false
+    }
+
+    if (phone) {
+      const phoneRegexp = /^\d{8}$/
+      if (!phoneRegexp.test(phone)) {
+        errors.phone = 'Phone is not valid'
+        isValid= false
+      }
     }
   
     if (confirmPassword === '') {
-      errors.push('Confirm password is required')
+      errors.confirmPassword = 'Confirm password is required'
+      isValid= false
     }
   
     // Verifica que la contraseña tenga al menos 6 caracteres
     if (password.length < 6) {
-      errors.push('Password must be at least 6 characters')
+      errors.password = 'Password must be at least 6 characters'
+      isValid= false
     }
   
     // Verifica que la contraseña y su confirmación coincidan
     if (password !== confirmPassword) {
-      errors.push('Passwords do not match')
+      errors.confirmPassword = 'Passwords do not match'
+      isValid= false
     }
 
-    return errors
+    return {isValid, errors}
   }
   

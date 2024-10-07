@@ -7,12 +7,23 @@ import React, { useState } from 'react';
 import { login } from "./actions";
 
 export default function Login() {
-  const [errors, setErrors] = useState<string[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
 
+  async function handleLogin(formData: FormData) {
+    const loginValidated = loginValidator(formData); // Valida los datos del formulario
+    if(!loginValidated.isValid) {
+      setErrorMessage(loginValidated.errors.message);
+      return;
+    }
+
+    login(formData);
+
+  }
+  
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
     setFormData({
@@ -21,17 +32,13 @@ export default function Login() {
     });
   }
 
-  function handleSubmitClick(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const form = new FormData(e.currentTarget);
-    const errorsLoginValidation = loginValidator(form); // Valida los datos del formulario
-    setErrors(errorsLoginValidation); // Actualiza los errores
-  }
+
+
 
 
   return (
     <div className="min-h-screen flex items-center justify-center">
-    <form onSubmit={handleSubmitClick}>
+    <form>
       <div className="flex items-center flex-col bg-white">
         <p className="text-[24px] font-bold text-black">Welcome back!</p>
         <p className="text-[12px] text-black">Login to your account</p>
@@ -42,13 +49,10 @@ export default function Login() {
         <InputField id="password" name="password" type="password" placeholder="Password" value={formData.password} onChange={handleInputChange} />
 
         <div className="mt-5">
-          {errors.map((error, index) => (
-            <p key={index} className="text-red-500 text-xs">{error}</p>
-          ))}
-
+          {errorMessage && <div className="text-red-500 text-xs animate-shake mt-2 text-left">{errorMessage}</div>}
         </div>
 
-        <button formAction={login} className="mt-12 w-[270px] h-[40px] bg-[#FFA07A] rounded-[20px] text-sm text-white">
+        <button formAction={handleLogin} className="mt-12 w-[270px] h-[40px] bg-[#FFA07A] rounded-[20px] text-sm text-white">
           Login
         </button>
       </div>
