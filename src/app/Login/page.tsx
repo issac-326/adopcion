@@ -5,9 +5,10 @@ import { loginValidator } from "@/validations/login";
 import InputField from "@/components/ui/InputField";
 import React, { useState } from 'react';
 import { loginUser } from "./actions";
-import { redirect } from 'next/navigation'
+import { useRouter } from "next/navigation";
 
 export default function Login() {
+  const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [formData, setFormData] = useState({
     email: '',
@@ -24,7 +25,7 @@ export default function Login() {
     try {
       const data = await loginUser(formData);
       console.log('User added successfully:', data);
-      redirect('/home');
+      router.push('/home');
     } catch (error) {
       console.error("Error en el registro:", error);
     }
@@ -50,8 +51,13 @@ export default function Login() {
       </div>
       <div className="flex flex-col items-center bg-white">
 
-        <InputField id="email" name="email" type="email" placeholder="Email" value={formData.email} onChange={handleInputChange} />
-        <InputField id="password" name="password" type="password" placeholder="Password" value={formData.password} onChange={handleInputChange} />
+        <div>
+          <InputField id="email" name="email" type="email" placeholder="Email" value={formData.email} onChange={handleInputChange} />
+        </div>
+        <div>
+          <InputField id="password" name="password" type="password" placeholder="Password" value={formData.password} onChange={handleInputChange} />
+          <div className="text-right"><Link href="/reset-password" className="text-xs text-[#FFA07A] pl-2 ">forgot your password?</Link></div>
+          </div>
 
         <div className="mt-5">
           {errorMessage && <div className="text-red-500 text-xs animate-shake mt-2 text-left">{errorMessage}</div>}

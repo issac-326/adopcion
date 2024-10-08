@@ -6,10 +6,12 @@ import React, { useState } from 'react';
 import InputField from "@/components/ui/InputField";
 import { addUser } from "./actions";
 import SuccessNotification from "@/components/ui/SuccesNotification";
+import {useRouter} from "next/navigation";
 
 
 
 export default function Register() {
+  const router = useRouter();
   
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState({
@@ -29,6 +31,7 @@ export default function Register() {
       try {
         const data = await addUser(formData);
         console.log('User added successfully:', data);
+        router.push('/login');
         setIsSuccess(true);
       } catch (error) {
         console.error("Error en el registro:", error);
