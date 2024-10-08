@@ -4,7 +4,8 @@ import Link from "next/link";
 import { loginValidator } from "@/validations/login";
 import InputField from "@/components/ui/InputField";
 import React, { useState } from 'react';
-import { login } from "./actions";
+import { loginUser } from "./actions";
+import { redirect } from 'next/navigation'
 
 export default function Login() {
   const [errorMessage, setErrorMessage] = useState<string>('');
@@ -20,7 +21,13 @@ export default function Login() {
       return;
     }
 
-    login(formData);
+    try {
+      const data = await loginUser(formData);
+      console.log('User added successfully:', data);
+      redirect('/home');
+    } catch (error) {
+      console.error("Error en el registro:", error);
+    }
 
   }
   
@@ -31,8 +38,6 @@ export default function Login() {
       [name]: value
     });
   }
-
-
 
 
 
@@ -56,7 +61,7 @@ export default function Login() {
           Login
         </button>
       </div>
-      <div className="flex mt-8 flex mt-6 justify-center">
+      <div className="flex mt-8 justify-center">
         <p className="text-xs text-black">Don't have an account</p>
         <Link href="/register" className="text-xs text-[#FFA07A] pl-2 ">Sign up here</Link>
       </div>

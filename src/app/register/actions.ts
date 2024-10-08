@@ -5,23 +5,42 @@ import { redirect } from 'next/navigation'
 
 import { createClient } from '@/utils/supabase/server'
 
-export async function signup(formData: FormData) {
+export async function login(formData: FormData) {
   const supabase = createClient()
 
-  // Obtén los valores de los campos
+  // type-casting here for convenience
+  // in practice, you should validate your inputs
   const data = {
     email: formData.get('email') as string,
     password: formData.get('password') as string,
-    phone : formData.get('phone') as string,
   }
 
-  const { error } = await supabase.auth.signUp(data)
+  const { error } = await supabase.auth.signInWithPassword(data)
 
   if (error) {
     redirect('/error')
   }
 
   revalidatePath('/', 'layout')
-  redirect('/home')
-  
+  redirect('/')
 }
+
+
+export const addUser = async (formData : FormData) => {
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from('users')
+    .insert([
+      {
+        email: formData.get('email'),
+        password: formData.get('password'),
+        phone: formData.get('phone'),
+      },
+    ]);
+
+  if (error) {
+    throw error; // Lanzar el error para manejarlo en el componente
+  }
+
+  return data; // Retornar los datos de la inserción
+};

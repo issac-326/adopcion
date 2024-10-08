@@ -4,10 +4,13 @@ import Link from "next/link";
 import { signupValidator } from "@/validations/signup";
 import React, { useState } from 'react';
 import InputField from "@/components/ui/InputField";
-import { signup } from "./actions";
+import { addUser } from "./actions";
 import SuccessNotification from "@/components/ui/SuccesNotification";
 
+
+
 export default function Register() {
+  
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState({
     email: '',
@@ -24,9 +27,9 @@ export default function Register() {
     // Si hay errores en la validación, se muestran en pantalla; si no, se registra al usuario
     if (formResult.isValid) {
       try {
-        await signup(formData);
-        setIsSuccess(true); 
-        setErrors({});
+        const data = await addUser(formData);
+        console.log('User added successfully:', data);
+        setIsSuccess(true);
       } catch (error) {
         console.error("Error en el registro:", error);
       }
