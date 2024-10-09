@@ -1,11 +1,11 @@
 'use client'
 
 import Link from "next/link";
-import { loginValidator } from "@/validations/login";
 import InputField from "@/components/ui/InputField";
 import React, { useState } from 'react';
-import { loginUser } from "./actions";
 import { useRouter } from "next/navigation";
+import { searchUser } from "./actions";
+
 
 export default function ResetPassword() {
   const router = useRouter();
@@ -23,6 +23,16 @@ export default function ResetPassword() {
     });
   };
 
+  const handleSearchUser = async (formData: FormData) => {
+    try {
+      await searchUser(formData);
+      localStorage.setItem('email', formData.get('email') as string);
+      router.push('/reset-password/code');
+    } catch (error) {
+      setErrorMessage(error.message);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center">
     <form>
@@ -36,7 +46,7 @@ export default function ResetPassword() {
           <InputField id="email" name="email" type="email" placeholder="" value={formData.email} onChange={handleInputChange} />
         </div>
         <div className="mt-5">
-          <button className="bg-[#FFA07A] text-white rounded-[50px] pl-5 pt-2 mt-5 w-[330px] h-[35px] shadow-[0_4px_4px_rgba(0,0,0,0.25)]">Search</button>
+          <button className="bg-[#FFA07A] text-white rounded-[50px] pl-5 pt-2 mt-5 w-[330px] h-[35px] shadow-[0_4px_4px_rgba(0,0,0,0.25)]" formAction={handleSearchUser}>Search</button>
         </div>
         <div>
           <Link href="/login" className="bg-[#e4e6eb] block flex justify-center text-[#4b4f5c] rounded-[50px] pl-5 pt-2 mt-2 w-[330px] h-[35px] shadow-[0_4px_4px_rgba(0,0,0,0.25)]">Cancel</Link>
