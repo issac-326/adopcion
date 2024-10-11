@@ -168,12 +168,6 @@ export default function Home() {
                 </CardContent>
             </Card>
         </section>
-        <footer className="fixed bottom-0 left-0 flex justify-around items-center bg-white h-[64px] w-full text-gray-400 shadow-inner border-t border-gray-300">
-            <FontAwesomeIcon icon={faUser} className="w-5 h-5 text-[#03063a]" />
-            <FontAwesomeIcon icon={faHeart} className="w-5 h-5" />
-            <FontAwesomeIcon icon={faCommentDots} className="w-5 h-5" />
-            <FontAwesomeIcon icon={faGear} className="w-5 h-5" />
-        </footer>
       </div>
     );
   }

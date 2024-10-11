@@ -478,9 +478,9 @@ export type Database = {
         Row: {
           apellido1: string | null
           apellido2: string | null
-          contraseña: string
+          contrasena: string
           correo: string
-          fecha_creacion: string
+          fecha_creacion: string | null
           id_estado: number | null
           id_mascota_favorita: number | null
           id_tipo_usuario: number | null
@@ -492,9 +492,9 @@ export type Database = {
         Insert: {
           apellido1?: string | null
           apellido2?: string | null
-          contraseña: string
+          contrasena: string
           correo: string
-          fecha_creacion: string
+          fecha_creacion?: string | null
           id_estado?: number | null
           id_mascota_favorita?: number | null
           id_tipo_usuario?: number | null
@@ -506,9 +506,9 @@ export type Database = {
         Update: {
           apellido1?: string | null
           apellido2?: string | null
-          contraseña?: string
+          contrasena?: string
           correo?: string
-          fecha_creacion?: string
+          fecha_creacion?: string | null
           id_estado?: number | null
           id_mascota_favorita?: number | null
           id_tipo_usuario?: number | null
