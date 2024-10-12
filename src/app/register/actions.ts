@@ -29,12 +29,12 @@ export async function login(formData: FormData) {
 export const addUser = async (formData : FormData) => {
   const supabase = createClient()
   const { data, error } = await supabase
-    .from('users')
+    .from('usuarios')
     .insert([
       {
-        email: formData.get('email'),
-        password: formData.get('password'),
-        phone: formData.get('phone'),
+        correo: formData.get('email'),
+        contrasena: formData.get('password'),
+        telefono: formData.get('phone'),
       },
     ]);
 
