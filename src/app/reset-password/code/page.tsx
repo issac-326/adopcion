@@ -48,9 +48,16 @@ export default function Code() {
       }
     } catch (error: any) {
       console.error('Error handling send code:', error);
-      setIsIncorrect(true); 
+      handleSetIncorrect(true); 
     }
   };
+
+  const handleSetIncorrect = (value: boolean) => {
+    setIsIncorrect(value);
+    setTimeout(() => {
+      setIsIncorrect(false);
+    }, 2000);
+  }
   
 
 

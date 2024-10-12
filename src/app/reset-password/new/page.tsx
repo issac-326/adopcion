@@ -5,6 +5,7 @@ import InputField from "@/components/ui/InputField";
 import React, { useState } from 'react';
 import { useRouter } from "next/navigation";
 import { changePassword } from "./actions";
+import { Console } from "console";
 
 export default function NewPassword() {
   const router = useRouter();
@@ -28,12 +29,14 @@ export default function NewPassword() {
   };
 
   const handleChangePassword = async (formData: FormData) => {
+    setIsValid(true);
     setErrors({
       password: '',
       confirmPassword: ''
     });
 
     if (formData.get('password')!.toString().length < 6) {
+      console.log(formData.get('password')!.toString().length < 6)
       setErrors((prev) => ({
         ...prev,
         password: 'Password must be at least 6 characters'
@@ -42,6 +45,7 @@ export default function NewPassword() {
     }
 
     if (formData.get('password') !== formData.get('confirmPassword')) {
+
       setErrors((prev) => ({
         ...prev,
         confirmPassword: 'Passwords do not match'
@@ -49,18 +53,19 @@ export default function NewPassword() {
       setIsValid(false);
     }
 
-    if(!isValid) {
-      return;
+    if(isValid) {
+      try {
+        const email = localStorage.getItem('email') as string;
+        console.log('EXEC')
+        await changePassword(formData, email);
+        router.push('/login');
+      } catch (error) {
+        setIsValid(false);
+        console.error(error);
+      }
     }
 
-    try {
-      const email = localStorage.getItem('email') as string;
-      await changePassword(formData, email);
-      router.push('/login');
-    } catch (error) {
-      setIsValid(false);
-      console.error(error);
-    }
+    return;
   };
 
 

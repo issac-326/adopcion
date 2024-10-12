@@ -8,9 +8,9 @@ export const sendCode = async (formData: FormData, email: string) => {
 
   try {
     const { data, error } = await supabase
-      .from('users')
+      .from('usuarios')
       .select('reset_token')
-      .eq('email', email)
+      .eq('correo', email)
       .single();
 
     if (error) {

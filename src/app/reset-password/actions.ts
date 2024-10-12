@@ -12,17 +12,17 @@ function generateResetToken() {
 
 export const searchUser = async (formData: FormData) => {
   const supabase = createClient();
-  const email = formData.get('email');
+  const email = formData.get('email')?.toString();
 
   // Busca al usuario en la base de datos por correo
   const { data, error } = await supabase
-    .from('users')
+    .from('usuarios')
     .select('*')
-    .eq('email', email)
+    .eq('correo', email)
     .single();
 
   if (!data) {
-    throw new Error('Usuario no existe');
+    throw new Error('El usuario no existe');
   }
 
   // Genera un código de restablecimiento
@@ -31,19 +31,20 @@ export const searchUser = async (formData: FormData) => {
   tokenExpiry.setHours(tokenExpiry.getHours() + 1); // Código válido por 1 hora
 
   // Actualiza la base de datos con el código y su fecha de expiración
-  const { dataUpdated, errorUpdated } = await supabase
-    .from('users')
-    .update({ reset_token: resetToken, token_expiry: tokenExpiry })
-    .eq('email', email);
-    
+  const { dataUpdated, errorUpdated} = await supabase
+    .from('usuarios')
+    .update({ reset_token: resetToken })
+    .eq('correo', email);
+
   if (errorUpdated) {
     throw new Error('Error al generar el código de restablecimiento');
   }
+
   console.log(dataUpdated);
+  
   // Envía el correo al usuario con el código de restablecimiento
   await sendResetEmail(email, resetToken);
 
-  redirect('/reset-password/code'); // Redirige al usuario a la página de restablecimiento
   return { message: 'Correo con código de restablecimiento enviado' };
 };
 

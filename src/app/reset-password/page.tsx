@@ -24,14 +24,23 @@ export default function ResetPassword() {
   };
 
   const handleSearchUser = async (formData: FormData) => {
+    setErrorMessage('');
     try {
       await searchUser(formData);
       localStorage.setItem('email', formData.get('email') as string);
       router.push('/reset-password/code');
     } catch (error) {
-      setErrorMessage(error.message);
+      handleErrorNotification(error.message);  // Asigna el mensaje de error aquí
     }
   };
+
+  const handleErrorNotification = (error: string) => { 
+    setErrorMessage(error);
+    setTimeout(() => {
+      setErrorMessage('');
+    }, 3000);
+  }
+    
 
   return (
     <div className="min-h-screen flex items-center justify-center">
@@ -44,6 +53,7 @@ export default function ResetPassword() {
 
         <div>
           <InputField id="email" name="email" type="email" placeholder="" value={formData.email} onChange={handleInputChange} />
+          {errorMessage && <p className="mt-2 pl-5 animate-shake text-red-500 text-xs">{errorMessage}</p>}
         </div>
         <div className="mt-5">
           <button className="bg-[#FFA07A] text-white rounded-[50px] pl-5 pt-2 mt-5 w-[330px] h-[35px] shadow-[0_4px_4px_rgba(0,0,0,0.25)]" formAction={handleSearchUser}>Search</button>

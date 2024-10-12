@@ -14,10 +14,10 @@ export const loginUser = async (formData: FormData) => {
 
   // Realiza una consulta a la tabla users
   const { data, error } = await supabase
-    .from('users')
+    .from('usuarios')
     .select('*')
-    .eq('email', email)
-    .eq('password', password)
+    .eq('correo', email)
+    .eq('contrasena', password)
     .single();
 
   if (!data) {
