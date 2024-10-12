@@ -28,9 +28,8 @@ export const searchUser = async (formData: FormData) => {
   // Genera un código de restablecimiento
   const resetToken = generateResetToken();
   const tokenExpiry = new Date();
-  tokenExpiry.setHours(tokenExpiry.getHours() + 1); // Código válido por 1 hora
 
-  // Actualiza la base de datos con el código y su fecha de expiración
+  // Actualiza la base de datos con el código 
   const { dataUpdated, errorUpdated} = await supabase
     .from('usuarios')
     .update({ reset_token: resetToken })

@@ -121,7 +121,7 @@ export default function Register() {
 
         <div className="flex mt-6 justify-center">
           <p className="text-xs text-black">You already have an account?</p>
-          <Link href="/login" className="text-xs text-[#FFA07A] pl-2">Login here</Link>
+          <Link href="/login" className="text-xs text-[#FFA07A] pl-2">Logeate aqui!</Link>
         </div>
       </form>
     </div>

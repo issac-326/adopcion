@@ -1,18 +1,48 @@
 'use client'
 import Link from "next/link";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import PetCard from "@/components/ui/PetCard";
+
   import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
   import {faMagnifyingGlass, faChevronDown, faSliders, faGear, faChevronRight} from '@fortawesome/free-solid-svg-icons'
   import {faBell, faUser, faHeart, faCommentDots, } from '@fortawesome/free-regular-svg-icons'
+import { getCategorias, getCategoriaEspecifica } from "@/app/menu/home/actions";  
 
+interface Categoria {
+    id_categoria: number;
+    tipo_mascotas: string;
+}
 
-export default function Home() {
+export default function MenuCategorias() {
+    const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
     // Define el tipo como string o null
-    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-    const categories = ['All', 'Dogs', 'Cats', 'Birds'];
+    const [categories, setCategories] = useState<Categoria[]>([]); // Usa useState para manejar las categorías
+
+    const [loading, setLoading] = useState<boolean>(true); // Estado para cargar
+    const obtenerCategorias = async () => {
+        try {
+            const data = await getCategorias(); // obtengo el array con su tipo e id
+            setCategories(data); // Guardo las categories
+            setLoading(false); // Cambio el estado de carga
+        } catch (error) {
+            console.error("Error al obtener las categorías en el frontend:", error);
+        }
+        console.log(categories);
+    };
+
+    useEffect(() => {
+        obtenerCategorias(); // Llama a la función al montar el componente
+    }, []);
+    
+    const seleccionarCategoria = async (id: number) => {
+        try {
+            const data = await getCategoriaEspecifica(id); // obtengo el array con su tipo e id
+            console.log(data);
+        } catch (error) {
+            console.error("Error al obtener las categorías en el frontend:", error);
+        }
+    };
 
     return (
       <div className="mx-2 text-[#03063a]">
@@ -50,20 +80,26 @@ export default function Home() {
         <div className="mt-5">
             <h2 className="text-texto my-3 font-semibold">Categories</h2>
             <section className="flex justify-between">
-                <span
-                    className={`h-14 w-14 rounded-xl flex items-center justify-center ${selectedCategory === null ? 'bg-[#FE8A5B] text-white' : 'bg-[#f7f7f8] text-black'}`}
-                    onClick={() => setSelectedCategory(null)} // Esto solo cambiará su estilo
+                <Button
+                    className={`h-14 w-14 rounded-xl flex items-center justify-center hover:bg-[#FE8A5B] hover:text-white  ${selectedCategory === null ? 'bg-[#FE8A5B] text-white' : 'bg-[#f7f7f8] text-black'}`}
+                    onClick={() => {
+                        setSelectedCategory(null); // Cambia el estado de la categoría seleccionada
+                        seleccionarCategoria(0); // Llama a la función para seleccionar la categoría
+                    }}// Esto solo cambiará su estilo
                 >
-                    <FontAwesomeIcon icon={faSliders} className="w-6" />
-                </span>
-                {categories.map((category, index) => (
-                    <span
+                    All
+                </Button>
+                {loading ? <div>Loading...</div> : categories.map((category, index) => (
+                    <Button
                         key={index}
-                        className={`h-14 w-14 rounded-xl flex items-center justify-center ${selectedCategory === category ? 'bg-[#FE8A5B] text-white' : 'bg-[#f7f7f8] text-black'}`}
-                        onClick={() => setSelectedCategory(category)}
+                        className={`h-14 w-14 rounded-xl flex items-center justify-center hover:bg-[#FE8A5B] hover:text-white ${selectedCategory === index ? 'bg-[#FE8A5B] text-white' : 'bg-[#f7f7f8] text-black'}`}
+                        onClick={() => {
+                            setSelectedCategory(index); // Cambia el estado de la categoría seleccionada
+                            seleccionarCategoria(category.id_categoria); // Llama a la función para seleccionar la categoría
+                        }}
                     >
-                        {category}
-                    </span>
+                        {category.tipo_mascotas}
+                    </Button>
                 ))}
             </section>
 
@@ -78,19 +114,7 @@ export default function Home() {
                 </div>
             </div>
         </section>
-        <section className="grid grid-cols-2 gap-4 mt-2">
-            <PetCard />
-
-        </section>
-        <footer className="fixed bottom-0 left-0 flex justify-around items-center bg-white h-[64px] w-full text-gray-400 shadow-inner border-t border-gray-300">
-            <FontAwesomeIcon icon={faUser} className="w-5 h-5 text-[#03063a]" />
-            <FontAwesomeIcon icon={faHeart} className="w-5 h-5" />
-            <FontAwesomeIcon icon={faCommentDots} className="w-5 h-5" />
-            <FontAwesomeIcon icon={faGear} className="w-5 h-5" />
-        </footer>
-      </div>
+       </div>
     );
   }
-
-  
   

@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { loginUser } from "./actions";
 import { useRouter } from "next/navigation";
 
+
 export default function Login() {
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string>('');
@@ -25,7 +26,7 @@ export default function Login() {
     try {
       const data = await loginUser(formData);
       console.log('User added successfully:', data);
-      router.push('/home');
+      router.push('/menu/home');
     } catch (error) {
       console.error("Error en el registro:", error);
     }
