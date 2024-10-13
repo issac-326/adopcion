@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import PetCard from "./PetCard";
 import Pet from "@/types/Pet";
 
@@ -10,16 +11,24 @@ const colorPairs = [
 ];
 
 const PetList = ({ pets }: { pets: Pet[] }) => {
+  const [pet, setPet] = useState<Pet[]>([]);
+
+  useEffect(() => {
+    
+    setPet(pets);
+  }, [pets]);
+
+
+
   return (
     <section className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 mt-2">
-      <div>
-        {pets.map((pet, index) => {
-          //índice para alternar los colores
+      
+        {pet &&pet.map((pet, index) => {
           const colors = colorPairs[index % colorPairs.length];
           return (
             <PetCard
-              key={pet.id}
-              id={pet.id}
+              key={pet.id_publicacion}
+              id={pet.id_publicacion}
               nombre={pet.nombre}
               edad={pet.edad}
               ciudad={pet.ciudad}
@@ -29,7 +38,7 @@ const PetList = ({ pets }: { pets: Pet[] }) => {
             />
           );
         })}
-      </div>
+      
     </section>
   );
 };

@@ -6,12 +6,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 
-interface InputProps {
+interface InputProps { // Propiedades que recibe el componente
+  id: number; // Debe ser un número
   nombre: string;
+  edad: number;
   ciudad: string;
   imagen: string;
-  id: string;
-  edad: number;
   footerBg: string;
   svgBg: string;
 }
@@ -31,7 +31,7 @@ const PetCard= ({
   return (
     <div className="flex flex-col cursor-pointer relative border w-full h-68 rounded-lg shadow-lg" key={id} onClick={() => { router.push(`/mascotas/${id}`) }} >
     <header className="relative h-4/5">
-      <Image src={imagen} alt="perro" className="w-full h-full object-cover rounded-t-lg" />
+      <Image src={imagen} alt="perro" className="w-full h-full object-cover rounded-t-lg" width={50} height={50}/>
       <div className="absolute top-2 right-2 bg-white rounded-full w-8 h-8 flex items-center justify-center hover:scale-110">
         <FontAwesomeIcon icon={faHeart} className="text-red-500" />
       </div>

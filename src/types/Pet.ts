@@ -1,5 +1,5 @@
 interface Pet {
-    id: string;
+    id_publicacion: number;
     nombre: string;
     edad: number;
     ciudad: string;

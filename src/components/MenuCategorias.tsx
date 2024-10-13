@@ -6,16 +6,25 @@ import { Button } from "@/components/ui/button";
 import { faMagnifyingGlass, faChevronDown, faBell, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { getCategorias, getCategoriaEspecifica } from "@/app/menu/home/actions";  
+import Pet from "@/types/Pet";
 
 interface Categoria {
     id_categoria: number;
     tipo_mascotas: string;
 }
 
-export default function MenuCategorias() {
+
+interface MenuCategoriasProps {
+    escogerMascotas: (mascotas: Pet[]) => void; // Asegúrate de que el tipo sea correcto
+  }
+  
+  
+
+export default function MenuCategorias({ escogerMascotas }: MenuCategoriasProps) {
     const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
     const [categories, setCategories] = useState<Categoria[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const [selectedMascotas, setSelectedMascotas] = useState<Pet[]>([]);
     let currentIndex = 0;
 const slides = document.querySelectorAll('[data-carousel-item]');
 const totalSlides = slides.length;
@@ -66,12 +75,13 @@ setInterval(moveToNextSlide, 5000);
 
     useEffect(() => {
         obtenerCategorias();
+        seleccionarMascotasPorId(0);
     }, []);
     
-    const seleccionarCategoria = async (id: number) => {
+    const seleccionarMascotasPorId = async (id: number) => {
         try {
             const data = await getCategoriaEspecifica(id);
-            console.log(data);
+            setSelectedMascotas(data ?? []);
         } catch (error) {
             console.error("Error al obtener la categoría específica:", error);
         }
@@ -82,6 +92,12 @@ setInterval(moveToNextSlide, 5000);
             ? 'bg-[#FE8A5B] text-white' 
             : 'bg-[#f7f7f8] text-black';
     };
+
+    useEffect(() => {
+        escogerMascotas(selectedMascotas);
+        console.log("Selected mascotas actualizado:", selectedMascotas);
+    }, [selectedMascotas]);
+    
 
     return (
       <div className="text-[#03063a] m-2 bg-white">
@@ -189,7 +205,7 @@ setInterval(moveToNextSlide, 5000);
                     className={`h-14 w-14 rounded-xl flex items-center justify-center hover:bg-[#FE8A5B] hover:text-white ${getButtonClasses(selectedCategory === null)}`}
                     onClick={() => {
                         setSelectedCategory(null);
-                        seleccionarCategoria(0);
+                        seleccionarMascotasPorId(0);
                     }}
                 >
                     All
@@ -200,7 +216,7 @@ setInterval(moveToNextSlide, 5000);
                         className={`h-14 w-14 rounded-xl flex items-center justify-center hover:bg-[#FE8A5B] hover:text-white ${getButtonClasses(selectedCategory === category.id_categoria)}`}
                         onClick={() => {
                             setSelectedCategory(category.id_categoria);
-                            seleccionarCategoria(category.id_categoria);
+                            seleccionarMascotasPorId(category.id_categoria);
                         }}
                     >
                         {category.tipo_mascotas}
