@@ -9,7 +9,7 @@ import Pet from "@/types/Pet";
 export default function Home() {
   const [selectedMascotas, setSelectedMascotas] = useState<Pet[]>([]);
 
-  // Esta función recibirá las mascotas seleccionadas
+  // Esta función recibirá las mascotas seleccionadas del prop
   const manejarMascotas = (mascotas: Pet[]) => {
     setSelectedMascotas(mascotas);
   };
