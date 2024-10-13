@@ -6,6 +6,8 @@ import InputField from "@/components/ui/InputField";
 import React, { useState } from 'react';
 import { loginUser } from "./actions";
 import { useRouter } from "next/navigation";
+import { faPaw } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 
 export default function Login() {
@@ -28,7 +30,7 @@ export default function Login() {
       console.log('User added successfully:', data);
       router.push('/menu/home');
     } catch (error) {
-      console.error("Error en el registro:", error);
+      setErrorMessage(error.message);
     }
 
   }
@@ -45,7 +47,7 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center">
-    <form>
+    <form className="relative">
       <div className="flex items-center flex-col bg-white">
         <p className="text-[24px] font-bold text-black">Welcome back!</p>
         <p className="text-[12px] text-black">Login to your account</p>
@@ -72,6 +74,22 @@ export default function Login() {
         <p className="text-xs text-black">Don't have an account</p>
         <Link href="/register" className="text-xs text-[#FFA07A] pl-2 ">Sign up here</Link>
       </div>
+      <div className="fixed bottom-0 right-0 w-70 h-70 flex items-center justify-center"> {/* Usando flex para centrar el ícono */}
+  <FontAwesomeIcon
+    icon={faPaw}
+    rotation={180}
+    style={{
+      color: "#ffa07a",
+      transform: 'rotate(20deg)',
+      width: '100%',  // O '100%' aquí para ocupar el 100% del contenedor
+      height: '100%',
+      opacity: .7 // Si quieres que el ícono también ajuste su altura
+    }}
+  />
+</div>
+
+
+
     </form>
     </div>
   );

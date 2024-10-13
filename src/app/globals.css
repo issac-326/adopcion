@@ -33,6 +33,14 @@ html, body {
   }
 }
 
+/* En tu archivo CSS (ejemplo: styles.css) */
+.bg-paws {
+  background-image: url('/paws.jpg');
+  background-size: cover; /* Asegura que la imagen cubra todo el fondo */
+  background-position: center; /* Centra la imagen en el fondo */
+}
+
+
 @layer utilities {
   .animate-shake {
     animation: shake 0.5s ease-in-out;

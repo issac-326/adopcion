@@ -10,6 +10,12 @@ const config: Config = {
   ],
   theme: {
   	extend: {
+		fontFamily: {
+			montserrat: ['var(--font-montserrat)', 'sans-serif'], // Añade Montserrat usando la variable de CSS
+		  },
+		  boxShadow: {
+			'custom-blue': '0 4px 6px -1px rgba(59, 130, 246, 0.5), 0 2px 4px -1px rgba(59, 130, 246, 0.25)',
+		  },
   		colors: {
 			texto: '#03063A',
   			background: 'hsl(var(--background))',

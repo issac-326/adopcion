@@ -2,49 +2,74 @@
 
 import * as React from "react";
 import Image from "next/image";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHeart, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 
-/* interface InputProps {
+interface InputProps {
   nombre: string;
   ciudad: string;
   imagen: string;
-} */
+  id: string;
+  edad: number;
+  footerBg: string;
+  svgBg: string;
+}
 
 const PetCard= ({
-  
-}) => {
+  nombre,
+  ciudad,
+  imagen,
+  id,
+  edad,
+  footerBg,
+  svgBg,
+}: InputProps) => {
 
   const router = useRouter();
 
   return (
-    <section className="bg-[#ADD8E6] h-[200px] rounded-[10px_10px_10px_10px_/_15px_15px_15px_15px]" onClick={() => router.push('mascotas/6')}>
-      <div className="flex flex-col space-y-1.5 pt-4 pl-4 pr-4">
-        <div className="grid grid-cols-2">
-          <div>
-            <h3 className="text-2xl font-semibold leading-none tracking-tight text-[#03063A]">
-              Leo
-            </h3>
-            <p className="text-xs text-muted-foreground">Tegucigalpa, Honduras</p>
-          </div>
-          <div className="flex justify-end">
-            <div className="flex items-center justify-center w-8 h-8 bg-white rounded-full shadow-lg">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="20px"
-                viewBox="0 -960 960 960"
-                width="20px"
-                fill="#BB271A"
-              >
-                <path d="m480-144-50-45q-100-89-165-152.5t-102.5-113Q125-504 110.5-545T96-629q0-89 61-150t150-61q49 0 95 21t78 59q32-38 78-59t95-21q89 0 150 61t61 150q0 43-14 83t-51.5 89q-37.5 49-103 113.5T528-187l-48 43Zm0-97q93-83 153-141.5t95.5-102Q764-528 778-562t14-67q0-59-40-99t-99-40q-35 0-65.5 14.5T535-713l-35 41h-40l-35-41q-22-26-53.5-40.5T307-768q-59 0-99 40t-40 99q0 33 13 65.5t47.5 75.5q34.5 43 95 102T480-241Zm0-264Z" />
-              </svg>
-            </div>
-          </div>
-        </div>
+    <div className="flex flex-col cursor-pointer relative border w-full h-68 rounded-lg shadow-lg" key={id} onClick={() => { router.push(`/mascotas/${id}`) }} >
+    <header className="relative h-4/5">
+      <Image src={imagen} alt="perro" className="w-full h-full object-cover rounded-t-lg" />
+      <div className="absolute top-2 right-2 bg-white rounded-full w-8 h-8 flex items-center justify-center hover:scale-110">
+        <FontAwesomeIcon icon={faHeart} className="text-red-500" />
       </div>
-      <div className="flex justify-end">
-        <Image src="/Leo.webp" alt="Mascota" width={190} height={200} />
+      <h1
+        className="absolute bottom-0 right-2 text-white text-lg font-semibold text-4xl z-10"
+        style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)' }}
+      >
+        {nombre}
+      </h1>
+    </header>
+
+    <footer className={`flex flex-col h-1/4 bg-[${footerBg}] text-black py-4 items-center justify-center w-full relative overflow-hidden font-montserrat font-semibold`}>
+    
+      <div className="flex items-center space-x-2 z-10">
+        <p>{edad} años</p>
       </div>
-    </section>
+      <div className="flex items-center space-x-2 z-10">
+        <FontAwesomeIcon icon={faMapMarkerAlt} />
+        <p className='text-gray-500 text-sm font-light'>{ciudad}, HN</p>
+      </div>
+
+      <svg
+        width="70"
+        height="70"
+        viewBox="0 0 82 116"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="absolute left-0 bottom-0 transform z-0"
+        style={{ maxWidth: '100%', maxHeight: '100%' }}
+      >
+        <path d="M66.3484 83.4388C56.2913 85.3644 46.8156 80.0166 45.1838 71.4942C43.5521 62.9718 50.3822 54.502 60.4393 52.5764C70.4965 50.6508 79.9722 55.9986 81.6039 64.521C83.2357 73.0435 76.4055 81.5132 66.3484 83.4388Z" fill="#FFD68F" />
+        <path d="M58.7324 47.8435C49.5678 52.4114 39.0006 49.8187 35.1299 42.0527C31.2591 34.2867 35.5505 24.2881 44.715 19.7203C53.8796 15.1524 64.4468 17.7451 68.3176 25.5111C72.1883 33.2771 67.8969 43.2757 58.7324 47.8435Z" fill="#FFD68F" />
+        <path d="M30.005 22.0778C25.5142 28.998 17.1197 31.523 11.2555 27.7175C5.39129 23.912 4.27793 15.217 8.76875 8.29677C13.2596 1.37652 21.654 -1.14846 27.5182 2.65706C33.3824 6.46258 34.4958 15.1575 30.005 22.0778Z" fill="#FFD68F" />
+        <path d="M50.9846 115.148C42.4635 115.313 35.4425 109.593 35.3026 102.372C35.1627 95.1513 41.957 89.1639 50.4781 88.9989C58.9992 88.8338 66.0202 94.5536 66.1601 101.774C66.3 108.995 59.5057 114.983 50.9846 115.148Z" fill="#FFD68F" />
+        <path d="M23.0099 104.61C9.26048 120.154 -18.9528 113.399 -29.4054 97.3449C-39.858 81.2904 -34.2644 53.0729 -14.8423 46.4718C7.13988 40.5404 27.1205 37.6826 37.5731 53.7371C48.0257 69.7915 39.4475 86.0272 23.0099 104.61Z" fill={svgBg}/>
+      </svg>
+    </footer>
+  </div>
   );
 };
 
