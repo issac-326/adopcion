@@ -3,8 +3,9 @@ import Link from "next/link";
 import React, { useState, useEffect } from 'react';
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass, faChevronDown, faBell, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {faBell } from '@fortawesome/free-regular-svg-icons'
 import { getCategorias, getCategoriaEspecifica } from "@/app/menu/home/actions";  
 
 interface Categoria {
