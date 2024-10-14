@@ -8,13 +8,15 @@ export const getCategorias = async () => {
 
     const { data, error } = await supabase
         .from('categorias') 
-        .select('*');
+        .select('*')
+        .order('id_categoria', { ascending: true }); // Ordenar por id_categoria
 
     if (error) {
         console.error('Error al obtener las categorias:', error);
         throw new Error(error.message);
     }
 
+    console.log('Categorias obtenidas:', data);
     return data;
 };
 

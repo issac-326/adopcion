@@ -3,7 +3,7 @@ import Link from "next/link";
 import React, { useState, useEffect } from 'react';
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { faMagnifyingGlass, faChevronDown, faBell, faChevronRight, faDog, faCat, faDove, faFish } from '@fortawesome/free-solid-svg-icons';
+import { faMagnifyingGlass, faChevronDown, faBell, faChevronRight, faDog, faCat, faDove, faFish, faPaw } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getCategorias, getCategoriaEspecifica } from "@/app/menu/home/actions";  
 import Pet from "@/types/Pet";
@@ -12,6 +12,7 @@ import Pet from "@/types/Pet";
 interface Categoria {
     id_categoria: number;
     tipo_mascotas: string;
+    color: string;
 }
 
 interface MenuCategoriasProps {
@@ -32,15 +33,8 @@ export default function MenuCategorias({ escogerMascotas }: MenuCategoriasProps)
         '/navega-filtros.png'
     ];
 
-    type MascotaTipo = 'cat' | 'dog' | 'dove' | 'fish';
-
-    /* para hacer dinamico los iconos de font awesome */
-    const iconMapping: Record<MascotaTipo, any> = {
-        cat: faCat,
-        dog: faDog,
-        dove: faDove,
-        fish: faFish
-    };
+    const colors = ["#f39893", "#7d86a5", "#f5a473", "#acd094"];
+    const colorsPaws = ["#9e4f4a", "#4a6079", "#a95b3c", "#6f8e65"];
 
     /* obtiene las categorias y las carga en el estado nomas cargar la pagina*/
     useEffect(() => {
@@ -176,32 +170,49 @@ export default function MenuCategorias({ escogerMascotas }: MenuCategoriasProps)
                 </div>
             </section>
 
-            <div className="mt-5 col-span-2">
+            <div className="mt-5 col-span-2 ">
                 <h2 className="text-texto my-3 font-semibold">Categories</h2>
-                <section className="flex justify-between">
-                    {/* renderizar los botones de las categorias de forma dinamica*/}
-                    <Button
-                        className={`h-14 w-14 rounded-xl flex items-center justify-center hover:bg-[#FE8A5B] hover:text-white ${getButtonClasses(selectedCategory === null)}`}
-                        onClick={() => {
-                            setSelectedCategory(null);
-                            seleccionarMascotasPorId(0);
-                        }}
-                    >
-                        All
-                    </Button>
-                    {loading ? <div>Loading...</div> : categories.map((category) => (
-                        <Button 
-                            key={category.id_categoria} 
-                            className={`h-14 w-14 rounded-xl flex items-center justify-center hover:bg-[#FE8A5B] hover:text-white ${getButtonClasses(selectedCategory === category.id_categoria)}`}
-                            onClick={() => {
-                                setSelectedCategory(category.id_categoria);
-                                seleccionarMascotasPorId(category.id_categoria);
-                            }}
-                        >
-                            <FontAwesomeIcon icon={iconMapping[category.tipo_mascotas as MascotaTipo]} className="text-2xl" />
-                        </Button>
-                    ))}
+                <section className="flex justify-between h-[50px]">
+                    {/* Elemento fijo */}
+                    <div className="flex-1 bg-[#21888d] p-2 rounded-lg relative hover:scale-110 flex items-center justify-center mx-1"
+                    onClick={() => {
+                        setSelectedCategory(null);
+                        seleccionarMascotasPorId(0);
+                    }}>
+                        <p className="font-bold text-base text-center">Todos</p>
+                        <FontAwesomeIcon
+                            icon={faPaw}
+                            rotation={180}
+                            className="absolute top-2 right-4 text-[#135556] opacity-30 transform -rotate-12 text-3xl"
+                        />
+                    </div>
+
+                    {loading ? (
+                        <div>Loading...</div>
+                    ) : (
+                        categories.map((category, index) => (
+                            <div
+                                key={index}
+                                className="flex-1 p-2 rounded-lg relative hover:scale-110 flex items-center justify-center mx-1"
+                                style={{ backgroundColor: colors[index] }} // Aplicando el color dinámicamente
+                                onClick={() => {
+                                    setSelectedCategory(category.id_categoria);
+                                    seleccionarMascotasPorId(category.id_categoria);
+                                }}
+                            >
+                                <p className="font-bold text-base text-center">{category.tipo_mascotas}</p>
+                                <FontAwesomeIcon
+                                    icon={faPaw}
+                                    rotation={180}
+                                    style={{ color: colorsPaws[index]}}
+                                    className="absolute top-2 right-4 opacity-30 transform -rotate-12 text-3xl"
+                                />
+                            </div>
+                        )))}
                 </section>
+
+
+
             </div>
 
             <section className="mt-5 flex justify-between items-center">
@@ -216,3 +227,14 @@ export default function MenuCategorias({ escogerMascotas }: MenuCategoriasProps)
         </div>
     );
 }
+
+{/* <Button 
+    key={category.id_categoria} 
+    className={`h-14 w-14 rounded-xl flex items-center justify-center hover:bg-[#FE8A5B] hover:text-white ${getButtonClasses(selectedCategory === category.id_categoria)}`}
+    onClick={() => {
+        setSelectedCategory(category.id_categoria);
+        seleccionarMascotasPorId(category.id_categoria);
+    }}
+>
+    <FontAwesomeIcon icon={iconMapping[category.tipo_mascotas as MascotaTipo]} className="text-2xl" />
+</Button> */}

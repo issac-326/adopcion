@@ -363,36 +363,42 @@ export type Database = {
       }
       publicaciones: {
         Row: {
+          ciudad: string | null
           color: string | null
           condicion_medica: string | null
           edad: number | null
           fecha_creacion: string
           id_publicacion: number
           id_usuario: number | null
+          imagen: string | null
           nombre: string | null
           peso: number | null
           tipo_animal: number | null
           vacunas: boolean | null
         }
         Insert: {
+          ciudad?: string | null
           color?: string | null
           condicion_medica?: string | null
           edad?: number | null
           fecha_creacion: string
           id_publicacion?: number
           id_usuario?: number | null
+          imagen?: string | null
           nombre?: string | null
           peso?: number | null
           tipo_animal?: number | null
           vacunas?: boolean | null
         }
         Update: {
+          ciudad?: string | null
           color?: string | null
           condicion_medica?: string | null
           edad?: number | null
           fecha_creacion?: string
           id_publicacion?: number
           id_usuario?: number | null
+          imagen?: string | null
           nombre?: string | null
           peso?: number | null
           tipo_animal?: number | null
@@ -487,6 +493,7 @@ export type Database = {
           id_usuario: number
           nombre1: string | null
           nombre2: string | null
+          reset_token: string | null
           telefono: string | null
         }
         Insert: {
@@ -501,6 +508,7 @@ export type Database = {
           id_usuario?: number
           nombre1?: string | null
           nombre2?: string | null
+          reset_token?: string | null
           telefono?: string | null
         }
         Update: {
@@ -515,6 +523,7 @@ export type Database = {
           id_usuario?: number
           nombre1?: string | null
           nombre2?: string | null
+          reset_token?: string | null
           telefono?: string | null
         }
         Relationships: [
@@ -546,7 +555,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      sp_actualizarresettoken: {
+        Args: {
+          reset_token_param: string
+          email_param: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
