@@ -29,7 +29,7 @@ const PetCard= ({
   const router = useRouter();
 
   return (
-    <div className="flex flex-col cursor-pointer relative border w-full h-68 rounded-lg shadow-lg" key={id} onClick={() => { router.push(`/mascotas/${id}`) }} >
+    <div className="flex flex-col cursor-pointer relative border w-full h-68 rounded-lg shadow-lg" key={id} onClick={() => { router.push(`/menu/mascota/${id}`) }} >
     <header className="relative h-4/5">
       <Image src={imagen} alt="perro" className="w-full h-full object-cover rounded-t-lg" width={50} height={50}/>
       <div className="absolute top-2 right-2 bg-white rounded-full w-8 h-8 flex items-center justify-center hover:scale-110">

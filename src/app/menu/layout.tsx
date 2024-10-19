@@ -8,7 +8,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       <main className="flex-1 overflow-auto">
         {children}
       </main>
-    </div>
+    </div> 
   );
 };
 
