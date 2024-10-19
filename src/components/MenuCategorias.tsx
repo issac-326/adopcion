@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { faMagnifyingGlass, faChevronDown, faBell, faChevronRight, faDog, faCat, faDove, faFish, faPaw } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { getCategorias, getCategoriaEspecifica } from "@/app/menu/home/actions";  
+import { getCategorias, getCategoriaEspecifica } from "@/app/menu/inicio/actions";  
 import Pet from "@/types/Pet";
 
 /* todas las interfaces son por el tipado de typescript */

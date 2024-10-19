@@ -34,7 +34,7 @@ export default function Login() {
       }
 
       console.log('User added successfully:', data);
-      router.push('/menu/home'); 
+      router.push('/menu/inicio'); 
     } catch (error) {
       setErrorMessage(error.message);
     }
