@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faHeart, faCommentDots } from '@fortawesome/free-regular-svg-icons';
 import { faGear, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Button } from '@/components/ui/button'; // Asegúrate de que Button esté definido
+import Link from 'next/link';
 
 interface MenuItem {
   icon: JSX.Element;
@@ -23,9 +24,9 @@ export default function Header() {
       <aside className="w-16 sm:w-64 bg-gray-100/40 dark:bg-gray-800/40 flex-shrink-0 mt-7">
         <nav className="flex flex-col gap-2 p-2 sm:p-4">
           {menuItems.map((item, index) => (
-            <Button key={index} variant="ghost" className="w-full justify-start hover:scale-110 hover:bg-[#e8defd] transition-transform duration-300 text-lg">
+            <Button  key={index} variant="ghost" className="w-full justify-start hover:scale-110 hover:bg-[#e8defd] transition-transform duration-300 text-lg">
               {item.icon}
-              <span className="hidden sm:inline ml-2 ">{item.label}</span>
+             <Link href={`/${item.label}`}><span className="hidden sm:inline ml-2 ">{item.label}</span></Link> 
             </Button>
           ))}
         </nav>

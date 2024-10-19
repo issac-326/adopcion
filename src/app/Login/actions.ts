@@ -1,24 +1,22 @@
-'use server'
+'use server';
 
-import { createClient } from '@/utils/supabase/server'
-
+import { createClient } from '@/utils/supabase/server';
 
 export const loginUser = async (formData: FormData) => {
-  const supabase = createClient()
+  const supabase = createClient();
 
   const email = formData.get('email');
   const password = formData.get('password');
 
-  
-  // Realiza una consulta a la tabla users
+  // Realiza una consulta a la tabla usuarios
   const { data, error } = await supabase
-    .from('usuarios')
-    .select('*')
+    .from('usuarios') // Asegúrate de que el nombre de la tabla sea correcto
+    .select('id_usuario, correo') // Seleccionamos 'id_usuario' y 'correo'
     .eq('correo', email)
     .eq('contrasena', password)
     .single();
 
-  if (!data) {
+  if (error || !data) {
     throw new Error('Credenciales incorrectas'); // Manejar caso de credenciales incorrectas
   }
 
