@@ -51,11 +51,11 @@ export default function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <form className="relative">
-        <div className="flex items-center flex-col">
+        <div className="flex items-center flex-col bg-white">
           <p className="text-[24px] font-bold text-black">Welcome back!</p>
           <p className="text-[12px] text-black">Login to your account</p>
         </div>
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center bg-white">
           <div>
             <InputField id="email" name="email" type="email" placeholder="Email" value={formData.email} onChange={handleInputChange} />
           </div>

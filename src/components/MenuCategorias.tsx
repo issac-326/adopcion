@@ -5,9 +5,8 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { faMagnifyingGlass, faChevronDown, faBell, faChevronRight, faPaw } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { getCategorias, getCategoriaEspecifica } from "@/app/menu/home/actions";
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
-import { ChevronDownIcon } from '@heroicons/react/20/solid'
+import { getCategorias, getCategoriaEspecifica } from "@/app/menu/home/actions"; // O `inicial/actions` según necesites
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import Pet from "@/types/Pet";
 
 /* todas las interfaces son por el tipado de typescript */
@@ -21,13 +20,14 @@ interface MenuCategoriasProps {
     escogerMascotas: (mascotas: Pet[]) => void;
 }
 
-export default function MenuCategorias({ escogerMascotas, setLoadingPets }: MenuCategoriasProps) {
+export default function MenuCategorias({ escogerMascotas }: MenuCategoriasProps) {
     const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
     const [categories, setCategories] = useState<Categoria[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [selectedMascotas, setSelectedMascotas] = useState<Pet[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
-
+    const [isSticky, setIsSticky] = useState(false);
+    
     const bannerImages = [
         '/adopta.png',
         '/denuncia-animal.png',
@@ -55,14 +55,21 @@ export default function MenuCategorias({ escogerMascotas, setLoadingPets }: Menu
         seleccionarMascotasPorId(0);
     }, []);
 
-    const seleccionarMascotasPorId = async (id: number) => {
-        setLoadingPets(true)
-        try {
+    useEffect(() => {
+        const handleScroll = () => {
+            const offset = window.scrollY; // Cambia esto si el scroll no es en el documento completo
+            setIsSticky(offset > 0); // Ajusta la condición según lo que necesites
+        };
 
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
+
+    const seleccionarMascotasPorId = async (id: number) => {
+        try {
             const data = await getCategoriaEspecifica(id);
-            if(data){
-                setLoadingPets(false)
-            }
             setSelectedMascotas(data ?? []);
         } catch (error) {
             console.error("Error al obtener la categoría específica:", error);
@@ -210,51 +217,50 @@ export default function MenuCategorias({ escogerMascotas, setLoadingPets }: Menu
                 </div>
             </section>
 
-            {/* categorias */}
-            <div className="mt-5 col-span-2 ">
-                <h2 className="text-texto my-3 font-semibold">Categories</h2>
-                <section className="flex justify-between h-[50px] gap-4">
-                    {/* Elemento fijo */}
-                    <div className="flex-1 bg-[#21888d] p-2 rounded-lg relative hover:scale-105 flex items-center justify-center mx-1"
-                        onClick={() => {
-                            setSelectedCategory(null);
-                            seleccionarMascotasPorId(0);
-                        }}>
-                        <p className="font-bold text-base text-center">Todos</p>
-                        <FontAwesomeIcon
-                            icon={faPaw}
-                            rotation={180}
-                            className="absolute top-2 right-4 text-[#135556] opacity-30 transform -rotate-12 text-3xl"
-                        />
-                    </div>
+{/* Categorías */ }
+<div className="mt-5 sticky top-0 z-10 bg-white transition-shadow duration-300">
+    <h2 className="text-texto my-3 font-semibold">Categories</h2>
+    <section className="flex justify-between h-[50px] gap-4">
+        {/* Elemento fijo */}
+        <div className="flex-1 bg-[#21888d] p-2 rounded-lg relative hover:scale-105 flex items-center justify-center mx-1"
+            onClick={() => {
+                setSelectedCategory(null);
+                seleccionarMascotasPorId(0);
+            }}>
+            <p className="font-bold text-base text-center">Todos</p>
+            <FontAwesomeIcon
+                icon={faPaw}
+                rotation={180}
+                className="absolute top-2 right-4 text-[#135556] opacity-30 transform -rotate-12 text-3xl"
+            />
+        </div>
 
-                    {loading ? (
-                        <div>Loading...</div>
-                    ) : (
-                        categories.map((category, index) => (
-                            <div
-                                key={index}
-                                className="flex-1 p-2 rounded-lg relative hover:scale-105 flex items-center justify-center"
-                                style={{ backgroundColor: colors[index] }} // Aplicando el color dinámicamente
-                                onClick={() => {
-                                    setSelectedCategory(category.id_categoria);
-                                    seleccionarMascotasPorId(category.id_categoria);
-                                }}
-                            >
-                                <p className="font-bold text-base text-center">{category.tipo_mascotas}</p>
-                                <FontAwesomeIcon
-                                    icon={faPaw}
-                                    rotation={180}
-                                    style={{ color: colorsPaws[index] }}
-                                    className="absolute top-2 right-4 opacity-30 transform -rotate-12 text-3xl"
-                                />
-                            </div>
-                        )))}
-                </section>
+        {loading ? (
+            <div>Loading...</div>
+        ) : (
+            categories.map((category, index) => (
+                <div
+                    key={index}
+                    className="flex-1 p-2 rounded-lg relative hover:scale-105 flex items-center justify-center"
+                    style={{ backgroundColor: colors[index] }} // Aplicando el color dinámicamente
+                    onClick={() => {
+                        setSelectedCategory(category.id_categoria);
+                        seleccionarMascotasPorId(category.id_categoria);
+                    }}
+                >
+                    <p className="font-bold text-base text-center">{category.tipo_mascotas}</p>
+                    <FontAwesomeIcon
+                        icon={faPaw}
+                        rotation={180}
+                        style={{ color: colorsPaws[index] }}
+                        className="absolute top-2 right-4 opacity-30 transform -rotate-12 text-3xl"
+                    />
+                </div>
+            ))
+        )}
+    </section>
+</div>
 
-
-
-            </div>
 
             <section className="mt-5 flex justify-between items-center">
                 <h2 className="font-semibold">Adopt pet</h2>

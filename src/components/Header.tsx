@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faHeart, faCommentDots } from '@fortawesome/free-regular-svg-icons';
 import { faGear, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Button } from '@/components/ui/button'; // Asegúrate de que Button esté definido
+import Link from 'next/link';
 
 interface MenuItem {
   icon: JSX.Element;
@@ -20,24 +21,17 @@ export default function Header() {
   ];
 
   return (
-      <aside className="w-16 sm:w-64 bg-gray-100/40 dark:bg-gray-800/40 flex-shrink-0 mt-7">
-        <nav className="flex flex-col gap-2 p-2 sm:p-4">
-          {menuItems.map((item, index) => (
-            <Button key={index} variant="ghost" className="w-full justify-start hover:scale-110 hover:bg-[#e8defd] transition-transform duration-300 text-lg">
-              {item.icon}
-              <span className="hidden sm:inline ml-2 ">{item.label}</span>
-            </Button>
-          ))}
-        </nav>
-      </aside>
-
-  );
+    <aside className="w-10 sm:w-48 bg-gray-100/40 dark:bg-gray-800/40 flex-shrink-0 mt-7">
+      <nav className="flex flex-col gap-2 p-2 sm:p-4">
+        {menuItems.map((item, index) => (
+          <Button key={index} variant="ghost" className="w-full justify-start hover:scale-110 hover:bg-[#e8defd] transition-transform duration-300 text-lg">
+            {item.icon}
+            <Link href={`/menu/${item.label.toLowerCase()}`}>
+              <span className="hidden sm:inline ml-2">{item.label}</span>
+            </Link>
+          </Button>
+        ))}
+      </nav>
+    </aside>
+);
 }
-
-
-{/* <div className="fixed top-3 w-auto max-w-full left-1/2 -translate-x-1/2 z-[999] border border-gray-600 rounded-full text-gray-200 flex text-sm h-[44px] items-center ">
-        <Link id="aboutMe" className="ml-4 flex items-center justify-center w-full gap-1 px-5 py-4 text-gray-900 text-base duration-300 md:w-auto md:py-2 md:text-sm hover:scale-110 hover:text-gray-900 hover:font-bold "  href=""> <FontAwesomeIcon icon={faUser} className="w-5 h-5 text-[#03063a]" /> </Link>
-        <Link id="skills" className='flex items-center justify-center w-full gap-1 px-5 py-4 text-gray-900 text-base duration-300 md:w-auto md:py-2 md:text-sm hover:scale-110 hover:text-gray-900 hover:font-bold ' href="" ><FontAwesomeIcon icon={faHeart} className="w-5 h-5" /></Link>
-        <Link id="proyects" href="" className='flex items-center justify-center w-full gap-1 px-5 py-4 text-gray-900 text-base duration-300 md:w-auto md:py-2 md:text-sm hover:scale-110 hover:text-gray-900 hover:font-bold ' ><FontAwesomeIcon icon={faCommentDots} className="w-5 h-5" /></Link>
-        <Link id="proyects" href="" className='flex items-center justify-center w-full gap-1 px-5 py-4 text-gray-900 text-base duration-300 md:w-auto md:py-2 md:text-sm hover:scale-110 hover:text-gray-900 hover:font-bold ' ><FontAwesomeIcon icon={faGear} className="w-5 h-5" /></Link>
-    </div> */}

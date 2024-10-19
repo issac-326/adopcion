@@ -5,9 +5,10 @@ import React from 'react';
 interface InputProps {
   id: string;
   name: string;
-  type?: string;
+  type: string;
   value: string;
   placeholder: string;
+  required?: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   minLength?: number;
 }
