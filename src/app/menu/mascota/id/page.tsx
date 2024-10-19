@@ -6,177 +6,90 @@ import Image from 'next/image';
 
 const Mascotas = () => {
   return (
-    <div style={{ display: 'flex', height: '100vh'}}>
-      
+    <div className="flex p-5 h-screen">
       {/* Información */}
-      <div style={{ flex: 1, padding: '50px', display: 'flex', 
-        flexDirection: 'column', justifyContent: 'space-between', borderTopRightRadius: '50px',
-        borderBottomRightRadius: '50px', backgroundColor: 'white' , 
-        boxShadow: '5px 5px 15px rgba(0, 0, 0.2, 0.2)'}}>
-        
+      <div className="flex-1 p-8 flex flex-col justify-between bg-white rounded-tr-[50px] rounded-br-[50px] shadow-[0px_5px_20px_rgba(0,0,0,0.4)]">
         {/* Botón para regresar */}
-        <div className=" bg-white rounded-full w-12 h-12 flex items-center justify-center hover:scale-110" style={{
-              boxShadow: '0 2px 5px rgba(0, 0, 0, 0.4)',
-              cursor: 'pointer',
-            }}>
-          <button><FontAwesomeIcon icon={faAngleLeft} className="text-red-500" style={{ fontSize: '25px' }} /></button>
-        </div>
-
-        {/* Nombre y ubicación */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ padding: '20px' }}>
-            <h1 style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '10px' }}>Doggi</h1>
-            <div style={{ fontSize: '16px', color: 'gray', display: 'flex', alignItems: 'center' }}>
-              <FontAwesomeIcon icon={faLocationDot} style={{ color: '#2196F3', marginRight: '8px' }} />
-              TGU, HN
-            </div>
-          </div>
-          <button
-            style={{
-              width: '60px',
-              height: '60px',
-              borderRadius: '50%',
-              backgroundColor: 'white',
-              boxShadow: '0 2px 5px rgba(0, 0, 0, 0.4)',
-              cursor: 'pointer',
-            }}
-          >
-              <FontAwesomeIcon icon={faHeart} className="text-red-500" style={{ fontSize: '25px' }}  />
+        <div className="bg-white rounded-full w-12 h-12 flex items-center justify-center shadow-[0_2px_5px_rgba(0,0,0,0.4)] cursor-pointer hover:scale-110">
+          <button>
+            <FontAwesomeIcon icon={faAngleLeft} className="text-red-500 text-[25px]" />
           </button>
         </div>
 
-        {/*  Descripción y detalles */}
-        <div>
-                   
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <div
-                className="hover:scale-110"
-                  style={{
-                    flex: 1,
-                    backgroundColor: '#A5D6A7',
-                    padding: '10px',
-                    borderRadius: '15px', 
-                    marginRight: '15px',
-                    position: 'relative', 
-                  }}
-                >
-                  <h2 style={{ fontWeight: 'bold'}} >Macho</h2>
-                  <p style={{ fontSize: '12px', color: 'gray'}}>Sexo</p>
-                  <FontAwesomeIcon
-                    icon={faPaw}
-                    rotation={180}
-                    style={{
-                      position: 'absolute',
-                      top: '20px',
-                      right: '15px',
-                      color: '#4CAF50', 
-                      opacity: 0.3,
-                      transform: 'rotate(-30deg)',
-                      fontSize: '40px',
-                    }}
-                  />
-                </div>
-                <div
-                  className="hover:scale-110"
-                  style={{
-                    flex: 1,
-                    backgroundColor: '#FFCC80',
-                    padding: '10px',
-                    borderRadius: '15px',
-                    marginRight: '15px',
-                    position: 'relative',
-                    textAlign: 'center',
-                  }}
-                >
-                  <h2 style={{ fontWeight: 'bold'}}>1 año</h2>
-                  <p style={{ fontSize: '12px', color: 'gray'}}>Edad</p>
-                  <FontAwesomeIcon
-                    icon={faPaw}
-                    rotation={180}
-                    style={{
-                      position: 'absolute',
-                      top: '20px',
-                      right: '15px',
-                      color: '#FF9800', 
-                      opacity: 0.3,
-                      transform: 'rotate(-30deg)',
-                      fontSize: '40px',
-                    }}
-                  />
-                </div>
- 
-                <div
-                  className="hover:scale-110"
-                  style={{
-                    flex: 1,
-                    backgroundColor: '#90CAF9', 
-                    padding: '10px',
-                    borderRadius: '15px',
-                    marginRight: '15px',
-                    position: 'relative',
-                    textAlign: 'center',
-                  }}
-                >
-                  <h2 style={{ fontWeight: 'bold'}}>10kg</h2>
-                  <p style={{ fontSize: '12px', color: 'gray'}}>Peso</p>
-                  <FontAwesomeIcon
-                    icon={faPaw}
-                    rotation={180}
-                    style={{
-                      position: 'absolute',
-                      top: '20px',
-                      right: '15px',
-                      color: '#2196F3',
-                      opacity: 0.3,
-                      transform: 'rotate(-30deg)',
-                      fontSize: '40px',
-                    }}
-                  />
-                </div>
+        <div className="flex-1 p-8 flex flex-col">
+          {/* Nombre y ubicación */}
+          <div className="flex justify-between items-center">
+            <div className="p-5">
+              <h1 className="text-3xl font-bold mb-2">Doggi</h1>
+              <div className="text-gray-500 flex items-center">
+                <FontAwesomeIcon icon={faLocationDot} className="text-blue-500 mr-2" />
+                TGU, HN
+              </div>
+            </div>
+            <button className="w-14 h-14 rounded-full bg-white shadow-[0_2px_5px_rgba(0,0,0,0.4)] cursor-pointer">
+              <FontAwesomeIcon icon={faHeart} className="text-red-500 text-[25px]" />
+            </button>
           </div>
-          <div style={{ marginTop: '50px' }}>
+
+          {/* Descripción y detalles */}
+          <div className="flex justify-between mt-8">
+            <div className="flex-1 bg-green-200 p-3 rounded-lg relative hover:scale-110 transition-transform mr-4">
+              <h2 className="font-bold">Macho</h2>
+              <p className="text-xs text-gray-500">Sexo</p>
+              <FontAwesomeIcon
+                icon={faPaw}
+                className="absolute top-5 right-4 text-green-500 opacity-30 rotate-[-30deg] text-[40px]"
+              />
+            </div>
+            <div className="flex-1 bg-orange-200 p-3 rounded-lg relative hover:scale-110 transition-transform mr-4">
+              <h2 className="font-bold">1 año</h2>
+              <p className="text-xs text-gray-500">Edad</p>
+              <FontAwesomeIcon
+                icon={faPaw}
+                className="absolute top-5 right-4 text-orange-500 opacity-30 rotate-[-30deg] text-[40px]"
+              />
+            </div>
+            <div className="flex-1 bg-blue-200 p-3 rounded-lg relative hover:scale-110 transition-transform">
+              <h2 className="font-bold">10kg</h2>
+              <p className="text-xs text-gray-500">Peso</p>
+              <FontAwesomeIcon
+                icon={faPaw}
+                className="absolute top-5 right-4 text-blue-500 opacity-30 rotate-[-30deg] text-[40px]"
+              />
+            </div>
+          </div>
+
+          <div className="mt-12 mb-4">
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt, atque expedita? Quam nemo voluptatibus beatae.
           </div>
-        </div>
 
-        {/* PImagen y nombre del dueño */}
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <Image src="/Leo.webp" alt="Propietario" width={70} height={70} style={{ borderRadius: '50%' }} />
-          <div style={{ marginLeft: '10px' }}>
-            <p style={{ fontWeight: 'bold' }}>Sophia</p>
+          {/* Imagen y nombre del dueño */}
+          <div className="flex items-center mb-6">
+            <Image src="/Leo.webp" alt="Propietario" width={70} height={70} className="rounded-full" />
+            <div className="ml-4">
+              <p className="font-bold">Sophia</p>
+            </div>
           </div>
         </div>
 
         {/* Botón de Adoptar */}
         <div>
-          <button
-            style={{
-              width: '100%',
-              padding: '15px 0',
-              backgroundColor: '#FFA07A',
-              borderRadius: '30px',
-              color: 'white',
-              border: 'none',
-              fontSize: '16px',
-              cursor: 'pointer',
-            }}
-          >
+          <button className="w-full py-3 bg-orange-300 text-white rounded-3xl text-lg hover:bg-orange-400 transition-colors">
             Adoptar
           </button>
         </div>
       </div>
+
       {/* Lado derecho Imagen de la mascota */}
-      <div
-          style={{
-            flex: 1,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderBottomRightRadius: '50px',
-          }}
-        >
-          <Image src="/misty.avif" alt="Mascota" width={300} height={300} />
-        </div>
+      <div className="flex-1 flex justify-center items-center rounded-br-[50px]">
+        <Image
+          src="/misty.avif"
+          alt="Mascota"
+          width={500}
+          height={500}
+          className="shadow-[5px_5px_15px_rgba(0,0,0,0.9)] rounded-lg"
+        />
+      </div>
     </div>
   );
 };
