@@ -1,6 +1,5 @@
 'use server'
 
-import bcrypt from 'bcrypt'; 
 import { createClient } from '@/utils/supabase/server';
 
 export const loginUser = async (formData: FormData) => {
@@ -12,8 +11,9 @@ export const loginUser = async (formData: FormData) => {
   // Realiza una consulta a la tabla usuarios
   const { data, error } = await supabase
     .from('usuarios') // Asegúrate de que el nombre de la tabla sea correcto
-    .select('id_usuario, correo, contrasena') // Seleccionamos 'id_usuario', 'correo' y 'contrasena'
+    .select('id_usuario, correo') // Seleccionamos 'id_usuario' y 'correo'
     .eq('correo', email)
+    .eq('contrasena', password)
     .single();
 
   if (error || !data) {

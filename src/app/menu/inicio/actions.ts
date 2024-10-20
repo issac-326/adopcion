@@ -20,12 +20,13 @@ export const getCategorias = async () => {
     return data;
 };
 
-export const getCategoriaEspecifica = async (id: number) => {
+export const getCategoriaEspecifica = async (id: number, idDepartamento: number) => {
     console.log('ID recibido:', id);
     if (id === 0) {
         const { data, error } = await supabase
             .from('publicaciones')
-            .select('id_publicacion, nombre, edad, ciudad, imagen');
+            .select('id_publicacion, nombre, edad, ciudad, imagen')
+            .eq('id_departamento', idDepartamento);
         if (error) {
             console.error('Error obtener mascotas:', error);
             throw new Error(error.message);
@@ -35,7 +36,8 @@ export const getCategoriaEspecifica = async (id: number) => {
         const { data, error } = await supabase
             .from('publicaciones')
             .select('id_publicacion, nombre, edad, ciudad, imagen')
-            .eq('tipo_animal', id);
+            .eq('tipo_animal', id)
+            .eq('id_departamento', idDepartamento);
         console.log("DATA en el backend:", data);
         return data;
     }

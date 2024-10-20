@@ -32,10 +32,11 @@ export default function Home() {
   const [categories, setCategories] = useState<Categoria[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [currentIndex, setCurrentIndex] = useState(0);
+  /* sirve para almacenar el id del departamento seleccionado */
+  const [depaSeleccionado, setDepaSeleccionado] = useState<number | null>(null);
   const [isSticky, setIsSticky] = useState(false);
   const [departamentos, setDepartamentos] = useState([]);
   const stickyRef = useRef(null); // Referencia al div que se volverá sticky
-
   useEffect(() => {
     const handleScroll = () => {
       if (stickyRef.current) {
@@ -53,7 +54,7 @@ export default function Home() {
     };
   }, []);
 
-  /* obtiene las categorias y las carga en el estado nomas cargar la pagina*/
+  /* obtiene las categorias y las carga en el estado nomas cargar la pagina pone el primer departamento seleccionado que de momento es siempre FM*/
   useEffect(() => {
     const obtenerCategorias = async () => {
       try {
@@ -67,9 +68,10 @@ export default function Home() {
     };
 
     obtenerCategorias();
-    seleccionarMascotasPorId(0);
+    seleccionarMascotasPorIdCatIdDepa(0, 8);
   }, []);
 
+  /* Obtiene los departamentos y los carga en el estado departamentos */
   useEffect(() => {
     try {
 
@@ -98,6 +100,7 @@ export default function Home() {
     };
   }, []);
 
+  /* cada que cambiemos las mascotas seleccionadas las volvera a renderizar */
   useEffect(() => {
     manejarMascotas(selectedMascotas);
   }, [selectedMascotas]);
@@ -121,10 +124,11 @@ export default function Home() {
     };
   }, []);
 
-  const seleccionarMascotasPorId = async (id: number) => {
+  const seleccionarMascotasPorIdCatIdDepa = async (id: number, id_departamento: number) => {
     try {
-      const data = await getCategoriaEspecifica(id);
+      const data = await getCategoriaEspecifica(id, id_departamento);
       setSelectedMascotas(data ?? []);
+      setDepaSeleccionado(id_departamento);
     } catch (error) {
       console.error("Error al obtener la categoría específica:", error);
     }
@@ -137,37 +141,41 @@ export default function Home() {
   return (
     <div className="bg-white border my-2 mx-4 px-4 pb-4 rounded-xl shadow-[0_4px_8px_rgba(0,0,255,0.2),0_2px_4px_rgba(0,0,0,0.1)] flex flex-col ">
       <div id="encabezado" className="mt-8 mb-2 flex justify-between text-[#03063a]">
+        {/* esta renderiza toda la parte de arriba del home */}
         <Menu as="div" className="relative inline-block text-left">
           <div>
             <MenuButton>
               <div>
                 <div className="flex gap-2 text-sm text-gray-400 items-center">Ubicacion <FontAwesomeIcon icon={faChevronDown} className="w-3" /></div>
-                <span className="font-extrabold">TGU,</span> HN
+                <span className="font-extrabold">{departamentos.find(dep => dep.id === depaSeleccionado)?.descripcion},</span> HN
+                
               </div>
             </MenuButton>
           </div>
 
           <MenuItems
-  transition
-  className="absolute left-0 z-40 mt-2 w-max origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none justify-start data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in grid grid-cols-3 gap-x-4"
->
+          transition
+          className="absolute left-0 z-40 mt-2 w-max origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none justify-start data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in grid grid-cols-3 gap-x-4"
+        >
   {departamentos && departamentos.length > 0 ? (
     departamentos.map((departamento, index) => (
-      <MenuItem key={departamento.id} as="div" className="flex justify-start justify-center"> 
-        <a
-          href="#"
-          className="block text-left w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:text-gray-900 text-center"
-        >
-          {departamento.descripcion}
-        </a>
-      </MenuItem>
-    ))
-  ) : (
-    <MenuItem as="div">
-      <span className="block px-4 py-2 text-sm text-gray-700">No hay departamentos disponibles</span>
-    </MenuItem>
-  )}
-</MenuItems>
+      <MenuItem key={departamento.id} onClick={() => {
+        seleccionarMascotasPorIdCatIdDepa(0, departamento.id);
+        }} as="div" className="flex justify-start justify-center"> 
+          <a
+            onClick={() => setCurrentIndex(index)}
+            className="block text-left w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:text-gray-900 text-center"
+          >
+            {departamento.descripcion}
+          </a>
+        </MenuItem>
+            ))
+          ) : (
+            <MenuItem as="div">
+              <span className="block px-4 py-2 text-sm text-gray-700">No hay departamentos disponibles</span>
+            </MenuItem>
+          )}
+        </MenuItems>
 
         </Menu>
         <div className="flex gap-2">
@@ -268,7 +276,14 @@ export default function Home() {
           <div className="flex-1 bg-[#21888d] p-2 rounded-lg relative hover:scale-105 flex items-center justify-center mx-1"
             onClick={() => {
               setSelectedCategory(null);
-              seleccionarMascotasPorId(0);
+              
+              // Comprobar que depaSeleccionado no sea null
+              if (depaSeleccionado !== null) {
+                seleccionarMascotasPorIdCatIdDepa(0, depaSeleccionado);
+              } else {
+                // Manejo adicional si depaSeleccionado es null (opcional)
+                console.warn('depaSeleccionado es null, no se llamará a seleccionarMascotasPorIdCatIdDepa');
+              }
             }}>
             <p className="font-bold text-base text-center">Todos</p>
             <FontAwesomeIcon
@@ -288,9 +303,16 @@ export default function Home() {
                 style={{ backgroundColor: colors[index] }} // Aplicando el color dinámicamente
                 onClick={() => {
                   setSelectedCategory(category.id_categoria);
-                  seleccionarMascotasPorId(category.id_categoria);
+                  
+                  // Comprobar que depaSeleccionado no sea null
+                  if (depaSeleccionado !== null) {
+                    seleccionarMascotasPorIdCatIdDepa(category.id_categoria, depaSeleccionado);
+                  } else {
+                    // Manejo adicional si depaSeleccionado es null (opcional)
+                    console.warn('depaSeleccionado es null, no se llamará a seleccionarMascotasPorIdCatIdDepa');
+                  }
                 }}
-              >
+                >
                 <p className="font-bold text-base text-center">{category.tipo_mascotas}</p>
                 <FontAwesomeIcon
                   icon={faPaw}
