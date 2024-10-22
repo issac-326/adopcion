@@ -45,11 +45,11 @@ export default function ResetPassword() {
   return (
     <div className="min-h-screen flex items-center justify-center">
     <form>
-      <div className="flex items-center flex-col bg-white">
+      <div className="flex items-center flex-col">
         <p className="text-[24px] font-bold text-black">Reset your password</p>
         <p className="text-[12px] text-black">Please enter your email to search for your account.</p>
       </div>
-      <div className="flex flex-col items-center bg-white">
+      <div className="flex flex-col items-center">
 
         <div>
           <InputField id="email" name="email" type="email" placeholder="" value={formData.email} onChange={handleInputChange} />

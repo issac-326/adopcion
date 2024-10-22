@@ -19,9 +19,10 @@ export default function Login() {
 
   // Modificacion de el handleLogin para almacenar el ID en LocalStorage
   async function handleLogin(formData: FormData) {
+    setErrorMessage('');
     const loginValidated = loginValidator(formData); // Valida los datos del formulario
     if (!loginValidated.isValid) {
-      setErrorMessage(loginValidated.errors.message);
+      setErrorMessageFunction(loginValidated.errors.message);
       return;
     }
 
@@ -33,12 +34,20 @@ export default function Login() {
         localStorage.setItem('userId', data.id_usuario); // Almacenar el ID del usuario
       }
 
-      console.log('User added successfully:', data);
-      router.push('/menu/inicio'); 
+      router.push('/menu/inicio');
     } catch (error) {
-      setErrorMessage(error.message);
+      setErrorMessageFunction(error.message);
     }
   }
+
+  async function setErrorMessageFunction(message?: string) {
+    setErrorMessage(message ? message : '');
+
+    setTimeout(() => {
+      setErrorMessage('');
+    }, 2500);
+  }
+
 
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
@@ -55,20 +64,24 @@ export default function Login() {
           <p className="text-[24px] font-bold text-black">Welcome back!</p>
           <p className="text-[12px] text-black">Login to your account</p>
         </div>
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center flex-wrap">
           <div>
-            <InputField id="email" name="email" type="email" placeholder="Email" value={formData.email} onChange={handleInputChange} />
+            <InputField id="email" name="email" type="text" placeholder="Correo" value={formData.email} onChange={handleInputChange} />
           </div>
           <div>
-            <InputField id="password" name="password" type="password" placeholder="Password" value={formData.password} onChange={handleInputChange} />
+            <InputField id="password" name="password" type="password" placeholder="Contraseña" value={formData.password} onChange={handleInputChange} />
             <div className="text-right"><Link href="/reset-password" className="text-xs text-[#FFA07A] pl-2 ">forgot your password?</Link></div>
           </div>
 
           <div className="mt-5">
-            {errorMessage && <div className="text-red-500 text-xs animate-shake mt-2 text-left">{errorMessage}</div>}
+            {errorMessage && (
+              <div className={`text-red-500 text-xs animate-shake ease-in-out duration-300 mt-2 text-left`}>
+                {errorMessage}
+              </div>
+            )}
           </div>
 
-          <button formAction={handleLogin} className="mt-12 w-[270px] h-[40px] bg-[#FFA07A] rounded-[20px] text-sm text-white">
+          <button formAction={handleLogin} className="mt-12 w-[270px] h-[40px] bg-[#FFA07A] rounded-[20px] text-sm text-white hover:scale-105">
             Login
           </button>
         </div>

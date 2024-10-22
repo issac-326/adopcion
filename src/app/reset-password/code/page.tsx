@@ -64,11 +64,11 @@ export default function Code() {
   return (
     <div className="min-h-screen flex items-center justify-center">
     <form>
-      <div className="flex items-center flex-col bg-white">
+      <div className="flex items-center flex-col">
         <p className="text-[24px] font-bold text-black">Code</p>
         <p className="text-[12px] text-black">Please enter your code to verify</p>
       </div>
-      <div className="flex flex-col items-center bg-white">
+      <div className="flex flex-col items-center">
 
         <div>
           <InputField id="code" name="code" type="text" placeholder="" value={formData.code} onChange={handleInputChange} />

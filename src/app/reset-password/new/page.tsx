@@ -5,7 +5,6 @@ import InputField from "@/components/ui/InputField";
 import React, { useState } from 'react';
 import { useRouter } from "next/navigation";
 import { changePassword } from "./actions";
-import { Console } from "console";
 
 export default function NewPassword() {
   const router = useRouter();
@@ -35,11 +34,18 @@ export default function NewPassword() {
       confirmPassword: ''
     });
 
-    if (formData.get('password')!.toString().length < 6) {
-      console.log(formData.get('password')!.toString().length < 6)
+    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*.])(?=.{6,})/.test(formData.get('password'))) {
       setErrors((prev) => ({
         ...prev,
-        password: 'Password must be at least 6 characters'
+        password: 'La contraseña debe tener al menos una mayúscula, una minúscula y un carácter especial.'
+      }));
+      setIsValid(false);
+    }
+
+    if (formData.get('password')!.toString().length < 6) {
+      setErrors((prev) => ({
+        ...prev,
+        password: 'La contraseña debe de tener al menos 6 caracteres'
       }));
       setIsValid(false);
     }
@@ -48,7 +54,7 @@ export default function NewPassword() {
 
       setErrors((prev) => ({
         ...prev,
-        confirmPassword: 'Passwords do not match'
+        confirmPassword: 'Las contraseñas no coinciden'
       }));
       setIsValid(false);
     }
@@ -72,11 +78,11 @@ export default function NewPassword() {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <form>
-        <div className="flex items-center flex-col bg-white">
+        <div className="flex items-center flex-col">
           <p className="text-[24px] font-bold text-black">New Password</p>
           <p className="text-[12px] text-black">Please enter your new password</p>
         </div>
-        <div className="flex flex-col items-center bg-white">
+        <div className="flex flex-col items-center">
           <div>
             <InputField
               id="password"
@@ -86,7 +92,7 @@ export default function NewPassword() {
               value={formData.password}
               onChange={handleInputChange}
             />
-            {errors.password && <p className="text-red-500 pl-5 text-xs animate-shake mt-2">{errors.password}</p>}
+            {errors.password && <p className="text-red-500 pl-5 text-xs w-[330px] animate-shake mt-2">{errors.password}</p>}
           </div>
           <div>
             <InputField
@@ -97,7 +103,7 @@ export default function NewPassword() {
               value={formData.confirmPassword}
               onChange={handleInputChange}
             />
-            {errors.confirmPassword && <p className="text-red-500 text-xs animate-shake pl-5 mt-2">{errors.confirmPassword}</p>}
+            {errors.confirmPassword && <p className="text-red-500 text-xs w-[330px] animate-shake pl-5 mt-2">{errors.confirmPassword}</p>}
           </div>
           <div className="mt-5">
             <button

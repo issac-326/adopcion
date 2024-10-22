@@ -26,28 +26,43 @@ export async function login(formData: FormData) {
   redirect('/')
 }
 
-
 export async function addUser(formData: FormData) {
   try {
+    const email = formData.get('email');
     const password = formData.get('password');
-    
+
+    // Verificar si el usuario ya existe
+    const supabase = createClient();
+    const { data: existingUser, error: fetchError } = await supabase
+      .from('usuarios')
+      .select('id_usuario')
+      .eq('correo', email);
+
+    if (fetchError) throw fetchError;
+
+    if (existingUser.length > 0) {
+      throw new Error('El usuario ya existe');
+    }
+
+    // Si no existe, crear el nuevo usuario
     const salt = bcrypt.genSaltSync(10);
     const hashedPassword = bcrypt.hashSync(password, salt);
-    
-    const supabase = createClient()
-    const { data, error } = await supabase
+
+    const { data, error: insertError } = await supabase
       .from('usuarios')
       .insert([
         {
-          correo: formData.get('email'),
+          correo: email,
           contrasena: hashedPassword, // Guarda la contraseña encriptada
           telefono: formData.get('phone'),
         },
       ]);
 
-    if (error) throw error;
+    if (insertError) throw insertError;
+
     console.log('Usuario registrado:', data);
   } catch (error) {
-    console.error('Error registrando usuario:', error);
+    throw error;
   }
 }
+

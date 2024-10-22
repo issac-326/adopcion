@@ -16,6 +16,7 @@ export default function Register() {
   const router = useRouter();
   
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [userExists, setUserExists] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -30,12 +31,14 @@ export default function Register() {
 
     // Si hay errores en la validación, se muestran en pantalla; si no, se registra al usuario
     if (formResult.isValid) {
+      setUserExists(false);
       try {
         const data = await addUser(formData);
         console.log('User added successfully:', data);
         router.push('/login');
         setIsSuccess(true);
       } catch (error) {
+        setUserExists(true);
         console.error("Error en el registro:", error);
       }
     } else {
@@ -74,7 +77,7 @@ export default function Register() {
           onChange={handleInputChange}
         />
         {errors.email && <div className="text-red-500 pl-5 text-xs animate-shake mt-2 text-left">{errors.email}</div>}
-
+        {userExists && <div className="text-red-500 pl-5 text-xs animate-shake mt-2 text-left">El correo ya esta registrado</div>}
         </div>
 
         {/* Input de la contraseña */}
@@ -88,6 +91,7 @@ export default function Register() {
             onChange={handleInputChange}
           />
           {errors.password && <div className="text-red-500 pl-5 animate-shake text-xs mt-2">{errors.password}</div>}
+          {errors.passwordRegex && <div className="text-red-500 w-[330px] pl-5 animate-shake text-xs mt-2">{errors.passwordRegex}</div>}
         </div>
 
         {/* Input de confirmación de contraseña */}
