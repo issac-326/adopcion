@@ -21,7 +21,7 @@ export default function Header() {
   ];
 
   return (
-    <aside className="w-16 sm:w-64 bg-gray-100/40 dark:bg-gray-800/40 flex-shrink-0 mt-7">
+    <aside className="w-10 sm:w-48 bg-gray-100/40 dark:bg-gray-800/40 flex-shrink-0 mt-7">
       <nav className="flex flex-col gap-2 p-2 sm:p-4">
         {menuItems.map((item, index) => (
           <Button key={index} variant="ghost" className="w-full justify-start hover:scale-110 hover:bg-[#e8defd] transition-transform duration-300 text-lg">

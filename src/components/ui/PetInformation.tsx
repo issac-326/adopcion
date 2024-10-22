@@ -1,7 +1,7 @@
 
 'use client';
 
-import Link from "next/link";
+
 import React, { useState, useEffect } from 'react';// Para obtener el ID de la ruta
 import { getMascotaEspecifica } from '@/app/menu/mascota/[id]/actions';// Importa la función del servidor
 import { verificacionFavoritos, favorito } from '@/app/menu/favoritos/actions';
@@ -72,18 +72,18 @@ export default function PetInformation({ id, id_usuario }: { id: string, id_usua
   return (
     <div className="flex p-5 h-screen">
       {/* Información */}
-      <div className="flex-1 p-8 flex flex-col justify-between bg-white rounded-tr-[50px] rounded-br-[50px] shadow-[0px_5px_20px_rgba(0,0,0,0.4)]">
+      <div className="flex-1 p-8 flex flex-col justify-between bg-white rounded-tr-[50px] rounded-br-[50px] shadow-[0_4px_8px_rgba(0,0,255,0.2),0_2px_4px_rgba(0,0,0,0.1)]">
         {/* Botón para regresar */}
-        <div className="bg-white rounded-full w-12 h-12 flex items-center justify-center shadow-[0_2px_5px_rgba(0,0,0,0.4)] cursor-pointer hover:scale-110" onClick={() => {router.push('/menu/inicio')}}>
-          <button>
-            <FontAwesomeIcon icon={faAngleLeft} className="text-red-500 text-[25px]" />
+        <div className="bg-white rounded-full w-12 h-12 flex items-center justify-center cursor-pointer hover:scale-110" onClick={() => {router.push('/menu/inicio')}}>
+          <button className="ml-[30px]">
+            <FontAwesomeIcon icon={faAngleLeft} className="text-red-500 text-[32px]" />
           </button>
         </div>
 
         <div className="flex-1 p-8 flex flex-col">
           {/* Nombre y ubicación */}
           <div className="flex justify-between items-center">
-            <div className="p-5">
+            <div className="p-3">
               <h1 className="text-3xl font-bold mb-2">{mascota.nombre}</h1>
               <div className="text-gray-500 flex items-center">
                 <FontAwesomeIcon icon={faLocationDot} className="text-blue-500 mr-2" />

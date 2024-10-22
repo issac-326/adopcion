@@ -51,16 +51,16 @@ export default function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <form className="relative">
-        <div className="flex items-center flex-col bg-white">
+        <div className="flex items-center flex-col">
           <p className="text-[24px] font-bold text-black">Welcome back!</p>
           <p className="text-[12px] text-black">Login to your account</p>
         </div>
-        <div className="flex flex-col items-center bg-white">
+        <div className="flex flex-col items-center flex-wrap">
           <div>
-            <InputField id="email" name="email" type="email" placeholder="Email" value={formData.email} onChange={handleInputChange} />
+            <InputField id="email" name="email" type="text" placeholder="Correo" value={formData.email} onChange={handleInputChange} />
           </div>
           <div>
-            <InputField id="password" name="password" type="password" placeholder="Password" value={formData.password} onChange={handleInputChange} />
+            <InputField id="password" name="password" type="password" placeholder="Contraseña" value={formData.password} onChange={handleInputChange} />
             <div className="text-right"><Link href="/reset-password" className="text-xs text-[#FFA07A] pl-2 ">forgot your password?</Link></div>
           </div>
 

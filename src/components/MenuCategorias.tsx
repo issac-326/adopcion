@@ -3,9 +3,10 @@ import Link from "next/link";
 import React, { useState, useEffect } from 'react';
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { faMagnifyingGlass, faChevronDown, faBell, faChevronRight, faDog, faCat, faDove, faFish, faPaw } from '@fortawesome/free-solid-svg-icons';
+import { faMagnifyingGlass, faChevronDown, faBell, faChevronRight, faPaw } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { getCategorias, getCategoriaEspecifica } from "@/app/menu/inicio/actions";  
+import { getCategorias, getCategoriaEspecifica } from "@/app/menu/home/actions"; // O `inicial/actions` según necesites
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import Pet from "@/types/Pet";
 
 /* todas las interfaces son por el tipado de typescript */
@@ -25,6 +26,7 @@ export default function MenuCategorias({ escogerMascotas }: MenuCategoriasProps)
     const [loading, setLoading] = useState<boolean>(true);
     const [selectedMascotas, setSelectedMascotas] = useState<Pet[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [isSticky, setIsSticky] = useState(false);
     
     const bannerImages = [
         '/adopta.png',
@@ -53,6 +55,18 @@ export default function MenuCategorias({ escogerMascotas }: MenuCategoriasProps)
         seleccionarMascotasPorId(0);
     }, []);
 
+    useEffect(() => {
+        const handleScroll = () => {
+            const offset = window.scrollY; // Cambia esto si el scroll no es en el documento completo
+            setIsSticky(offset > 0); // Ajusta la condición según lo que necesites
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
+
     const seleccionarMascotasPorId = async (id: number) => {
         try {
             const data = await getCategoriaEspecifica(id);
@@ -79,19 +93,52 @@ export default function MenuCategorias({ escogerMascotas }: MenuCategoriasProps)
     }, [bannerImages.length]);
 
     return (
-        <div className="text-[#03063a] m-2 bg-white">
+        <div className="text-[#03063a] bg-white">
             <div id="encabezado" className="mt-8 mb-2 flex justify-between text-[#03063a]">
-                <div>  
-                    <div className="flex gap-2 text-sm text-gray-400">Location <FontAwesomeIcon icon={faChevronDown} className="w-3"/></div>  
-                    <div><span className="font-extrabold">TGU,</span> HN</div>        
-                </div>
+                <Menu as="div" className="relative inline-block text-left">
+                    <div>
+                        <MenuButton>
+                            <div>
+                                <div className="flex gap-2 text-sm text-gray-400 items-center">Ubicacion <FontAwesomeIcon icon={faChevronDown} className="w-3" /></div>
+                                <span className="font-extrabold">TGU,</span> HN
+                            </div>
+                        </MenuButton>
+                    </div>
+
+                    <MenuItems
+                        transition
+                        className="absolute left-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
+                    >
+                        <div className="py-1">
+                            <MenuItem>
+                                <a
+                                    href="#"
+                                    className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900"
+                                >
+                                    Account settings
+                                </a>
+                            </MenuItem>
+                            <form action="#" method="POST">
+                                <MenuItem>
+                                    <button
+                                        type="submit"
+                                        className="block w-full px-4 py-2 text-left text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900"
+                                    >
+                                        Sign out
+                                    </button>
+                                </MenuItem>
+                            </form>
+                        </div>
+                    </MenuItems>
+                </Menu>
                 <div className="flex gap-2">
                     <span className="h-12 w-12 rounded-xl flex items-center justify-center bg-[#f7f7f8]"><FontAwesomeIcon icon={faMagnifyingGlass} className="w-6" /></span>
-                    <span className="h-12 w-12 rounded-xl flex items-center justify-center bg-[#f7f7f8]"><FontAwesomeIcon icon={faBell} className="w-6"/></span>
+                    <span className="h-12 w-12 rounded-xl flex items-center justify-center bg-[#f7f7f8]"><FontAwesomeIcon icon={faBell} className="w-6" /></span>
                 </div>
             </div>
 
-            <section className="grid grid-cols-5 gap-2 h-56">
+            {/* carrousel */}
+            <section className="grid grid-cols-5 gap-4 h-56">
                 <div id="default-carousel" className="relative w-full col-span-4">
                     <div className="relative h-full overflow-hidden rounded-lg">
                         {bannerImages.map((image, index) => (
@@ -170,50 +217,50 @@ export default function MenuCategorias({ escogerMascotas }: MenuCategoriasProps)
                 </div>
             </section>
 
-            <div className="mt-5 col-span-2 ">
-                <h2 className="text-texto my-3 font-semibold">Categories</h2>
-                <section className="flex justify-between h-[50px]">
-                    {/* Elemento fijo */}
-                    <div className="flex-1 bg-[#21888d] p-2 rounded-lg relative hover:scale-110 flex items-center justify-center mx-1"
+{/* Categorías */ }
+<div className="mt-5 sticky top-0 z-10 bg-white transition-shadow duration-300">
+    <h2 className="text-texto my-3 font-semibold">Categories</h2>
+    <section className="flex justify-between h-[50px] gap-4">
+        {/* Elemento fijo */}
+        <div className="flex-1 bg-[#21888d] p-2 rounded-lg relative hover:scale-105 flex items-center justify-center mx-1"
+            onClick={() => {
+                setSelectedCategory(null);
+                seleccionarMascotasPorId(0);
+            }}>
+            <p className="font-bold text-base text-center">Todos</p>
+            <FontAwesomeIcon
+                icon={faPaw}
+                rotation={180}
+                className="absolute top-2 right-4 text-[#135556] opacity-30 transform -rotate-12 text-3xl"
+            />
+        </div>
+
+        {loading ? (
+            <div>Loading...</div>
+        ) : (
+            categories.map((category, index) => (
+                <div
+                    key={index}
+                    className="flex-1 p-2 rounded-lg relative hover:scale-105 flex items-center justify-center"
+                    style={{ backgroundColor: colors[index] }} // Aplicando el color dinámicamente
                     onClick={() => {
-                        setSelectedCategory(null);
-                        seleccionarMascotasPorId(0);
-                    }}>
-                        <p className="font-bold text-base text-center">Todos</p>
-                        <FontAwesomeIcon
-                            icon={faPaw}
-                            rotation={180}
-                            className="absolute top-2 right-4 text-[#135556] opacity-30 transform -rotate-12 text-3xl"
-                        />
-                    </div>
+                        setSelectedCategory(category.id_categoria);
+                        seleccionarMascotasPorId(category.id_categoria);
+                    }}
+                >
+                    <p className="font-bold text-base text-center">{category.tipo_mascotas}</p>
+                    <FontAwesomeIcon
+                        icon={faPaw}
+                        rotation={180}
+                        style={{ color: colorsPaws[index] }}
+                        className="absolute top-2 right-4 opacity-30 transform -rotate-12 text-3xl"
+                    />
+                </div>
+            ))
+        )}
+    </section>
+</div>
 
-                    {loading ? (
-                        <div>Loading...</div>
-                    ) : (
-                        categories.map((category, index) => (
-                            <div
-                                key={index}
-                                className="flex-1 p-2 rounded-lg relative hover:scale-110 flex items-center justify-center mx-1"
-                                style={{ backgroundColor: colors[index] }} // Aplicando el color dinámicamente
-                                onClick={() => {
-                                    setSelectedCategory(category.id_categoria);
-                                    seleccionarMascotasPorId(category.id_categoria);
-                                }}
-                            >
-                                <p className="font-bold text-base text-center">{category.tipo_mascotas}</p>
-                                <FontAwesomeIcon
-                                    icon={faPaw}
-                                    rotation={180}
-                                    style={{ color: colorsPaws[index]}}
-                                    className="absolute top-2 right-4 opacity-30 transform -rotate-12 text-3xl"
-                                />
-                            </div>
-                        )))}
-                </section>
-
-
-
-            </div>
 
             <section className="mt-5 flex justify-between items-center">
                 <h2 className="font-semibold">Adopt pet</h2>

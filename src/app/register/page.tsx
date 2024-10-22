@@ -7,6 +7,8 @@ import InputField from "@/components/ui/InputField";
 import { addUser } from "./actions";
 import SuccessNotification from "@/components/ui/SuccesNotification";
 import {useRouter} from "next/navigation";
+import { faPaw } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 
 
@@ -55,7 +57,7 @@ export default function Register() {
       {isSuccess && (
         <SuccessNotification message="Your account has been created successfully" />
       )}
-      <form className="flex flex-col items-center bg-white p-6 rounded-lg">
+      <form className="flex flex-col items-center p-6 rounded-lg">
         <div className="flex items-center flex-col mb-6">
           <p className="text-[24px] font-bold text-black">Welcome!</p>
           <p className="text-[12px] text-black">Create your account</p>
@@ -115,7 +117,7 @@ export default function Register() {
         </div>
 
         {/* Botón de envío */}
-        <button formAction={handleSignUp} className="hover:scale-110 mt-12 w-[270px] h-[40px] bg-[#FFA07A] rounded-[20px] text-sm text-white">
+        <button formAction={handleSignUp} className="hover:scale-105 mt-12 w-[270px] h-[40px] bg-[#FFA07A] rounded-[20px] text-sm text-white">
           Sign Up
         </button>
 
@@ -123,6 +125,19 @@ export default function Register() {
           <p className="text-xs text-black">You already have an account?</p>
           <Link href="/login" className="text-xs text-[#FFA07A] pl-2">Login here</Link>
         </div>
+        <div className="fixed bottom-0 right-0 w-70 h-70 flex items-center justify-center"> {/* Usando flex para centrar el ícono */}
+  <FontAwesomeIcon
+    icon={faPaw}
+    rotation={180}
+    style={{
+      color: "#ffa07a",
+      transform: 'rotate(20deg)',
+      width: '100%',  // O '100%' aquí para ocupar el 100% del contenedor
+      height: '100%',
+      opacity: .7 // Si quieres que el ícono también ajuste su altura
+    }}
+  />
+</div>
       </form>
     </div>
   );
