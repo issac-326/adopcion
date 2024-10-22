@@ -30,19 +30,19 @@ const PetCard = ({
 
   return (
     <div
-      className="flex flex-col cursor-pointer hover:scale-102 transition-transform duration-300 relative border w-full h-68 rounded-lg shadow-lg overflow-hidden" // Añadir overflow-hidden
+      className="flex flex-col cursor-pointer hover:scale-102 transition-transform duration-300 relative border w-full h-[272px] rounded-lg shadow-lg overflow-hidden" // Añadir overflow-hidden
       key={id}
       onClick={() => router.push(`/menu/mascota/${id}`)}
     >
       <header className="relative h-4/5 overflow-hidden">
-        <Image
-          src={imagen}
-          alt="perro"
-          className="w-full h-full object-cover"
-          width={50}
-          height={50}
-          style={{ objectFit: 'cover' }}
-        />
+      <Image
+  src={imagen}
+  alt="perro"
+  className="w-full h-full object-cover"
+  width={50}
+  height={50}
+  style={{ objectFit: 'cover' }}
+/>
         <div className="absolute top-2 right-2 bg-white rounded-full w-8 h-8 flex items-center justify-center hover:scale-110">
           <FontAwesomeIcon icon={faHeart} className="text-red-500" />
         </div>
@@ -64,7 +64,7 @@ const PetCard = ({
         </div>
         <div className="flex items-center space-x-2 z-10">
           <FontAwesomeIcon icon={faMapMarkerAlt} />
-          <p className='text-black-800 text-sm font-light'>{ciudad}, HN</p>
+          <p className='text-black-800 text-sm font-light'>{ciudad}</p>
         </div>
 
         <svg

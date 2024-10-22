@@ -51,17 +51,17 @@ export default function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <form className="relative">
-        <div className="flex items-center flex-col bg-white">
-          <p className="text-[24px] font-bold text-black">Welcome back!</p>
-          <p className="text-[12px] text-black">Login to your account</p>
+        <div className="flex items-center flex-col">
+          <p className="text-[24px] font-bold text-black">¡Bienvenido de vuelta!</p>
+          <p className="text-[12px] text-black">Entra a tu cuenta</p>
         </div>
-        <div className="flex flex-col items-center bg-white">
+        <div className="flex flex-col items-center">
           <div>
-            <InputField id="email" name="email" type="email" placeholder="Email" value={formData.email} onChange={handleInputChange} />
+            <InputField id="email" name="email" type="email" placeholder="correo" value={formData.email} onChange={handleInputChange} />
           </div>
           <div>
-            <InputField id="password" name="password" type="password" placeholder="Password" value={formData.password} onChange={handleInputChange} />
-            <div className="text-right"><Link href="/reset-password" className="text-xs text-[#FFA07A] pl-2 ">forgot your password?</Link></div>
+            <InputField id="password" name="password" type="password" placeholder="contraseña" value={formData.password} onChange={handleInputChange} />
+            <div className="text-right"><Link href="/reset-password" className="text-xs text-[#FFA07A] pl-2 ">Olvide mi contraseña</Link></div>
           </div>
 
           <div className="mt-5">
@@ -69,12 +69,12 @@ export default function Login() {
           </div>
 
           <button formAction={handleLogin} className="mt-12 w-[270px] h-[40px] bg-[#FFA07A] rounded-[20px] text-sm text-white">
-            Login
+            Iniciar sesión	
           </button>
         </div>
         <div className="flex mt-8 justify-center">
-          <p className="text-xs text-black">Don't have an account</p>
-          <Link href="/register" className="text-xs text-[#FFA07A] pl-2 ">Sign up here</Link>
+          <p className="text-xs text-black">No tienes una cuenta</p>
+          <Link href="/register" className="text-xs text-[#FFA07A] pl-2 ">¡Registrate aqui!</Link>
         </div>
         <div className="fixed bottom-0 right-0 w-70 h-70 flex items-center justify-center">
           <FontAwesomeIcon

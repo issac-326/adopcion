@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import InputField from "@/components/ui/InputField";
 import { addUser } from "./actions";
 import SuccessNotification from "@/components/ui/SuccesNotification";
-import {useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 import { faPaw } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -14,7 +14,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function Register() {
   const router = useRouter();
-  
+
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [userExists, setUserExists] = useState(false);
   const [formData, setFormData] = useState({
@@ -26,7 +26,7 @@ export default function Register() {
   const [isSuccess, setIsSuccess] = useState(false); // Control de éxito
 
   // Función que valida los datos del formulario y envía los datos al servidor
-  const handleSignUp = async (formData : FormData) => {
+  const handleSignUp = async (formData: FormData) => {
     const formResult = signupValidator(formData);
 
     // Si hay errores en la validación, se muestran en pantalla; si no, se registra al usuario
@@ -62,22 +62,22 @@ export default function Register() {
       )}
       <form className="flex flex-col items-center p-6 rounded-lg">
         <div className="flex items-center flex-col mb-6">
-          <p className="text-[24px] font-bold text-black">Welcome!</p>
-          <p className="text-[12px] text-black">Create your account</p>
+          <p className="text-[24px] font-bold text-black">¡Bienvenido!</p>
+          <p className="text-[12px] text-black">Crea tu cuenta</p>
         </div>
 
         {/* Input del correo */}
         <div>
-        <InputField
-          id="email"
-          name="email"
-          type="text"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleInputChange}
-        />
-        {errors.email && <div className="text-red-500 pl-5 text-xs animate-shake mt-2 text-left">{errors.email}</div>}
-        {userExists && <div className="text-red-500 pl-5 text-xs animate-shake mt-2 text-left">El correo ya esta registrado</div>}
+          <InputField
+            id="email"
+            name="email"
+            type="text"
+            placeholder="correo"
+            value={formData.email}
+            onChange={handleInputChange}
+          />
+          {errors.email && <div className="text-red-500 pl-5 text-xs animate-shake mt-2 text-left">{errors.email}</div>}
+          {userExists && <div className="text-red-500 pl-5 text-xs animate-shake mt-2 text-left">El correo ya esta registrado</div>}
         </div>
 
         {/* Input de la contraseña */}
@@ -86,12 +86,21 @@ export default function Register() {
             id="password"
             name="password"
             type="password"
-            placeholder="Password"
+            placeholder="contraseña"
             value={formData.password}
             onChange={handleInputChange}
           />
-          {errors.password && <div className="text-red-500 pl-5 animate-shake text-xs mt-2">{errors.password}</div>}
-          {errors.passwordRegex && <div className="text-red-500 w-[330px] pl-5 animate-shake text-xs mt-2">{errors.passwordRegex}</div>}
+          {Array.isArray(errors.password) && errors.password.length > 0 && (
+            <div className="mt-2 pl-5">
+                {errors.password.map((error, index) => (
+                  <li key={index} className="text-red-500 text-xs animate-shake">
+                    {error}
+                  </li>
+                ))}
+            </div>
+          )}
+
+
         </div>
 
         {/* Input de confirmación de contraseña */}
@@ -100,7 +109,7 @@ export default function Register() {
             id="confirmPassword"
             name="confirmPassword"
             type="password"
-            placeholder="Confirm password"
+            placeholder="confirmar contraseña"
             value={formData.confirmPassword}
             onChange={handleInputChange}
           />
@@ -113,7 +122,7 @@ export default function Register() {
             id="phone"
             name="phone"
             type="text"
-            placeholder="Phone"
+            placeholder="telefono"
             value={formData.phone}
             onChange={handleInputChange}
           />
@@ -122,26 +131,26 @@ export default function Register() {
 
         {/* Botón de envío */}
         <button formAction={handleSignUp} className="hover:scale-105 mt-12 w-[270px] h-[40px] bg-[#FFA07A] rounded-[20px] text-sm text-white">
-          Sign Up
+          Registrarme
         </button>
 
         <div className="flex mt-6 justify-center">
-          <p className="text-xs text-black">You already have an account?</p>
-          <Link href="/login" className="text-xs text-[#FFA07A] pl-2">Logeate aqui!</Link>
+          <p className="text-xs text-black">¿Ya tienes una cuenta?</p>
+          <Link href="/login" className="text-xs text-[#FFA07A] pl-2">¡Inicia sesión aqui!</Link>
         </div>
         <div className="fixed bottom-0 right-0 w-70 h-70 flex items-center justify-center"> {/* Usando flex para centrar el ícono */}
-  <FontAwesomeIcon
-    icon={faPaw}
-    rotation={180}
-    style={{
-      color: "#ffa07a",
-      transform: 'rotate(20deg)',
-      width: '100%',  // O '100%' aquí para ocupar el 100% del contenedor
-      height: '100%',
-      opacity: .7 // Si quieres que el ícono también ajuste su altura
-    }}
-  />
-</div>
+          <FontAwesomeIcon
+            icon={faPaw}
+            rotation={180}
+            style={{
+              color: "#ffa07a",
+              transform: 'rotate(20deg)',
+              width: '100%',  // O '100%' aquí para ocupar el 100% del contenedor
+              height: '100%',
+              opacity: .7 // Si quieres que el ícono también ajuste su altura
+            }}
+          />
+        </div>
       </form>
     </div>
   );

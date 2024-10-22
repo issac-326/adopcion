@@ -161,7 +161,9 @@ export default function Home() {
             )}
           </MenuItems>
 
+
         </Menu>
+
         <div className="flex gap-2">
           <span className="h-12 w-12 rounded-xl flex items-center justify-center bg-[#f7f7f8] hover:cursor-pointer" aria-haspopup="dialog"
             aria-expanded={isOffcanvasOpen}
@@ -292,7 +294,7 @@ export default function Home() {
         className={`py-2 w-full sticky z-20 top-0 bg-white transition-shadow duration-300 ${isSticky ? 'shadow-lg border-2' : ''
           }`}
       >
-        <section className="flex justify-between h-[50px] gap-4">
+        <section className="flex justify-between h-[40px] gap-4">
           <div
             className={`flex-1 bg-[#21888d] p-2 rounded-lg relative hover:scale-105 flex items-center justify-center ${selectedCategory === null ? 'border-2 border-[#020817]' : ''
               }`}
