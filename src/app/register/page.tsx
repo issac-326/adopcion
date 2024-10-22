@@ -123,7 +123,7 @@ export default function Register() {
 
         <div className="flex mt-6 justify-center">
           <p className="text-xs text-black">You already have an account?</p>
-          <Link href="/login" className="text-xs text-[#FFA07A] pl-2">Logeate aqui!</Link>
+          <Link href="/login" className="text-xs text-[#FFA07A] pl-2">Login here</Link>
         </div>
         <div className="fixed bottom-0 right-0 w-70 h-70 flex items-center justify-center"> {/* Usando flex para centrar el ícono */}
   <FontAwesomeIcon
