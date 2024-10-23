@@ -34,12 +34,24 @@ export const getCategoriaEspecifica = async (id: number, idDepartamento: number)
         }
         return data;
     }
+    //filtro mascotas pero en dep para todos
+    if (idDepartamento === 0) {
+        const { data, error } = await supabase
+            .from('publicaciones')
+            .select('id_publicacion, nombre, edad, ciudad, imagen , departamentos (descripcion)')
+            .eq('tipo_animal', id);
+        if (error) {
+            console.error('Error obtener mascotas:', error);
+            throw new Error(error.message);
+        }
+        return data;
+    }
+    //filtro para dep y categorias y depa y todos
     if (id === 0) {
         const { data, error } = await supabase
             .from('publicaciones')
             .select('id_publicacion, nombre, edad, ciudad, imagen , departamentos (descripcion)')
             .eq('id_departamento', idDepartamento);
-        
         if (error) {
             console.error('Error obtener mascotas:', error);
             throw new Error(error.message);
