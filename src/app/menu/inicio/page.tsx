@@ -1,12 +1,12 @@
-'use client'; 
+'use client';
 
-import React, { useState, useEffect, useRef } from 'react'; 
+import React, { useState, useEffect, useRef } from 'react';
 import PetList from '@/components/ui/PetList';
 import Pet from "@/types/Pet";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { faMagnifyingGlass, faChevronDown, faBell, faPaw } from '@fortawesome/free-solid-svg-icons';
+import { faChevronDown, faBell, faPaw } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getCategorias, getCategoriaEspecifica, getDepartamentos } from "@/app/menu/inicio/actions"; // Corrige según la ruta correcta de tus acciones
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
@@ -35,12 +35,13 @@ export default function Home() {
   const [loading, setLoading] = useState<boolean>(true);
   const [loadingPets, setLoadingPets] = useState<boolean>(true);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [departamentos, setDepartamentos] = useState([]);
-  const [isSticky, setIsSticky] = useState(false);
   const [isOffcanvasOpen, setIsOffcanvasOpen] = useState(false);
   const stickyRef = useRef(null);
+  const [depaSeleccionado, setDepaSeleccionado] = useState<number | null>(null);
+  const [isSticky, setIsSticky] = useState(false);
+  const [departamentos, setDepartamentos] = useState([]);
 
-  /* obtiene las categorias y las carga en el estado nomas cargar la pagina*/
+  /* obtiene las categorias y las carga en el estado nomas cargar la pagina pone el primer departamento seleccionado que de momento es siempre FM*/
   useEffect(() => {
     const obtenerCategorias = async () => {
       try {
@@ -54,9 +55,30 @@ export default function Home() {
     };
 
     obtenerCategorias();
-    seleccionarMascotasPorId(0);
+    seleccionarMascotasPorIdCatIdDepa(0, 8);
   }, []);
 
+  const seleccionarMascotasPorIdCatIdDepa = async (id: number, id_departamento: number) => {
+
+    try {
+      setLoadingPets(true);
+      const data = await getCategoriaEspecifica(id, id_departamento);
+      setSelectedMascotas(data ?? []);
+      setDepaSeleccionado(id_departamento);
+    } catch (error) {
+      setLoadingPets(false);
+      console.error("Error al obtener la categoría específica:", error);
+    }
+    setLoadingPets(false);
+  };
+
+  useEffect(() => {
+    setSelectedCategory(null);
+
+  }, [depaSeleccionado]);
+
+
+  /* Obtiene los departamentos y los carga en el estado departamentos */
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -96,8 +118,19 @@ export default function Home() {
 
   useEffect(() => {
     setLoadingPets(true);
-    manejarMascotas(selectedMascotas);
-  }, [selectedMascotas]);
+    const handleScroll = () => {
+      const offset = window.scrollY; // Cambia esto si el scroll no es en el documento completo
+      setIsSticky(offset > 0); // Ajusta la condición según lo que necesites
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  /* cada que cambiemos las mascotas seleccionadas las volvera a renderizar */
+
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -106,21 +139,6 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [bannerImages.length]);
 
-  const seleccionarMascotasPorId = async (id: number) => {
-    setLoadingPets(true);
-    try {
-      const data = await getCategoriaEspecifica(id);
-      setSelectedMascotas(data ?? []);
-    } catch (error) {
-      setLoadingPets(false);
-      console.error("Error al obtener la categoría específica:", error);
-    }
-  };
-
-  const manejarMascotas = (mascotas: Pet[]) => {
-    setSelectedMascotas(mascotas);
-    setLoadingPets(false);
-  };
 
   const toggleOffcanvas = () => {
     setIsOffcanvasOpen(!isOffcanvasOpen);
@@ -129,12 +147,14 @@ export default function Home() {
   return (
     <div className="bg-white border my-2 mx-4 px-4 pb-4 rounded-xl shadow-[0_4px_8px_rgba(0,0,255,0.2),0_2px_4px_rgba(0,0,0,0.1)] flex flex-col ">
       <div id="encabezado" className="mt-8 mb-2 flex justify-between text-[#03063a]">
+        {/* esta renderiza toda la parte de arriba del home */}
         <Menu as="div" className="relative inline-block text-left">
           <div>
             <MenuButton>
               <div>
                 <div className="flex gap-2 text-sm text-gray-400 items-center">Ubicacion <FontAwesomeIcon icon={faChevronDown} className="w-3" /></div>
-                <span className="font-extrabold">TGU,</span> HN
+                <span className="font-extrabold">{departamentos.find(dep => dep.id === depaSeleccionado)?.descripcion},</span> HN
+
               </div>
             </MenuButton>
           </div>
@@ -145,9 +165,11 @@ export default function Home() {
           >
             {departamentos && departamentos.length > 0 ? (
               departamentos.map((departamento, index) => (
-                <MenuItem key={departamento.id} as="div" className="flex justify-start justify-center">
+                <MenuItem key={departamento.id} onClick={() => {
+                  seleccionarMascotasPorIdCatIdDepa(0, departamento.id);
+                }} as="div" className="flex justify-start justify-center">
                   <a
-                    href="#"
+                    onClick={() => setCurrentIndex(index)}
                     className="block text-left w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:text-gray-900 text-center"
                   >
                     {departamento.descripcion}
@@ -160,7 +182,6 @@ export default function Home() {
               </MenuItem>
             )}
           </MenuItems>
-
 
         </Menu>
 
@@ -236,22 +257,22 @@ export default function Home() {
         </div>
 
         <div className="flex justify-center h-full col-span-1">
-  <div id="imagen" className="w-[380px] bg-[#FE8A5B] rounded-[20px] relative">
-    <div className="bg-[#FE8A5B] rounded-l-[20px] relative z-20">
-      <div className="mt-5 ml-5">
-        <p className="text-base text-white">Join Our Animal</p>
-        <p className="text-base text-white">Lovers Community</p>
-      </div>
-      <Button asChild className="mt-5 ml-5 relative z-30">
-        <Link href="/error">Join now</Link>
-      </Button>
-    </div>
-    
-    <div className="absolute z-10 -right-0 bottom-0 bg-[#FE8A5B] flex flex-col-reverse rounded-r-[20px]">
-      <Image src="/promo.png" alt="promo" width={130} height={130} />
-    </div>
-  </div>
-</div>
+          <div id="imagen" className="w-[380px] bg-[#FE8A5B] rounded-[20px] relative">
+            <div className="bg-[#FE8A5B] rounded-l-[20px] relative z-20">
+              <div className="mt-5 ml-5">
+                <p className="text-base text-white">Join Our Animal</p>
+                <p className="text-base text-white">Lovers Community</p>
+              </div>
+              <Button asChild className="mt-5 ml-5 relative z-30">
+                <Link href="/error">Join now</Link>
+              </Button>
+            </div>
+
+            <div className="absolute z-10 -right-0 bottom-0 bg-[#FE8A5B] flex flex-col-reverse rounded-r-[20px]">
+              <Image src="/promo.png" alt="promo" width={130} height={130} />
+            </div>
+          </div>
+        </div>
 
       </section>
 
@@ -296,14 +317,20 @@ export default function Home() {
       >
         <section className="flex justify-between h-[40px] gap-4">
           <div
-            className={`flex-1 bg-[#21888d] p-2 rounded-lg relative hover:scale-105 flex items-center justify-center ${selectedCategory === null ? 'border-2 border-[#020817]' : ''
+            className={`flex-1 bg-[#21888d] font-light p-2 rounded-lg relative hover:scale-105 flex items-center justify-center ${selectedCategory === null ? 'border-2 border-[#020817]' : ''
               }`}
             onClick={() => {
               setSelectedCategory(null);
-              seleccionarMascotasPorId(0);
-            }}
-          >
-            <p className="font-medium text-base text-center">Todos</p>
+
+              // Comprobar que depaSeleccionado no sea null
+              if (depaSeleccionado !== null) {
+                seleccionarMascotasPorIdCatIdDepa(0, depaSeleccionado);
+              } else {
+                // Manejo adicional si depaSeleccionado es null (opcional)
+                console.warn('depaSeleccionado es null, no se llamará a seleccionarMascotasPorIdCatIdDepa');
+              }
+            }}>
+            <p className="font-normal text-base text-center">Todos</p>
             <FontAwesomeIcon
               icon={faPaw}
               rotation={180}
@@ -317,15 +344,22 @@ export default function Home() {
             categories.map((category, index) => (
               <div
                 key={index}
-                className={`flex-1 p-2 rounded-lg relative hover:scale-105 border-box flex items-center justify-center font-normal ${selectedCategory === category.id_categoria ? 'border-2 border-[#020817]' : ''
+                className={`flex-1 p-2 rounded-lg relative hover:scale-105 border-box flex items-center justify-center font-light ${selectedCategory === category.id_categoria ? 'border-2 border-[#020817]' : ''
                   }`}
                 style={{ backgroundColor: colors[index] }} // Aplicando el color dinámicamente
                 onClick={() => {
                   setSelectedCategory(category.id_categoria);
-                  seleccionarMascotasPorId(category.id_categoria);
+
+                  // Comprobar que depaSeleccionado no sea null
+                  if (depaSeleccionado !== null) {
+                    seleccionarMascotasPorIdCatIdDepa(category.id_categoria, depaSeleccionado);
+                  } else {
+                    // Manejo adicional si depaSeleccionado es null (opcional)
+                    console.warn('depaSeleccionado es null, no se llamará a seleccionarMascotasPorIdCatIdDepa');
+                  }
                 }}
               >
-                <p className="font-medium text-base text-center">{category.tipo_mascotas}</p>
+                <p className="font-normal text-base text-center">{category.tipo_mascotas}</p>
                 <FontAwesomeIcon
                   icon={faPaw}
                   rotation={180}
@@ -340,14 +374,21 @@ export default function Home() {
 
       {/* Mascotas */}
       <section className="mt-5 flex justify-between items-center">
-        <h2 className="font-montserrat text-xl font-medium">Adopt pet</h2>
+        <h2 className="font-montserrat text-xl font-medium">Esperando por ti</h2>
       </section>
 
       {loadingPets ? (
         <PetCardSkeleton />
       ) : (
-        <PetList pets={selectedMascotas} />
+        selectedMascotas.length > 0 ? (
+          <PetList pets={selectedMascotas} />
+        ) : (
+          <div className='text-[##f5a473]'>No hay mascotas disponibles 😿</div>
+        )
       )}
+
+
     </div>
   );
 };
+

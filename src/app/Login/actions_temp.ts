@@ -1,9 +1,11 @@
-'use server';
+'use server'
 
-import { createClient } from '@/utils/supabase/server'
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt'; // Asegúrate de importar bcrypt
+import { createClient } from '@/utils/supabase/server';
 
-export const loginUser = async (formData: FormData) => {
+ 
+
+export const loginUser = async (formData: FormData) => { 
   const supabase = createClient();
 
   const email = formData.get('email');
@@ -20,10 +22,11 @@ export const loginUser = async (formData: FormData) => {
     throw new Error('Credenciales incorrectas'); // Manejar caso de credenciales incorrectas
   }
 
-  // Comparar la contraseña ingresada con la contraseña encriptada
-  const isMatch = await bcrypt.compare(password, data.contrasena);
-  if (!isMatch) {
-    throw new Error('Credenciales incorrectas'); // Manejar caso de credenciales incorrectas
+  // Compara la contraseña ingresada con la almacenada
+  const isPasswordValid = await bcrypt.compare(password, data.contrasena);
+  
+  if (!isPasswordValid) {
+    throw new Error('Credenciales incorrectas'); // La contraseña es incorrecta
   }
 
   return data; // Retornar los datos del usuario autenticado

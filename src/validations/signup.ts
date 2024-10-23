@@ -1,14 +1,8 @@
-interface Error {
-  email: string;
-  password: string[];
-  confirmPassword: string;
-  phone: string;
-}
 
 export function signupValidator(formData: FormData) {
   const errors: Error = {
     email: '',
-    password: [],
+    password: '',
     confirmPassword: '',
     phone: '',
   };
@@ -36,33 +30,17 @@ export function signupValidator(formData: FormData) {
     }
   }
   
-  // Verifica que la contraseña contenga al menos una minúscula
-  if (!/[a-z]/.test(password)) {
-    errors.password.push('Debe contener al menos una letra minúscula');
-    isValid = false;
-  }
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\W_]).{6,}$/; // Mínimo 8 caracteres y cumple con los requisitos
 
-  // Verifica que la contraseña contenga al menos una mayúscula
-  if (!/[A-Z]/.test(password)) {
-    errors.password.push('Debe contener al menos una letra mayúscula');
-    isValid = false;
-  }
-
-  // Verifica que la contraseña contenga al menos un número
-  if (!/[0-9]/.test(password)) {
-    errors.password.push('Debe contener al menos un número');
-    isValid = false;
-  }
-
-  // Verifica que la contraseña contenga al menos un carácter especial
-  if (!/[\W_]/.test(password)) {
-    errors.password.push('Debe contener al menos un carácter especial');
+  if (!passwordRegex.test(password)) {
+    errors.password = 'La contraseña debe contener minimo una letra minúscula, una letra mayúscula, un número y un carácter especial.';
     isValid = false;
   }
 
   // Verifica que la contraseña tenga al menos 6 caracteres
   if (password.length < 6) {
-    errors.password.push('La contraseña debe tener al menos 6 caracteres');
+    errors.password = '';
+    errors.password = 'La contraseña debe tener al menos 6 caracteres';
     isValid = false;
   }
 

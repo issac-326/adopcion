@@ -90,15 +90,7 @@ export default function Register() {
             value={formData.password}
             onChange={handleInputChange}
           />
-          {Array.isArray(errors.password) && errors.password.length > 0 && (
-            <div className="mt-2 pl-5">
-                {errors.password.map((error, index) => (
-                  <li key={index} className="text-red-500 text-xs animate-shake">
-                    {error}
-                  </li>
-                ))}
-            </div>
-          )}
+          {errors.password && <div className="text-red-500 animate-shake pl-5 text-xs mt-2 w-[334px]">{errors.password}</div>}
 
 
         </div>

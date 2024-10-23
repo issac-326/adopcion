@@ -6,7 +6,7 @@ export function loginValidator(formData: FormData) {
     const password = formData.get('password') as string
 
     if (email === '' || password === '') {
-        errors.message = 'Wrong Credentials'
+        errors.message = 'Credenciales incorrectas'
         isValid = false
     }
 

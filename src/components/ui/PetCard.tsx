@@ -5,6 +5,9 @@ import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
+import { verificacionFavoritos, favorito } from '@/app/menu/favoritos/actions';
+import { useEffect, useState } from "react";
+
 
 interface InputProps { // Propiedades que recibe el componente
   id: number; // Debe ser un número
@@ -25,8 +28,34 @@ const PetCard = ({
   footerBg,
   svgBg,
 }: InputProps) => {
-
   const router = useRouter();
+  const userId = localStorage.getItem('userId');
+  const [isLiked, setIsLiked] = useState(false);
+  const [loading, setLoading] = useState(true);  
+
+  useEffect(() => {
+    const fetchMascota = async () => {
+      try {
+        // Verificar si ya está en favoritos
+        const liked = await verificacionFavoritos(Number(id), userId);
+        setIsLiked(liked);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error al cargar favorito:', error);
+      }
+    };
+
+    fetchMascota();
+  }, [id, userId]);
+  
+  const handleLike = async () => {
+    try {
+      await favorito(Number(id), userId, isLiked);
+      setIsLiked(!isLiked); // Alterna el estado después de guardar/eliminar
+    } catch (error) {
+      console.error('Error al actualizar favorito:', error);
+    }
+  };
 
   return (
     <div
@@ -35,16 +64,16 @@ const PetCard = ({
       onClick={() => router.push(`/menu/mascota/${id}`)}
     >
       <header className="relative h-4/5 overflow-hidden">
-      <Image
-  src={imagen}
-  alt="perro"
-  className="w-full h-full object-cover"
-  width={50}
-  height={50}
-  style={{ objectFit: 'cover' }}
-/>
-        <div className="absolute top-2 right-2 bg-white rounded-full w-8 h-8 flex items-center justify-center hover:scale-110">
-          <FontAwesomeIcon icon={faHeart} className="text-red-500" />
+        <Image
+          src={imagen}
+          alt="perro"
+          className="w-full h-full object-cover"
+          width={50}
+          height={50}
+          style={{ objectFit: 'cover' }}
+        />
+        <div className="absolute top-2 right-2 bg-white rounded-full w-8 h-8 flex items-center justify-center hover:scale-110" onClick={handleLike}>
+          <FontAwesomeIcon icon={faHeart} className={`${isLiked ? 'text-red-500' : 'text-gray-400'}`} />
         </div>
         <h1
           className="absolute bottom-0 right-2 text-white font-semibold text-2xl z-10"
