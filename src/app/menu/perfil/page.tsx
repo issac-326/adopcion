@@ -77,111 +77,114 @@ const UpdateProfile = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center"> 
-  <form onSubmit={submitHandler} className="relative flex flex-col items-center bg-white p-6 rounded-lg max-w-4xl w-full shadow-lg">
-    {/* Encabezado */}
-    <div className="flex items-center flex-col mb-6">
-      <p className="text-[24px] font-bold text-black">¡Actualiza tu perfil!</p>
-      <p className="text-[12px] text-black">Realiza cambios en tu cuenta</p>
-    </div>
+    <> 
+    <div className="flex justify-center items-center">
+      <form onSubmit={submitHandler} className="relative flex flex-col items-center rounded-lg max-w-4xl w-full">
+        {/* Encabezado */}
+        <div className="flex items-center flex-col mb-6">
+          <p className="text-[24px] font-bold text-black">¡Actualiza tu perfil!</p>
+          <p className="text-[12px] text-black">Realiza cambios en tu cuenta</p>
+        </div>
 
-    {/* Imagen de perfil y botones */}
-    <div className="flex flex-col items-center mb-6">
-      <img src="/usuario-default.jpg" alt="Imagen de perfil" className="w-32 h-32 rounded-full mb-4" />
-      <div className="flex gap-4">
-        <Button variant="default" className="bg-[#FFA07A] hover:bg-[#FF8C69]">Subir nueva</Button>
-        <Button variant="destructive">Eliminar</Button>
-      </div>
-    </div>
+        {/* Imagen de perfil y botones */}
+        <div className="flex flex-col items-center mb-6">
+          <img src="/usuario-default.jpg" alt="Imagen de perfil" className="w-32 h-32 rounded-full mb-4" />
+          <div className="flex gap-4">
+            <Button variant="default" className="bg-[#FFA07A] hover:bg-[#FF8C69]">Subir nueva</Button>
+            <Button variant="destructive">Eliminar</Button>
+          </div>
+        </div>
 
-    {/* Primer y Segundo Nombre */}
-    <div className="flex gap-6 mb-4 w-full">
-      <div className="w-1/2">
-        <label className="block mb-0 text-black">Primer Nombre</label>
-        <InputField
-          id="nombre1"
-          name="nombre1"
-          type="text"
-          placeholder="Primer Nombre"
-          value={nombre1}
-          onChange={(e) => setNombre1(e.target.value)}
-        />
-      </div>
-      <div className="w-1/2">
-        <label className="block mb-0 text-black">Segundo Nombre</label>
-        <InputField
-          id="nombre2"
-          name="nombre2"
-          type="text"
-          placeholder="Segundo Nombre"
-          value={nombre2}
-          onChange={(e) => setNombre2(e.target.value)}
-        />
-      </div>
-    </div>
+        {/* Primer y Segundo Nombre */}
+        <div className="flex gap-6 mb-4 w-full">
+          <div className="w-1/2">
+            <label className="block mb-0 text-black">Primer Nombre</label>
+            <InputField
+              id="nombre1"
+              name="nombre1"
+              type="text"
+              placeholder="Primer Nombre"
+              value={nombre1}
+              onChange={(e) => setNombre1(e.target.value)}
+            />
+          </div>
+          <div className="w-1/2">
+            <label className="block mb-0 text-black">Segundo Nombre</label>
+            <InputField
+              id="nombre2"
+              name="nombre2"
+              type="text"
+              placeholder="Segundo Nombre"
+              value={nombre2}
+              onChange={(e) => setNombre2(e.target.value)}
+            />
+          </div>
+        </div>
 
-    {/* Primer y Segundo Apellido */}
-    <div className="flex gap-6 mb-4 w-full">
-      <div className="w-1/2">
-        <label className="block mb-0 text-black">Primer Apellido</label>
-        <InputField
-          id="apellido1"
-          name="apellido1"
-          type="text"
-          placeholder="Primer Apellido"
-          value={apellido1}
-          onChange={(e) => setApellido1(e.target.value)}
-        />
-      </div>
-      <div className="w-1/2">
-        <label className="block mb-0 text-black">Segundo Apellido</label>
-        <InputField
-          id="apellido2"
-          name="apellido2"
-          type="text"
-          placeholder="Segundo Apellido"
-          value={apellido2}
-          onChange={(e) => setApellido2(e.target.value)}
-        />
-      </div>
-    </div>
+        {/* Primer y Segundo Apellido */}
+        <div className="flex gap-6 mb-4 w-full">
+          <div className="w-1/2">
+            <label className="block mb-0 text-black">Primer Apellido</label>
+            <InputField
+              id="apellido1"
+              name="apellido1"
+              type="text"
+              placeholder="Primer Apellido"
+              value={apellido1}
+              onChange={(e) => setApellido1(e.target.value)}
+            />
+          </div>
+          <div className="w-1/2">
+            <label className="block mb-0 text-black">Segundo Apellido</label>
+            <InputField
+              id="apellido2"
+              name="apellido2"
+              type="text"
+              placeholder="Segundo Apellido"
+              value={apellido2}
+              onChange={(e) => setApellido2(e.target.value)}
+            />
+          </div>
+        </div>
 
-    {/* Correo y Teléfono */}
-    <div className="flex gap-6 mb-4 w-full">
-      <div className="w-1/2">
-        <label className="block mb-0 text-black">Correo</label>
-        <InputField
-          id="correo"
-          name="correo"
-          type="text"
-          placeholder="Correo"
-          value={correo}
-          readOnly
-        />
-      </div>
-      <div className="w-1/2">
-        <label className="block mb-0 text-black">Teléfono</label>
-        <InputField
-          id="telefono"
-          name="telefono"
-          type="text"
-          placeholder="Teléfono"
-          value={telefono}
-          onChange={(e) => setTelefono(e.target.value)}
-        />
-        
-      </div>
-    </div>
+        {/* Correo y Teléfono */}
+        <div className="flex gap-6 mb-4 w-full">
+          <div className="w-1/2">
+            <label className="block mb-0 text-black">Correo</label>
+            <InputField
+              id="correo"
+              name="correo"
+              type="text"
+              placeholder="Correo"
+              value={correo}
+              readOnly
+            />
+          </div>
+          <div className="w-1/2">
+            <label className="block mb-0 text-black">Teléfono</label>
+            <InputField
+              id="telefono"
+              name="telefono"
+              type="text"
+              placeholder="Teléfono"
+              value={telefono}
+              onChange={(e) => setTelefono(e.target.value)}
+            />
+            
+          </div>
+        </div>
 
-    {/* Botones */}
-    <div className="flex justify-end gap-4 w-full mt-4 pr-20">
-      <Button variant="secondary" className="bg-gray-300 text-black hover:bg-gray-400">Cancelar</Button>
-      <Button type="submit" variant="default" className="bg-[#FFA07A] hover:bg-[#FF8C69]" disabled={loading}>
-        {loading ? "Actualizando..." : "Actualizar"}
-      </Button>
+        {/* Botones */}
+        <div className="flex justify-end gap-4 w-full mt-4 pr-20">
+          <Button variant="secondary" className="bg-gray-300 text-black hover:bg-gray-400">Cancelar</Button>
+          <Button type="submit" variant="default" className="bg-[#FFA07A] hover:bg-[#FF8C69]" disabled={loading}>
+            {loading ? "Actualizando..." : "Actualizar"}
+          </Button>
+        </div>
+      </form>
+
     </div>
-  </form>
-</div>
+</>
 
   );
 };

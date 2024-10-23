@@ -32,7 +32,7 @@ const InputField: React.FC<InputProps> = ({
         value={value}
         onChange={onChange}  // Esto será opcional
         readOnly={readOnly}  // Aplicamos readOnly
-        className="focus:outline-none focus:border-blue-800/2 placeholder:text-gray-400 text-xs text-black bg-white rounded-[50px] pl-5 pt-2 mt-5 w-[330px] h-[35px] shadow-[0_4px_4px_rgba(0,0,0,0.25)]"
+        className="focus:outline-none focus:border-blue-800/2 placeholder:text-gray-400 text-xs text-black bg-white rounded-[50px] pl-5 pt-2 mb-5 w-[330px] h-[35px] shadow-[0_4px_4px_rgba(0,0,0,0.25)]"
       />
   );
 };

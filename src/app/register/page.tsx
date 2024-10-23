@@ -130,20 +130,20 @@ export default function Register() {
           <p className="text-xs text-black">¿Ya tienes una cuenta?</p>
           <Link href="/login" className="text-xs text-[#FFA07A] pl-2">¡Inicia sesión aqui!</Link>
         </div>
-        <div className="fixed bottom-0 right-0 w-70 h-70 flex items-center justify-center"> {/* Usando flex para centrar el ícono */}
-          <FontAwesomeIcon
-            icon={faPaw}
-            rotation={180}
-            style={{
-              color: "#ffa07a",
-              transform: 'rotate(20deg)',
-              width: '100%',  // O '100%' aquí para ocupar el 100% del contenedor
-              height: '100%',
-              opacity: .7 // Si quieres que el ícono también ajuste su altura
-            }}
-          />
-        </div>
       </form>
+      <div className="absolute bottom-0 right-0 flex items-center justify-center">
+        <img
+          src="/Logo.svg"
+          alt="Descripción del logo"
+          style={{
+            color: "#ffa07a",
+            width: '20rem',  // Cambia a un ancho adecuado
+            height: '20rem', // Cambia a un alto adecuado
+            objectFit: 'contain', // Asegura que la imagen se ajuste sin distorsión
+            opacity: 0.4,
+          }}
+        />
+      </div>
     </div>
   );
 }

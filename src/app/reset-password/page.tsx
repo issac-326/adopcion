@@ -46,8 +46,8 @@ export default function ResetPassword() {
     <div className="min-h-screen flex items-center justify-center">
     <form>
       <div className="flex items-center flex-col">
-        <p className="text-[24px] font-bold text-black">Reset your password</p>
-        <p className="text-[12px] text-black">Please enter your email to search for your account.</p>
+        <p className="text-[24px] font-bold text-black">Cambia tu contraseña</p>
+        <p className="text-[12px] text-black">Por favor ingresa tu correo para buscar tu cuenta.</p>
       </div>
       <div className="flex flex-col items-center">
 
@@ -56,10 +56,10 @@ export default function ResetPassword() {
           {errorMessage && <p className="mt-2 pl-5 animate-shake text-red-500 text-xs">{errorMessage}</p>}
         </div>
         <div className="mt-5">
-          <button className="bg-[#FFA07A] text-white rounded-[50px] pl-5 pt-2 mt-5 w-[330px] h-[35px] shadow-[0_4px_4px_rgba(0,0,0,0.25)]" formAction={handleSearchUser}>Search</button>
+          <button className="bg-[#FFA07A] text-white rounded-[50px] pl-5 pt-2 mt-5 w-[330px] h-[35px] shadow-[0_4px_4px_rgba(0,0,0,0.25)]" formAction={handleSearchUser}>Buscar</button>
         </div>
         <div>
-          <Link href="/login" className="bg-[#e4e6eb] block flex justify-center text-[#4b4f5c] rounded-[50px] pl-5 pt-2 mt-2 w-[330px] h-[35px] shadow-[0_4px_4px_rgba(0,0,0,0.25)]">Cancel</Link>
+          <Link href="/login" className="bg-[#e4e6eb] block flex justify-center text-[#4b4f5c] rounded-[50px] pl-5 pt-2 mt-2 w-[330px] h-[35px] shadow-[0_4px_4px_rgba(0,0,0,0.25)]">Cancelar</Link>
         </div>
         </div>
     </form>

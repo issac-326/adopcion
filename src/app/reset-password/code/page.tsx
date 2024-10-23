@@ -65,8 +65,8 @@ export default function Code() {
     <div className="min-h-screen flex items-center justify-center">
     <form>
       <div className="flex items-center flex-col">
-        <p className="text-[24px] font-bold text-black">Code</p>
-        <p className="text-[12px] text-black">Please enter your code to verify</p>
+        <p className="text-[24px] font-bold text-black">Código</p>
+        <p className="text-[12px] text-black">Por favor ingresa tu código para verificar</p>
       </div>
       <div className="flex flex-col items-center">
 

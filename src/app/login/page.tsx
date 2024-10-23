@@ -34,7 +34,7 @@ export default function Login() {
       }
 
       console.log('User added successfully:', data);
-      router.push('/menu/inicio'); 
+      router.push('/menu/inicio');
     } catch (error) {
       setearError(error.message);
     }
@@ -48,8 +48,8 @@ export default function Login() {
     });
   }
 
-  function setearError (message?: string) {
-    setErrorMessage(message? message : '');
+  function setearError(message?: string) {
+    setErrorMessage(message ? message : '');
 
     setTimeout(() => {
       setErrorMessage('');
@@ -59,7 +59,7 @@ export default function Login() {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center">
-      <form className="relative">
+      <form>
         <div className="flex items-center flex-col">
           <p className="text-[24px] font-bold text-black">¡Bienvenido de vuelta!</p>
           <p className="text-[12px] text-black">Entra a tu cuenta</p>
@@ -77,8 +77,8 @@ export default function Login() {
             {errorMessage && <div className="text-red-500 text-xs animate-shake mt-2 text-left">{errorMessage}</div>}
           </div>
 
-          <button formAction={handleLogin} className="mt-12 w-[270px] h-[40px] bg-[#FFA07A] rounded-[20px] text-sm text-white">
-            Iniciar sesión	
+          <button formAction={handleLogin} className="mt-12 w-[270px] h-[40px] hover:scale-105 bg-[#FFA07A] rounded-[20px] text-sm text-white">
+            Iniciar sesión
           </button>
         </div>
         <div className="flex mt-8 justify-center">
@@ -87,18 +87,19 @@ export default function Login() {
         </div>
 
       </form>
-      <div className="fixed bottom-0 right-0 w-70 h-70 flex items-center justify-center">
-  <img
-    src="/LOGO_3.svg"
-    alt="Descripción del logo" // Reemplaza con una descripción adecuada
-    style={{
-      color: "#ffa07a",
-      width: '20rem',
-      height: '20rem',
-      opacity: 0.7,
-    }}
-  />
-</div>
+      <div className="absolute bottom-0 right-0 flex items-center justify-center">
+        <img
+          src="/Logo.svg"
+          alt="Descripción del logo"
+          style={{
+            color: "#ffa07a",
+            width: '20rem',  // Cambia a un ancho adecuado
+            height: '20rem', // Cambia a un alto adecuado
+            objectFit: 'contain', // Asegura que la imagen se ajuste sin distorsión
+            opacity: 0.4,
+          }}
+        />
+      </div>
 
     </div>
   );

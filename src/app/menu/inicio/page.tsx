@@ -145,14 +145,14 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-white border my-2 mx-4 px-4 pb-4 rounded-xl shadow-[0_4px_8px_rgba(0,0,255,0.2),0_2px_4px_rgba(0,0,0,0.1)] flex flex-col ">
+    < >
       <div id="encabezado" className="mt-8 mb-2 flex justify-between text-[#03063a]">
         {/* esta renderiza toda la parte de arriba del home */}
         <Menu as="div" className="relative inline-block text-left">
           <div>
             <MenuButton>
               <div>
-                <div className="flex gap-2 text-sm text-gray-400 items-center">Ubicacion <FontAwesomeIcon icon={faChevronDown} className="w-3" /></div>
+                <div className="flex gap-2 text-sm text-gray-400 items-center">Ubicación <FontAwesomeIcon icon={faChevronDown} className="w-3" /></div>
                 <span className="font-extrabold">{depaSeleccionado === 0 ? 'Todos' : departamentos.find(dep => dep.id === depaSeleccionado)?.descripcion},</span> HN
                 
               </div>
@@ -270,11 +270,11 @@ export default function Home() {
           <div id="imagen" className="w-[380px] bg-[#FE8A5B] rounded-[20px] relative">
             <div className="bg-[#FE8A5B] rounded-l-[20px] relative z-20">
               <div className="mt-5 ml-5">
-                <p className="text-base text-white">Join Our Animal</p>
-                <p className="text-base text-white">Lovers Community</p>
+                <p className="text-base text-white">Comunidad de</p>
+                <p className="text-base text-white">Amantes de Mascotas</p>
               </div>
               <Button asChild className="mt-5 ml-5 relative z-30">
-                <Link href="/error">Join now</Link>
+                <Link href="/error">Únete ahora</Link>
               </Button>
             </div>
 
@@ -319,7 +319,7 @@ export default function Home() {
       </div>
 
       {/* Categorías */}
-      <h2 className="text-texto mt-5 font-montserrat text-xl font-medium">Categories</h2>
+      <h2 className="text-texto mt-5 font-montserrat text-xl font-medium">Categorias</h2>
       <div
         ref={stickyRef}
         className={`py-2 w-full sticky z-20 top-0 bg-white transition-shadow duration-300 ${isSticky ? 'shadow-lg border-2' : ''
@@ -398,7 +398,7 @@ export default function Home() {
       )}
 
 
-    </div>
+    </>
   );
 };
 

@@ -21,7 +21,7 @@ export default function Header() {
     { icon: <FontAwesomeIcon icon={faCommentDots} className="w-5 h-5" />, label: "Mensaje" },
     { icon: <FontAwesomeIcon icon={faUser} className="w-5 h-5" />, label: "Perfil" },
     { icon: <FontAwesomeIcon icon={faPlus} className="w-5 h-5" />, label: "Publicar" },
-    { icon: <FontAwesomeIcon icon={faGear} className="w-5 h-5" />, label: "Configuración" },
+    { icon: <FontAwesomeIcon icon={faGear} className="w-5 h-5" />, label: "Configuraciones" },
   ];
 
   return (

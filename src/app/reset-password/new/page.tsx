@@ -79,8 +79,8 @@ export default function NewPassword() {
     <div className="min-h-screen flex items-center justify-center">
       <form>
         <div className="flex items-center flex-col">
-          <p className="text-[24px] font-bold text-black">New Password</p>
-          <p className="text-[12px] text-black">Please enter your new password</p>
+          <p className="text-[24px] font-bold text-black">Contraseña Nueva</p>
+          <p className="text-[12px] text-black">Por favor ingresa tu nueva contraseña</p>
         </div>
         <div className="flex flex-col items-center">
           <div>
@@ -88,7 +88,7 @@ export default function NewPassword() {
               id="password"
               name="password"
               type="password"
-              placeholder="New password"
+              placeholder="Contraseña nueva"
               value={formData.password}
               onChange={handleInputChange}
             />
@@ -99,7 +99,7 @@ export default function NewPassword() {
               id="new-password"
               name="confirmPassword"
               type="password"
-              placeholder="Confirm new password"
+              placeholder="Confirmar contraseña"
               value={formData.confirmPassword}
               onChange={handleInputChange}
             />

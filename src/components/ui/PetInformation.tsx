@@ -80,7 +80,7 @@ export default function PetInformation({ id, id_usuario }: { id: string, id_usua
           </button>
         </div>
 
-        <div className="flex-1 p-8 flex flex-col">
+        <div className="flex-1 p-8 pt-2  flex flex-col">
           {/* Nombre y ubicación */}
           <div className="flex justify-between items-center">
             <div className="p-3">
@@ -128,13 +128,13 @@ export default function PetInformation({ id, id_usuario }: { id: string, id_usua
           <div className="mt-8 mb-8">
   {/* Color de la mascota */}
   <div className="text-sm">
-    <span className="text-gray-500">Color:</span> <span className="text-gray-600">{mascota.color || 'Indefinido'}</span>
+    <span className="text-gray font-semibold">Color:</span> <span className="text-gray-600">{mascota.color || 'Indefinido'}</span>
   </div>
 
   {/* Vacunas, solo si no es nulo */}
   {mascota.vacunas !== null && (
     <div className="text-sm">
-      <span className="text-gray-500">Vacunas:</span> <span className="text-gray-600">{mascota.vacunas ? 'Sí' : 'No'}</span>
+      <span className="text-gray font-semibold">Vacunas:</span> <span className="text-gray-600">{mascota.vacunas ? 'Sí' : 'No'}</span>
     </div>
   )}
 
@@ -147,12 +147,12 @@ export default function PetInformation({ id, id_usuario }: { id: string, id_usua
 
   {/* Especie de la mascota */}
   <div className="text-sm">
-    <span className="text-gray-500">Especie:</span> <span className="text-gray-600">{mascota.categorias.tipo_mascotas || 'Indefinido'}</span>
+    <span className="text-gray font-semibold">Especie:</span> <span className="text-gray-600">{mascota.categorias.tipo_mascotas || 'Indefinido'}</span>
   </div>
 
   {/* Descripción */}
   <div className="text-base mt-4">
-    <span className="text-gray-500">Descripción:</span> <span className="text-gray-600">{mascota.descripcion || 'Indefinido'}</span>
+    <span className="text-gray font-semibold">Descripción:</span> <span className="text-gray-600">{mascota.descripcion || 'Indefinido'}</span>
   </div>
 </div>
 

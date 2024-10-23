@@ -115,124 +115,126 @@ export default function AnimalForm() {
   }, [])
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 max-w-md mx-auto mt-10 flex flex-col items-center">
-      <InputField
-        id="nombre"
-        name="nombre"
-        type="text"
-        placeholder="Nombre"
-        value={formData.nombre}
-        onChange={handleInputChange}
-        required
-      />
-
-      <Select onValueChange={handleSelectChange('sexo')}>
-        <SelectTrigger className="w-[330px]">
-          <SelectValue placeholder="Selecciona el sexo" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectLabel>Sexo</SelectLabel>
-            <SelectItem value="macho">Macho</SelectItem>
-            <SelectItem value="hembra">Hembra</SelectItem>
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-
-      <Select onValueChange={handleSelectChange('tipoAnimal')}>
-        <SelectTrigger className="w-[330px]">
-          <SelectValue placeholder="Selecciona el tipo de animal" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectLabel>Tipo de Animal</SelectLabel>
-            <SelectItem value="perro">Perro</SelectItem>
-            <SelectItem value="gato">Gato</SelectItem>
-            <SelectItem value="ave">Ave</SelectItem>
-            <SelectItem value="otro">Otro</SelectItem>
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-
-      <div className='grid grid-cols-2 gap-4'>
+    <>
+      <form onSubmit={handleSubmit} className="space-y-4 mx-auto mt-10 flex flex-col items-center">
         <InputField
-          id="Años"
-          name="Años"
+          id="nombre"
+          name="nombre"
           type="text"
-          placeholder="Años"
-          value={formData.edad}
+          placeholder="Nombre"
+          value={formData.nombre}
           onChange={handleInputChange}
           required
         />
-        <InputField
-          id="meses"
-          name="meses"
-          type="text"
-          placeholder="Meses"
-          value={formData.edad}
+
+        <Select onValueChange={handleSelectChange('sexo')}>
+          <SelectTrigger className="w-[330px]">
+            <SelectValue placeholder="Selecciona el sexo" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Sexo</SelectLabel>
+              <SelectItem value="macho">Macho</SelectItem>
+              <SelectItem value="hembra">Hembra</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+
+        <Select onValueChange={handleSelectChange('tipoAnimal')}>
+          <SelectTrigger className="w-[330px]">
+            <SelectValue placeholder="Selecciona el tipo de animal" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Tipo de Animal</SelectLabel>
+              <SelectItem value="perro">Perro</SelectItem>
+              <SelectItem value="gato">Gato</SelectItem>
+              <SelectItem value="ave">Ave</SelectItem>
+              <SelectItem value="otro">Otro</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+
+        <div className='grid grid-cols-2 gap-4'>
+          <InputField
+            id="Años"
+            name="Años"
+            type="text"
+            placeholder="Años"
+            value={formData.edad}
+            onChange={handleInputChange}
+            required
+          />
+          <InputField
+            id="meses"
+            name="meses"
+            type="text"
+            placeholder="Meses"
+            value={formData.edad}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+
+        <textarea
+          id="descripcion"
+          name="descripcion"
+          placeholder="Descripción"
+          value={formData.descripcion}
           onChange={handleInputChange}
-          required
+          className="focus:outline-none focus:border-blue-800/2 placeholder:text-gray-400 text-xs text-black bg-white rounded-[20px] pl-5 pt-2 mt-5 w-[330px] h-[100px] shadow-[0_4px_4px_rgba(0,0,0,0.25)]"
         />
-      </div>
 
-      <textarea
-        id="descripcion"
-        name="descripcion"
-        placeholder="Descripción"
-        value={formData.descripcion}
-        onChange={handleInputChange}
-        className="focus:outline-none focus:border-blue-800/2 placeholder:text-gray-400 text-xs text-black bg-white rounded-[20px] pl-5 pt-2 mt-5 w-[330px] h-[100px] shadow-[0_4px_4px_rgba(0,0,0,0.25)]"
-      />
-
-      <InputField
-        id="vacunas"
-        name="vacunas"
-        type="text"
-        placeholder="Vacunas"
-        value={formData.vacunas}
-        onChange={handleInputChange}
-      />
-
-      <Select onValueChange={handleSelectChange('tipoAnimal')}>
-        <SelectTrigger className="w-[330px]">
-          <SelectValue placeholder="Selecciona el departamento" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectLabel>Departamento</SelectLabel>
-            {departamentos && departamentos.length > 0 ? (
-              departamentos.map((departamento, index) => (
-                <SelectItem value={departamento.descripcion}>{departamento.descripcion}</SelectItem>
-                      ))
-                    ) : (
-                      <SelectItem value="perro">No hay departamentos disponibles</SelectItem>
-                    )}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-
-      <div
-        onDragOver={(e) => e.preventDefault()}
-        onDrop={handleImageDrop}
-        className="border-2 border-dashed border-gray-600 rounded-lg p-4 text-center cursor-pointer"
-      >
-        <p className="text-xs text-black">Arrastra y suelta una imagen aquí o haz clic para seleccionar</p>
-        <input
-          id="imagen"
-          type="file"
-          accept="image/*"
-          onChange={handleImageChange}
-          className="hidden"
+        <InputField
+          id="vacunas"
+          name="vacunas"
+          type="text"
+          placeholder="Vacunas"
+          value={formData.vacunas}
+          onChange={handleInputChange}
         />
-        {image && <p className="mt-2 text-xs">Imagen seleccionada: {image.name}</p>}
-      </div>
 
-      <Button
-        type="submit"
-        className="w-full bg-orange-300 text-white rounded-[50px] py-2 px-4 text-sm font-medium hover:bg-orange-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-      >
-        Enviar
-      </Button>
-    </form>
+        <Select onValueChange={handleSelectChange('tipoAnimal')}>
+          <SelectTrigger className="w-[330px]">
+            <SelectValue placeholder="Selecciona el departamento" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Departamento</SelectLabel>
+              {departamentos && departamentos.length > 0 ? (
+                departamentos.map((departamento, index) => (
+                  <SelectItem value={departamento.descripcion}>{departamento.descripcion}</SelectItem>
+                        ))
+                      ) : (
+                        <SelectItem value="perro">No hay departamentos disponibles</SelectItem>
+                      )}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+
+        <div
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={handleImageDrop}
+          className="border-2 border-dashed border-gray-600 rounded-lg p-4 text-center cursor-pointer"
+        >
+          <p className="text-xs text-black">Arrastra y suelta una imagen aquí o haz clic para seleccionar</p>
+          <input
+            id="imagen"
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="hidden"
+          />
+          {image && <p className="mt-2 text-xs">Imagen seleccionada: {image.name}</p>}
+        </div>
+
+        <Button
+          type="submit"
+          className="w-full bg-orange-300 text-white rounded-[50px] py-2 px-4 text-sm font-medium hover:bg-orange-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        >
+          Enviar
+        </Button>
+      </form>
+    </>
   );
 }
