@@ -14,31 +14,31 @@ import { useRouter } from "next/navigation"
 
 // Definición de los tipos de los datos que obtienes de Supabase
 interface Publicacion {
-    nombre: string;
-    edad: number;
-    color: string;
-    peso: number;
-    vacunas: boolean | null; // Puede ser null si no tiene vacunas
-    condicion_medica: string | null; // Puede ser null si no tiene una condición médica
+  nombre: string;
+  edad: number;
+  color: string;
+  peso: number;
+  vacunas: boolean | null; // Puede ser null si no tiene vacunas
+  condicion_medica: string | null; // Puede ser null si no tiene una condición médica
+  imagen: string;
+  ciudad: string;
+  sexo: boolean;
+  descripcion: string;
+  usuarios: {
+    nombre1: string;
     imagen: string;
-    ciudad: string;
-    sexo: boolean;
-    descripcion: string;
-    usuarios: {
-      nombre1: string;
-      imagen: string;
-    };
-    categorias: {
-      tipo_mascotas: string;
-    };
-  }
-  
+  };
+  categorias: {
+    tipo_mascotas: string;
+  };
+}
+
 
 export default function PetInformation({ id, id_usuario }: { id: string, id_usuario: string }) {
-    const [isLiked, setIsLiked] = useState(false);
-    const [mascota, setMascota] = useState(null); 
-    const [loading, setLoading] = useState(true);  
-    const router = useRouter()
+  const [isLiked, setIsLiked] = useState(false);
+  const [mascota, setMascota] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter()
 
   useEffect(() => {
     const fetchMascota = async () => {
@@ -74,7 +74,7 @@ export default function PetInformation({ id, id_usuario }: { id: string, id_usua
       {/* Información */}
       <div className="flex-1 p-8 flex flex-col justify-between bg-white rounded-tr-[50px] rounded-br-[50px] shadow-[0_4px_8px_rgba(0,0,255,0.2),0_2px_4px_rgba(0,0,0,0.1)]">
         {/* Botón para regresar */}
-        <div className="bg-white rounded-full w-12 h-12 flex items-center justify-center cursor-pointer hover:scale-110" onClick={() => {router.push('/menu/inicio')}}>
+        <div className="bg-white rounded-full w-12 h-12 flex items-center justify-center cursor-pointer hover:scale-110" onClick={() => { router.push('/menu/inicio') }}>
           <button className="ml-[30px]">
             <FontAwesomeIcon icon={faAngleLeft} className="text-red-500 text-[32px]" />
           </button>
@@ -91,11 +91,11 @@ export default function PetInformation({ id, id_usuario }: { id: string, id_usua
               </div>
             </div>
             <button className="w-14 h-14 rounded-full bg-white shadow-[0_2px_5px_rgba(0,0,0,0.4)] cursor-pointer" onClick={handleLike}>
-                <FontAwesomeIcon 
-                  icon={faHeart} 
-                  className={`text-[25px] ${isLiked ? 'text-red-500' : 'text-gray-400'}`} 
-                />
-              </button>
+              <FontAwesomeIcon
+                icon={faHeart}
+                className={`text-[25px] ${isLiked ? 'text-red-500' : 'text-gray-400'}`}
+              />
+            </button>
           </div>
 
           {/* Descripción y detalles */}
@@ -126,49 +126,49 @@ export default function PetInformation({ id, id_usuario }: { id: string, id_usua
             </div>
           </div>
           <div className="mt-8 mb-8">
-  {/* Color de la mascota */}
-  <div className="text-sm">
-    <span className="text-gray-500">Color:</span> <span className="text-gray-600">{mascota.color || 'Indefinido'}</span>
-  </div>
+            {/* Color de la mascota */}
+            <div className="text-sm">
+              <span className="text-gray-500">Color:</span> <span className="text-gray-600">{mascota.color || 'Indefinido'}</span>
+            </div>
 
-  {/* Vacunas, solo si no es nulo */}
-  {mascota.vacunas !== null && (
-    <div className="text-sm">
-      <span className="text-gray-500">Vacunas:</span> <span className="text-gray-600">{mascota.vacunas ? 'Sí' : 'No'}</span>
-    </div>
-  )}
+            {/* Vacunas, solo si no es nulo */}
+            {mascota.vacunas !== null && (
+              <div className="text-sm">
+                <span className="text-gray-500">Vacunas:</span> <span className="text-gray-600">{mascota.vacunas ? 'Sí' : 'No'}</span>
+              </div>
+            )}
 
-  {/* Condición Médica, solo si no es nulo */}
-  {mascota.condicion_medica && (
-    <div className="text-sm">
-      <span className="text-gray-500">Condición Médica:</span> <span className="text-gray-600">{mascota.condicion_medica}</span>
-    </div>
-  )}
+            {/* Condición Médica, solo si no es nulo */}
+            {mascota.condicion_medica && (
+              <div className="text-sm">
+                <span className="text-gray-500">Condición Médica:</span> <span className="text-gray-600">{mascota.condicion_medica}</span>
+              </div>
+            )}
 
-  {/* Especie de la mascota */}
-  <div className="text-sm">
-    <span className="text-gray-500">Especie:</span> <span className="text-gray-600">{mascota.categorias.tipo_mascotas || 'Indefinido'}</span>
-  </div>
+            {/* Especie de la mascota */}
+            <div className="text-sm">
+              <span className="text-gray-500">Especie:</span> <span className="text-gray-600">{mascota.categorias.tipo_mascotas || 'Indefinido'}</span>
+            </div>
 
-  {/* Descripción */}
-  <div className="text-base mt-4">
-    <span className="text-gray-500">Descripción:</span> <span className="text-gray-600">{mascota.descripcion || 'Indefinido'}</span>
-  </div>
-</div>
+            {/* Descripción */}
+            <div className="text-base mt-4">
+              <span className="text-gray-500">Descripción:</span> <span className="text-gray-600">{mascota.descripcion || 'Indefinido'}</span>
+            </div>
+          </div>
 
 
 
           {/* Imagen y nombre del dueño */}
           <div className="flex items-center mb-6">
-          <div className="w-[60px] h-[60px] overflow-hidden rounded-full">
-          <Image
-            src={mascota.usuarios.imagen}
-            alt="Propietario"
-            width={60}
-            height={60}
-            className="object-cover"
-          />
-        </div>
+            <div className="w-[60px] h-[60px] overflow-hidden rounded-full">
+              <Image
+                src={mascota.usuarios.imagen}
+                alt="Propietario"
+                width={60}
+                height={60}
+                className="object-cover"
+              />
+            </div>
 
             <div className="ml-4">
               <p className="font-bold"> {mascota.usuarios.nombre1} </p>
@@ -179,9 +179,9 @@ export default function PetInformation({ id, id_usuario }: { id: string, id_usua
 
         {/* Botón de Adoptar */}
         <div>
-        <button className="w-3/5 py-3 bg-orange-300 text-white rounded-3xl text-lg hover:bg-orange-400 transition-colors mx-auto block" key={id} onClick={() => {router.push(`/menu/mensaje`) }}>
-        Adoptar
-        </button>
+          <button className="w-3/5 py-3 bg-orange-300 text-white rounded-3xl text-lg hover:bg-orange-400 transition-colors mx-auto block" key={id} onClick={() => { router.push(`/menu/mensaje`) }}>
+            Adoptar
+          </button>
 
 
         </div>
