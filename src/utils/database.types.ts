@@ -158,6 +158,21 @@ export type Database = {
           },
         ]
       }
+      departamentos: {
+        Row: {
+          descripcion: string
+          id: number
+        }
+        Insert: {
+          descripcion: string
+          id?: number
+        }
+        Update: {
+          descripcion?: string
+          id?: number
+        }
+        Relationships: []
+      }
       estados: {
         Row: {
           estado: string
@@ -226,7 +241,7 @@ export type Database = {
           id_usuario: number | null
         }
         Insert: {
-          fecha: string
+          fecha?: string
           id_favorito?: number
           id_publicacion?: number | null
           id_usuario?: number | null
@@ -366,13 +381,16 @@ export type Database = {
           ciudad: string | null
           color: string | null
           condicion_medica: string | null
+          descripcion: string | null
           edad: number | null
           fecha_creacion: string
+          id_departamento: number | null
           id_publicacion: number
           id_usuario: number | null
           imagen: string | null
           nombre: string | null
           peso: number | null
+          sexo: boolean | null
           tipo_animal: number | null
           vacunas: boolean | null
         }
@@ -380,13 +398,16 @@ export type Database = {
           ciudad?: string | null
           color?: string | null
           condicion_medica?: string | null
+          descripcion?: string | null
           edad?: number | null
           fecha_creacion: string
+          id_departamento?: number | null
           id_publicacion?: number
           id_usuario?: number | null
           imagen?: string | null
           nombre?: string | null
           peso?: number | null
+          sexo?: boolean | null
           tipo_animal?: number | null
           vacunas?: boolean | null
         }
@@ -394,17 +415,27 @@ export type Database = {
           ciudad?: string | null
           color?: string | null
           condicion_medica?: string | null
+          descripcion?: string | null
           edad?: number | null
           fecha_creacion?: string
+          id_departamento?: number | null
           id_publicacion?: number
           id_usuario?: number | null
           imagen?: string | null
           nombre?: string | null
           peso?: number | null
+          sexo?: boolean | null
           tipo_animal?: number | null
           vacunas?: boolean | null
         }
         Relationships: [
+          {
+            foreignKeyName: "publicaciones_id_departamento_fkey"
+            columns: ["id_departamento"]
+            isOneToOne: false
+            referencedRelation: "departamentos"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "publicaciones_id_usuario_fkey"
             columns: ["id_usuario"]
@@ -491,6 +522,7 @@ export type Database = {
           id_mascota_favorita: number | null
           id_tipo_usuario: number | null
           id_usuario: number
+          imagen: string | null
           nombre1: string | null
           nombre2: string | null
           reset_token: string | null
@@ -506,6 +538,7 @@ export type Database = {
           id_mascota_favorita?: number | null
           id_tipo_usuario?: number | null
           id_usuario?: number
+          imagen?: string | null
           nombre1?: string | null
           nombre2?: string | null
           reset_token?: string | null
@@ -521,6 +554,7 @@ export type Database = {
           id_mascota_favorita?: number | null
           id_tipo_usuario?: number | null
           id_usuario?: number
+          imagen?: string | null
           nombre1?: string | null
           nombre2?: string | null
           reset_token?: string | null
@@ -652,4 +686,19 @@ export type Enums<
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof PublicSchema["CompositeTypes"]
+    | { schema: keyof Database },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
+    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never

@@ -68,7 +68,7 @@ export default function Home() {
     };
 
     obtenerCategorias();
-    seleccionarMascotasPorIdCatIdDepa(0, 8);
+    seleccionarMascotasPorIdCatIdDepa(0, 0);
   }, []);
 
   /* Obtiene los departamentos y los carga en el estado departamentos */
@@ -147,7 +147,7 @@ export default function Home() {
             <MenuButton>
               <div>
                 <div className="flex gap-2 text-sm text-gray-400 items-center">Ubicacion <FontAwesomeIcon icon={faChevronDown} className="w-3" /></div>
-                <span className="font-extrabold">{departamentos.find(dep => dep.id === depaSeleccionado)?.descripcion},</span> HN
+                <span className="font-extrabold">{depaSeleccionado === 0 ? 'Todos' : departamentos.find(dep => dep.id === depaSeleccionado)?.descripcion},</span> HN
                 
               </div>
             </MenuButton>
@@ -157,6 +157,16 @@ export default function Home() {
           transition
           className="absolute left-0 z-40 mt-2 w-max origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none justify-start data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in grid grid-cols-3 gap-x-4"
         >
+        <MenuItem key={0} onClick={() => {
+        seleccionarMascotasPorIdCatIdDepa(0, 0);
+        }} as="div" className="flex justify-start justify-center"> 
+          <a
+            onClick={() => setCurrentIndex(0)}
+            className="block text-left w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:text-gray-900 text-center"
+          >
+            Todos
+          </a>
+        </MenuItem>
   {departamentos && departamentos.length > 0 ? (
     departamentos.map((departamento, index) => (
       <MenuItem key={departamento.id} onClick={() => {

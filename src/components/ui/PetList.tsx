@@ -14,7 +14,7 @@ const PetList = ({ pets }: { pets: Pet[] }) => {
   const [pet, setPet] = useState<Pet[]>([]);
 
   useEffect(() => {
-    
+    console.log("Pets:", pets);
     setPet(pets);
   }, [pets]);
 
@@ -25,13 +25,14 @@ const PetList = ({ pets }: { pets: Pet[] }) => {
       
         {pet &&pet.map((pet, index) => {
           const colors = colorPairs[index % colorPairs.length];
+          const ciudad = pet.departamentos ? pet.departamentos.descripcion : "Descripción no disponible";
           return (
             <PetCard
               key={pet.id_publicacion}
               id={pet.id_publicacion}
               nombre={pet.nombre}
               edad={pet.edad}
-              ciudad={pet.ciudad}
+              ciudad={ciudad}
               imagen={pet.imagen}
               footerBg={colors.footerBg}
               svgBg={colors.svgBg}
