@@ -18,6 +18,7 @@ export const getMascotaEspecifica = async (id: number) => {
     ciudad,
     sexo,
     descripcion,
+    departamentos(descripcion),
     usuarios (nombre1, imagen),
     categorias (tipo_mascotas)
   `)
