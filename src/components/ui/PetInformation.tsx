@@ -72,7 +72,7 @@ export default function PetInformation({ id, id_usuario }: { id: string, id_usua
   return (
     <div className="flex p-5 h-screen">
       {/* Información */}
-      <div className="flex-1 p-8 flex flex-col justify-between bg-white rounded-tr-[50px] rounded-br-[50px] shadow-[0_4px_8px_rgba(0,0,255,0.2),0_2px_4px_rgba(0,0,0,0.1)]">
+      <div className="flex-1 p-8 flex flex-col justify-between">
         {/* Botón para regresar */}
         <div className="bg-white rounded-full w-12 h-12 flex items-center justify-center cursor-pointer hover:scale-110" onClick={() => { router.push('/menu/inicio') }}>
           <button className="ml-[30px]">
