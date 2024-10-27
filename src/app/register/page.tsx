@@ -122,7 +122,7 @@ export default function Register() {
         </div>
 
         {/* Botón de envío */}
-        <button formAction={handleSignUp} className="hover:scale-105 mt-12 w-[270px] h-[40px] bg-[#FFA07A] rounded-[20px] text-sm text-white">
+        <button formAction={handleSignUp} className="hover:scale-105 mt-12 w-[270px] h-[40px] bg-[#FFA07A] rounded-[20px] text-sm text-white hover:bg-[#ff9060]">
           Registrarme
         </button>
 

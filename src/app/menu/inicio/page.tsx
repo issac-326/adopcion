@@ -77,28 +77,6 @@ export default function Home() {
 
   }, [depaSeleccionado]);
 
-
-  /* Obtiene los departamentos y los carga en el estado departamentos */
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsSticky(!entry.isIntersecting); // Cambia el estado a sticky cuando ya no esté intersectando
-      },
-      { root: null, threshold: [0.5] } // Activa cuando el div está al 50% fuera de la vista
-    );
-
-    if (stickyRef.current) {
-      observer.observe(stickyRef.current);
-    }
-
-    return () => {
-      if (stickyRef.current) {
-        observer.unobserve(stickyRef.current);
-      }
-    };
-  }, []);
-
-
   /* Traer los departamentos al cargar la pagina */
   useEffect(() => {
     try {
@@ -116,22 +94,31 @@ export default function Home() {
     }
   }, [])
 
+  
   useEffect(() => {
-    setLoadingPets(true);
+    console.log("useEffect called");
+  
     const handleScroll = () => {
-      const offset = window.scrollY; // Cambia esto si el scroll no es en el documento completo
-      setIsSticky(offset > 0); // Ajusta la condición según lo que necesites
+      console.log("Scroll event triggered");
+      if (stickyRef.current) {
+        const offsetTop = stickyRef.current.getBoundingClientRect().top;
+        console.log('offsetTop:', offsetTop);
+        setIsSticky(offsetTop <= 0);
+      } else {
+        console.log('stickyRef.current is null');
+      }
     };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
+  
+    document.addEventListener('scroll', handleScroll); // Cambiado a `document`
+    
+    return () => document.removeEventListener('scroll', handleScroll);
+  }, [stickyRef]);
+  
+  
+  
+  
 
   /* cada que cambiemos las mascotas seleccionadas las volvera a renderizar */
-
-
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % bannerImages.length);
@@ -322,8 +309,9 @@ export default function Home() {
       <h2 className="text-texto mt-5 font-montserrat text-xl font-medium">Categorias</h2>
       <div
         ref={stickyRef}
-        className={`py-2 w-full sticky z-20 top-0 bg-white transition-shadow duration-300 ${isSticky ? 'shadow-lg border-2' : ''
-          }`}
+        className={`py-2 w-full sticky z-20 top-0 bg-white transition-shadow duration-300 ${
+          isSticky ? 'shadow-[0_4px_8px_rgba(0,0,255,0.2),0_2px_4px_rgba(0,0,0,0.1)]' : ''
+        }`}
       >
         <section className="flex justify-between h-[40px] gap-4">
           <div
