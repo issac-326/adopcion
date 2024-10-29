@@ -1,7 +1,6 @@
-'use client'
+'use client';
 
 import React from 'react';
-
 
 interface InputProps {
   id: string;
@@ -10,9 +9,9 @@ interface InputProps {
   value: string;
   placeholder: string;
   required?: boolean;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void; // Hacer onChange opcional
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   minLength?: number;
-  readOnly?: boolean;// Añadimos readOnly como una propiedad opcional
+  readOnly?: boolean;
 }
 
 const InputField: React.FC<InputProps> = ({
@@ -22,23 +21,30 @@ const InputField: React.FC<InputProps> = ({
   placeholder,
   value,
   onChange,
-  readOnly = false, // Valor por defecto para readOnly
+  readOnly = false,
 }) => {
   return (
+    <div className="relative w-[330px] mb-5">
       <input
         id={id}
         name={name}
         type={type}
-        placeholder={placeholder}
+        placeholder=" "
         value={value}
-        onChange={onChange}// Esto será opcional
-        readOnly={readOnly}// Aplicamos readOnly
-        className={`focus:outline-none focus:border-blue-800/2 placeholder:text-gray-400 text-xs text-black rounded-[50px] pl-5 pt-2 mb-5 w-[330px] h-[35px] shadow-[0_4px_4px_rgba(0,0,0,0.25)] ${
-          readOnly ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-white'
+        onChange={onChange}
+        readOnly={readOnly}
+        className={`peer h-10 w-full border border-gray-300 rounded-full bg-transparent px-4 pt-5 pb-1 outline-none text-sm transition duration-200 shadow-[0_4px_4px_rgba(0,0,0,0.25)] focus:border-orange-400 ${
+          readOnly ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : 'bg-white'
         }`}
       />
+      <label
+        htmlFor={id}
+        className="absolute left-3 top-2 bg-transparent px-1 text-gray-500 text-xs transition-all duration-200 peer-placeholder-shown:top-4 peer-placeholder-shown:left-3 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-1 peer-focus:text-xs peer-focus:text-orange-400"
+      >
+        {placeholder}
+      </label>
+    </div>
   );
 };
-
 
 export default InputField;
