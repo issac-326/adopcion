@@ -51,7 +51,7 @@ export default function ResetPassword() {
       </div>
       <div className="flex flex-col items-center">
 
-        <div>
+        <div className="mt-5">
           <InputField id="email" name="email" type="email" placeholder="" value={formData.email} onChange={handleInputChange} />
           {errorMessage && <p className="mt-2 pl-5 animate-shake text-red-500 text-xs">{errorMessage}</p>}
         </div>

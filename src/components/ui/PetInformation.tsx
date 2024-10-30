@@ -8,6 +8,7 @@ import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft, faLocationDot, faPaw } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from "next/navigation";
+import PetInformationSkeleton  from '@/components/ui/PetInformationSkeleton';
 
 export default function PetInformation({ id, id_usuario }: { id: string, id_usuario: string }) {
   const [isLiked, setIsLiked] = useState(false);
@@ -40,20 +41,21 @@ export default function PetInformation({ id, id_usuario }: { id: string, id_usua
     }
   };
 
-  if (!mascota) return <div>Cargando...</div>;
+  console.log('mascota', mascota)
+  if (!mascota) return <PetInformationSkeleton />;
 
   return (
     <div className="bg-white min-h-screen flex flex-col lg:flex-row-reverse p-5">
       {/* Imagen de la mascota */}
-<div className="flex-1 flex justify-center items-center rounded-br-[50px] mt-8 lg:mt-0">
-  <Image
-    src={mascota.imagen}
-    alt="Mascota"
-    width={300}
-    height={300}
-    className="shadow-[0_0px_15px_rgba(0,0,0,0.8)] rounded-lg sm:w-[200px] sm:h-[200px] lg:w-[500px] lg:h-[500px]"
-  />
-</div>
+      <div className="flex-1 flex justify-center items-center rounded-br-[50px] mt-8 lg:mt-0">
+        <Image
+          src={mascota.imagen}
+          alt="Mascota"
+          width={300}
+          height={300}
+          className="shadow-[0_0px_15px_rgba(0,0,0,0.8)] rounded-lg sm:w-[200px] sm:h-[200px] lg:w-[500px] lg:h-[500px]"
+        />
+      </div>
 
       {/* Información */}
       <div className="flex-1 flex flex-col justify-between p-8">

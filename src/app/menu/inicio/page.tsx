@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import PetList from '@/components/ui/PetList';
 import Pet from "@/types/Pet";
 import Link from "next/link";
@@ -30,16 +30,106 @@ const colorsPaws = ["#9e4f4a", "#4a6079", "#a95b3c", "#6f8e65"];
 
 export default function Home() {
   const [selectedMascotas, setSelectedMascotas] = useState<Pet[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<number>(0);
   const [categories, setCategories] = useState<Categoria[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [loadingPets, setLoadingPets] = useState<boolean>(true);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isOffcanvasOpen, setIsOffcanvasOpen] = useState(false);
-  const stickyRef = useRef(null);
-  const [depaSeleccionado, setDepaSeleccionado] = useState<number | null>(null);
+  const categoriesRef = useRef(null);
+  const [depaSeleccionado, setDepaSeleccionado] = useState<number | null>(0);
   const [isSticky, setIsSticky] = useState(false);
   const [departamentos, setDepartamentos] = useState([]);
+  const [page, setPage] = useState(0); // Controla la página actual para la paginación
+  const observerRef = useRef(null); // Referencia al sentinela
+  const [isInitialRender, setIsInitialRender] = useState(true);
+  const [hasMorePets, setHasMorePets] = useState(true);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (categoriesRef.current) {
+        const rect = categoriesRef.current.getBoundingClientRect();
+        console.log("recto", rect);  // Esto debe imprimir la información de posición
+        setIsSticky(rect.top <= 0);
+      } else {
+        console.log("categoriesRef.current es null");
+      }
+      console.log("scrolling...");
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    // Remueve el listener cuando el componente se desmonta
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+
+  useLayoutEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      console.log("entries", entries);
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          console.log("Sentinela visible, cargando más mascotas...");
+          console.log("pagen", page);
+          setPage((prevPage) => {
+            const newPage = prevPage + 1;
+            console.log("pagenx", newPage);
+            return newPage;
+          });
+          observer.unobserve(entry.target);
+        }
+      });
+    });
+
+    if (observerRef.current) {
+      observer.observe(observerRef.current); // Observa el div al final de la lista
+      console.log("Observando:", observerRef.current);
+    } else {
+      console.warn("observerRef.current es null, no se puede observar el sentinela");
+    }
+
+    return () => {
+      if (observerRef.current) {
+        observer.unobserve(observerRef.current);
+      }
+    };
+  }, [observerRef.current]); 
+
+/*   useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      console.log("entries", entries);
+      if (entries[0].isIntersecting) {
+        setPage((prevPage) => {
+          const newPage = prevPage + 1; // Incrementa la página cuando el sentinela es visible
+          console.log("pagen", newPage);
+          return newPage;
+        });
+      }
+    });
+  
+    console.log("observerRef.current", observerRef.current);
+    if (observerRef.current) {
+      observer.observe(observerRef.current);
+    }
+  
+    return () => {
+      if (observerRef.current) {
+        observer.unobserve(observerRef.current);
+      }
+    };
+  }, [observerRef]); // Asegúrate de que el array de dependencias sea correcto */
+
+useEffect(() => {
+  if (isInitialRender) {
+    setIsInitialRender(false);
+    return;
+  }
+
+    console.log("pagennn", page);
+    seleccionarMascotasPorIdCatIdDepa(selectedCategory, depaSeleccionado , page);
+  }, [page]); 
 
   /* obtiene las categorias y las carga en el estado nomas cargar la pagina pone el primer departamento seleccionado que de momento es siempre FM*/
   useEffect(() => {
@@ -55,27 +145,62 @@ export default function Home() {
     };
 
     obtenerCategorias();
-    seleccionarMascotasPorIdCatIdDepa(0, 0);
+    seleccionarMascotasPorIdCatIdDepa(selectedCategory, depaSeleccionado, 0);
   }, []);
 
-  const seleccionarMascotasPorIdCatIdDepa = async (id: number, id_departamento: number) => {
+  const seleccionarMascotasPorIdCatIdDepa = async (id = 0, id_departamento, page = 0) => {
+    if (!hasMorePets) {
+      console.log("No hay más mascotas para cargar.");
+      return; // Si no hay más mascotas, detenemos la ejecución
+    }
 
     try {
+      console.log("Seleccionando mascotas por categoría y departamento:", id, id_departamento, page);
       setLoadingPets(true);
-      const data = await getCategoriaEspecifica(id, id_departamento);
-      setSelectedMascotas(data ?? []);
-      setDepaSeleccionado(id_departamento);
+      const limit = 10; // Número de mascotas a cargar por página
+      const offset = page * limit;
+
+      const data = await getCategoriaEspecifica(id, id_departamento, limit, offset);
+      
+      // Si la cantidad de datos retornados es menor que el límite, ya no hay más mascotas para cargar
+      if (data.length < limit) {
+        setHasMorePets(false); // Indica que no hay más mascotas
+      }
+
+      // Añade las nuevas mascotas a la lista existente
+      setSelectedMascotas((prevMascotas) => [...prevMascotas, ...(data ?? [])]);
     } catch (error) {
-      setLoadingPets(false);
       console.error("Error al obtener la categoría específica:", error);
+    } finally {
+      setLoadingPets(false);
     }
-    setLoadingPets(false);
   };
-
+  
+  
+  /* Se ejecuta cuando cambia el departamento */
   useEffect(() => {
-    setSelectedCategory(null);
-
+    if (isInitialRender) {
+      // La primera vez que se renderiza, marcamos el flag como falso
+      setIsInitialRender(false);
+      return;
+    }
+    // Solo se ejecuta después del primer renderizado
+    setSelectedCategory(0);
+    setHasMorePets(true);
+    setSelectedMascotas([]);
+    setPage(0);
   }, [depaSeleccionado]);
+
+  // Este efecto solo se ejecuta cuando cambia 'selectedCategory'
+  useEffect(() => {
+    if (isInitialRender) {
+      return;
+    }
+    // Solo se ejecuta después del primer renderizado
+    setSelectedMascotas([]);
+    setPage(0);
+    setHasMorePets(true);
+  }, [selectedCategory]);
 
   /* Traer los departamentos al cargar la pagina */
   useEffect(() => {
@@ -93,33 +218,10 @@ export default function Home() {
       console.error("Error al obtener los departamentos:", error);
     }
   }, [])
-
-  
-  useEffect(() => {
-    console.log("useEffect called");
-  
-    const handleScroll = () => {
-      console.log("Scroll event triggered");
-      if (stickyRef.current) {
-        const offsetTop = stickyRef.current.getBoundingClientRect().top;
-        console.log('offsetTop:', offsetTop);
-        setIsSticky(offsetTop <= 0);
-      } else {
-        console.log('stickyRef.current is null');
-      }
-    };
-  
-    document.addEventListener('scroll', handleScroll); // Cambiado a `document`
     
-    return () => document.removeEventListener('scroll', handleScroll);
-  }, [stickyRef]);
-  
-  
-  
-  
 
-  /* cada que cambiemos las mascotas seleccionadas las volvera a renderizar */
-  useEffect(() => {
+  /* cada que cambiemos lhas mascotas seleccionadas las volvera a renderizar */
+useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % bannerImages.length);
     }, 5000);
@@ -150,12 +252,9 @@ export default function Home() {
             transition
             className="absolute left-0 z-40 mt-2 w-max origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none justify-start data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in grid grid-cols-3 gap-x-4"
           >
-                  <MenuItem key={0} onClick={() => {
-        seleccionarMascotasPorIdCatIdDepa(0, 0);
-        }} as="div" className="flex justify-start justify-center"> 
+                  <MenuItem key={0} onClick={() => setDepaSeleccionado(0)} as="div" className="flex justify-start justify-center"> 
           <a
-            onClick={() => setCurrentIndex(0)}
-            className="block text-left w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:text-gray-900 text-center"
+            className="block text-left w-max-8 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:text-gray-900 text-center"
           >
             Todos
           </a>
@@ -163,10 +262,9 @@ export default function Home() {
   {departamentos && departamentos.length > 0 ? (
               departamentos.map((departamento, index) => (
                 <MenuItem key={departamento.id} onClick={() => {
-                  seleccionarMascotasPorIdCatIdDepa(0, departamento.id);
+                  setDepaSeleccionado(departamento.id)
                 }} as="div" className="flex justify-start justify-center">
                   <a
-                    onClick={() => setCurrentIndex(index)}
                     className="block text-left w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:text-gray-900 text-center"
                   >
                     {departamento.descripcion}
@@ -308,25 +406,18 @@ export default function Home() {
       {/* Categorías */}
       <h2 className="text-texto mt-5 font-montserrat text-xl font-medium">Categorias</h2>
       <div
-        ref={stickyRef}
+      id="categorias"
+        ref={categoriesRef}
         className={`py-2 w-full sticky z-20 top-0 bg-white transition-shadow duration-300 ${
           isSticky ? 'shadow-[0_4px_8px_rgba(0,0,255,0.2),0_2px_4px_rgba(0,0,0,0.1)]' : ''
         }`}
       >
         <section className="flex justify-between h-[40px] gap-4">
           <div
-            className={`flex-1 bg-[#21888d] font-light p-2 rounded-lg relative hover:scale-105 flex items-center justify-center ${selectedCategory === null ? 'border-2 border-[#020817]' : ''
+            className={`flex-1 bg-[#21888d] font-light p-2 rounded-lg relative hover:scale-105 flex items-center justify-center ${selectedCategory === 0 ? 'border-2 border-[#020817]' : ''
               }`}
             onClick={() => {
-              setSelectedCategory(null);
-
-              // Comprobar que depaSeleccionado no sea null
-              if (depaSeleccionado !== null) {
-                seleccionarMascotasPorIdCatIdDepa(0, depaSeleccionado);
-              } else {
-                // Manejo adicional si depaSeleccionado es null (opcional)
-                console.warn('depaSeleccionado es null, no se llamará a seleccionarMascotasPorIdCatIdDepa');
-              }
+              setSelectedCategory(0);
             }}>
             <p className="font-normal text-base text-center">Todos</p>
             <FontAwesomeIcon
@@ -347,14 +438,6 @@ export default function Home() {
                 style={{ backgroundColor: colors[index] }} // Aplicando el color dinámicamente
                 onClick={() => {
                   setSelectedCategory(category.id_categoria);
-
-                  // Comprobar que depaSeleccionado no sea null
-                  if (depaSeleccionado !== null) {
-                    seleccionarMascotasPorIdCatIdDepa(category.id_categoria, depaSeleccionado);
-                  } else {
-                    // Manejo adicional si depaSeleccionado es null (opcional)
-                    console.warn('depaSeleccionado es null, no se llamará a seleccionarMascotasPorIdCatIdDepa');
-                  }
                 }}
               >
                 <p className="font-normal text-base text-center">{category.tipo_mascotas}</p>
@@ -376,14 +459,25 @@ export default function Home() {
       </section>
 
       {loadingPets ? (
-        <PetCardSkeleton />
-      ) : (
-        selectedMascotas.length > 0 ? (
-          <PetList pets={selectedMascotas} />
-        ) : (
-          <div className='text-[##f5a473]'>No hay mascotas disponibles 😿</div>
-        )
-      )}
+  <>
+    {selectedMascotas.length > 0 ? (
+      <>
+        <PetList pets={selectedMascotas} />
+      </>
+    ) : (
+      <PetCardSkeleton />
+    )}
+  </>
+) : (
+  <>
+    {selectedMascotas.length > 0 ? (
+      <PetList pets={selectedMascotas} />
+    ) : (
+      <div className='text-[#f5a473]'>No hay mascotas disponibles 😿</div>
+    )}
+    <div id='obsevando' ref={observerRef} />
+  </>
+)}
 
 
     </>
