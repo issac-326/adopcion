@@ -17,6 +17,7 @@ interface InputProps { // Propiedades que recibe el componente
   imagen: string;
   footerBg: string;
   svgBg: string;
+  isMyPet: boolean;
 }
 
 const PetCard = ({
@@ -27,6 +28,7 @@ const PetCard = ({
   edad,
   footerBg,
   svgBg,
+  isMyPet = false,
 }: InputProps) => {
   const router = useRouter();
   const userId = localStorage.getItem('userId');
@@ -61,7 +63,8 @@ const PetCard = ({
 <div
   className="flex flex-col cursor-pointer hover:scale-102 transition-transform duration-300 relative border w-full h-[272px] rounded-lg shadow-lg overflow-hidden"
   key={id}
-  onClick={() => router.push(`/menu/mascota/${id}`)} // Redirige al hacer clic en el contenedor
+  onClick={() => router.push(isMyPet ? `/menu/mascota/${id}` : `/menu/perfil/mascotas/${id}`)
+} // Redirige al hacer clic en el contenedor
 >
   <header className="relative h-4/5 overflow-hidden">
     <Image
@@ -72,7 +75,7 @@ const PetCard = ({
       height={50}
       style={{ objectFit: 'cover' }}
     />
-    <div
+    {!isMyPet && (    <div
       className="absolute top-2 right-2 bg-white rounded-full w-8 h-8 flex items-center justify-center hover:scale-110"
       onClick={(e) => {
         e.stopPropagation();
@@ -80,7 +83,8 @@ const PetCard = ({
       }}
     >
       <FontAwesomeIcon icon={faHeart} className={`${isLiked ? 'text-red-500' : 'text-gray-400'}`} />
-    </div>
+    </div>)}
+
     <h1
       className="absolute bottom-0 right-2 text-white font-semibold text-2xl z-10"
       style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)' }}

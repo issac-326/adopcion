@@ -188,7 +188,6 @@ useEffect(() => {
     setSelectedCategory(0);
     setHasMorePets(true);
     setSelectedMascotas([]);
-    setPage(0);
   }, [depaSeleccionado]);
 
   // Este efecto solo se ejecuta cuando cambia 'selectedCategory'
@@ -198,8 +197,8 @@ useEffect(() => {
     }
     // Solo se ejecuta después del primer renderizado
     setSelectedMascotas([]);
-    setPage(0);
     setHasMorePets(true);
+    setPage(0);
   }, [selectedCategory]);
 
   /* Traer los departamentos al cargar la pagina */

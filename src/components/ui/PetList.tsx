@@ -10,7 +10,12 @@ const colorPairs = [
   { footerBg: "#cee8f0", svgBg: "#add8e6" },
 ];
 
-const PetList = ({ pets }: { pets: Pet[] }) => {
+interface PetListProps {
+  pets: Pet[];
+  areMyPets?: boolean;
+}
+
+const PetList: React.FC<PetListProps> = ({ pets, areMyPets = false }) => {  
   const [pet, setPet] = useState<Pet[]>([]);
 
   useEffect(() => {
@@ -36,6 +41,7 @@ const PetList = ({ pets }: { pets: Pet[] }) => {
               imagen={pet.imagen}
               footerBg={colors.footerBg}
               svgBg={colors.svgBg}
+              isMyPet={areMyPets}
             />
           );
         })}

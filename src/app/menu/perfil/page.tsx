@@ -3,11 +3,16 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
 import { toast } from "react-toastify";
-import { getUserProfile, updateUserProfile } from './actions';
+import { getMyPets, getUserProfile, updateUserProfile } from './actions';
 import InputField from "@/components/ui/InputField"; 
 import { Button } from "@/components/ui/button"; 
+import PetList from "@/components/ui/PetList";
+import PetCardSkeleton from "@/components/ui/petCardSkeleton";
 
 const UpdateProfile = () => {
+
+  const userId = localStorage.getItem('userId'); 
+
   const [nombre1, setNombre1] = useState("");
   const [nombre2, setNombre2] = useState("");
   const [apellido1, setApellido1] = useState("");
@@ -25,9 +30,12 @@ const UpdateProfile = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  const [myPets, setMyPets] = useState([]);
+  const [loadingPets, setLoadingPets] = useState(false);
+
+
   useEffect(() => {
     const fetchProfile = async () => {
-      const userId = localStorage.getItem('userId'); 
 
       if (userId) {
         try {
@@ -59,6 +67,29 @@ const UpdateProfile = () => {
 
     fetchProfile();
   }, [router]);
+
+  useEffect(() => {
+    const fetchPets = async () => {
+      if (!userId) {
+        return;
+      }
+
+      setLoadingPets(true);
+
+      try {
+        const pets = await getMyPets(userId);
+        setMyPets(pets || []);
+      } catch (error) {
+        console.error("Error fetching pets:", error);
+        toast.error("Error al obtener las mascotas.");
+      } finally {
+        setLoadingPets(false);
+      }
+    };
+
+    fetchPets();
+  }, [userId]);
+
 
   const submitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,7 +128,6 @@ const UpdateProfile = () => {
     }
 
     try {
-      const userId = localStorage.getItem('userId'); 
 
       if (!userId) {
         throw new Error("No se encontró ningún ID de usuario. Inicie sesión.");
@@ -250,6 +280,17 @@ const UpdateProfile = () => {
 
         </form>
       </div>
+
+      {loadingPets ?
+        <PetCardSkeleton /> :  
+        <div>
+      <h2 className="text-texto mt-5 font-montserrat text-xl font-medium">Mis Mascotas</h2>
+      <hr />
+      <PetList pets={myPets} areMyPets={true} />
+        </div>    
+      }
+ 
+
     </>
   );
 };
