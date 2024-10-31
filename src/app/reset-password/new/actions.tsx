@@ -5,8 +5,9 @@ import { createClient } from '@/utils/supabase/server'
 export const changePassword = async (formData : FormData, email : string) => {
   const supabase = createClient()
 
+  const password = formData.get('password');
   const salt = bcrypt.genSaltSync(10);
-  const hashedPassword = bcrypt.hashSync(formData.get('password')?.toString(), salt);
+  const hashedPassword = bcrypt.hashSync(password, salt);
 
   const { data, error } = await supabase
     .from('usuarios')

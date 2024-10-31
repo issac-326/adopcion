@@ -14,7 +14,7 @@ interface InputProps {
   readOnly?: boolean;
 }
 
-const InputField: React.FC<InputProps> = ({
+const InputFieldSmall: React.FC<InputProps> = ({
   id,
   name,
   type,
@@ -24,7 +24,7 @@ const InputField: React.FC<InputProps> = ({
   readOnly = false,
 }) => {
   return (
-    <div className="relative w-[330px] mt-5">
+    <div className="relative w-[250px] mb-2">
       <input
         id={id}
         name={name}
@@ -47,4 +47,4 @@ const InputField: React.FC<InputProps> = ({
   );
 };
 
-export default InputField;
+export default InputFieldSmall;

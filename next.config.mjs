@@ -1,10 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    reactStrictMode: true,
+    reactStrictMode: false,
     images: {
-      domains: ['res.cloudinary.com'], // Agrega el dominio aquí
-    },
-  };
-  
-  export default nextConfig;
-  
+        domains: ['res.cloudinary.com'],
+      },
+
+};
+
+export default nextConfig;

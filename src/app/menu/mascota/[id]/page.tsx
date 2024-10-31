@@ -7,5 +7,6 @@ export default function MascotaPage({ params }) {
   const userId = localStorage.getItem('userId');
 
   // Pasamos tanto el id de la mascota como el id_usuario fijo al componente PetInformation
+    
   return <PetInformation id={id} id_usuario={userId} />;
 }

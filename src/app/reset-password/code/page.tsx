@@ -68,12 +68,12 @@ export default function Code() {
         <p className="text-[24px] font-bold text-black">Código</p>
         <p className="text-[12px] text-black">Por favor ingresa tu código para verificar</p>
       </div>
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center mt-5">
 
         <div>
           <InputField id="code" name="code" type="text" placeholder="" value={formData.code} onChange={handleInputChange} />
         </div>
-        {isIncorrect && <p className="text-red-500 text-sm mt-2 animate-shake text-left">Incorrect code</p>}
+        {isIncorrect && <p className="text-red-500 text-sm mt-2 animate-shake text-left">Código Incorrecto</p>}
         <div className="mt-5">
           <button className="bg-[#FFA07A] text-white rounded-[50px] pl-5 mt-5 w-[330px] h-[35px] shadow-[0_4px_4px_rgba(0,0,0,0.25)]" formAction={handleSendCode}>Continue</button>
         </div>

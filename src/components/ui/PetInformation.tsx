@@ -8,6 +8,7 @@ import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft, faLocationDot, faPaw } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from "next/navigation";
+import PetInformationSkeleton  from '@/components/ui/PetInformationSkeleton';
 
 export default function PetInformation({ id, id_usuario }: { id: string, id_usuario: string }) {
   const [isLiked, setIsLiked] = useState(false);
@@ -40,7 +41,8 @@ export default function PetInformation({ id, id_usuario }: { id: string, id_usua
     }
   };
 
-  if (!mascota) return <div>Cargando...</div>;
+  console.log('mascota', mascota)
+  if (!mascota) return <PetInformationSkeleton />;
 
   return (
     <div className="bg-white min-h-screen flex flex-col lg:flex-row-reverse p-5">

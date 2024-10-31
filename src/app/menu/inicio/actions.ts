@@ -21,8 +21,13 @@ export const getCategorias = async () => {
 };
 
 //Devuelve la mascota especifica por su categoria y su localizacion el id es la cat 
-export const getCategoriaEspecifica = async (id: number, idDepartamento: number) => {
-    console.log('ID recibido:', id);
+export const getCategoriaEspecifica = async (id: number= 0, idDepartamento: number, limit: number, offset: number) => {
+    console.log('ID recibido:', id, idDepartamento, limit, offset);
+    let query = supabase
+        .from('publicaciones')
+        .select('id_publicacion, nombre, edad, ciudad, imagen , departamentos (descripcion)')
+        .range(offset, offset + limit - 1); // Aquí añadimos la paginación
+
     if (id === 0 && idDepartamento === 0) {
         const { data, error } = await supabase
             .from('publicaciones')
@@ -30,12 +35,13 @@ export const getCategoriaEspecifica = async (id: number, idDepartamento: number)
             .eq('estado_adopcion', true);
         
         if (error) {
-            console.error('Error obtener mascotas:', error);
+            console.error('Error al obtener mascotas:', error);
             throw new Error(error.message);
         }
         return data;
     }
-    //filtro mascotas pero en dep para todos
+
+    // Filtro por categoría de animal (tipo_animal) pero no por departamento
     if (idDepartamento === 0) {
         const { data, error } = await supabase
             .from('publicaciones')
@@ -43,12 +49,13 @@ export const getCategoriaEspecifica = async (id: number, idDepartamento: number)
             .eq('tipo_animal', id)
             .eq('estado_adopcion', true);
         if (error) {
-            console.error('Error obtener mascotas:', error);
+            console.error('Error al obtener mascotas:', error);
             throw new Error(error.message);
         }
         return data;
     }
-    //filtro para dep y categorias y depa y todos
+
+    // Filtro por departamento sin categoría (todos los tipos de animal en ese departamento)
     if (id === 0) {
         const { data, error } = await supabase
             .from('publicaciones')
@@ -56,21 +63,25 @@ export const getCategoriaEspecifica = async (id: number, idDepartamento: number)
             .eq('id_departamento', idDepartamento)
             .eq('estado_adopcion', true);
         if (error) {
-            console.error('Error obtener mascotas:', error);
+            console.error('Error al obtener mascotas:', error);
             throw new Error(error.message);
         }
         return data;
-    } else {
-        const { data, error } = await supabase
-        .from('publicaciones')
-        .select('*, departamentos (descripcion)')
+    }
+
+    // Filtro por categoría de animal y departamento
+    const { data, error } = await query
         .eq('tipo_animal', id)
         .eq('id_departamento', idDepartamento)
         .eq('estado_adopcion', true);
-         return data;
-        }
-
+    
+    if (error) {
+        console.error('Error al obtener mascotas:', error);
+        throw new Error(error.message);
+    }
+    return data;
 };
+
 
 export const getDepartamentos = async () => {
 

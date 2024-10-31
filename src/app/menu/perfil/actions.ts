@@ -62,3 +62,28 @@ export const updateUserProfile = async (userId: string, updatedData: {
     throw new Error('Error en el servidor al actualizar el perfil');
   }
 };
+
+//funcion que trea las mascotas de este perfil
+export const getMyPets = async (userId: string) => {
+  const supabase = createClient();
+
+  if (!userId) {
+    throw new Error('El ID de usuario no fue proporcionado');
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('publicaciones')
+      .select('id_publicacion, nombre, edad, ciudad, imagen , departamentos (descripcion)')
+      .eq('id_usuario', '7');
+     
+    if (error) {
+      console.error('Error updating profile:', error);
+      throw new Error('No se pudo obtener las mascotas');
+    }
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
+}; 
