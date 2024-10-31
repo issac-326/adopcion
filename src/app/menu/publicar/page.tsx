@@ -1,6 +1,8 @@
 'use client'
 
 import React, { useEffect, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPaw } from '@fortawesome/free-solid-svg-icons';
 import { getDepartamentos } from "@/app/menu/inicio/actions";
 import { Button } from "@/components/ui/button";
 import { publicacionValidator } from '@/validations/publicacion';
@@ -8,7 +10,19 @@ import { PhotoIcon } from '@heroicons/react/24/solid'
 import { type DropzoneState, useDropzone } from 'react-dropzone';
 import { imagenCloudinary, crearPublicacion } from './actions';
 import InputField from '@/components/ui/InputField';
+import InputFieldSmall from '@/components/ui/InputFieldSmall';
 import Departamentos from '@/types/Departamentos';
+import InputFieldFull from '@/components/ui/InputFieldFull';
+import { Textarea } from "@/components/ui/textarea"
+
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog"
+
 import { startTransition } from 'react';
 import {
   Select,
@@ -21,23 +35,15 @@ import {
 } from "@/components/ui/select"
 
 
-interface InputProps {
-  id: string;
-  name: string;
-  type: string;
-  value: string;
-  placeholder: string;
-  required?: boolean;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  minLength?: number;
-}
 export default function AnimalForm() {
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [selectedTipoAnimal, setSelectedTipoAnimal] = useState("");
   const [selectedSexo, setSelectedSexo] = useState("");
   const [selectedDepartamento, setSelectedDepartamento] = useState("");
   const [departamentos, setDepartamentos] = useState<Departamentos[]>([]);
+  const [text, setText] = useState('');
   const [formData, setFormData] = useState({
     nombre: '',
     sexo: '',
@@ -55,7 +61,9 @@ export default function AnimalForm() {
     // Verifica que se haya seleccionado al menos un archivo
     console.log('Archivo seleccionado: ', acceptedFiles[0])
   }
-
+  const handleRefresh = () => {
+    window.location.reload()
+  }
   const {
     getRootProps,
     getInputProps,
@@ -73,19 +81,7 @@ export default function AnimalForm() {
     maxSize: 10000000
   })
 
-  const limpiarFormulario = () => {
-    setFormData({
-        nombre: '',
-        sexo: '',
-        tipoAnimal: '',
-        descripcion: '',
-        anos: '',
-        meses: '',
-        departamento: '',
-        imagen: '',
-        peso: '',
-    }); // Limpia los archivos seleccionados
-};
+
 
   // Función que captura el cambio en los inputs y actualiza el estado
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -96,12 +92,6 @@ export default function AnimalForm() {
     });
   };
 
-  const handleSelectChange = (name: string) => (value: string) => {
-    setFormData(prevData => ({
-      ...prevData,
-      [name]: value
-    }));
-  };
 
 
   const handleSignUp = async (formData: FormData) => {
@@ -127,7 +117,8 @@ export default function AnimalForm() {
         }
         // Crear la publicación
         const formResult = await crearPublicacion(formData);
-        limpiarFormulario(); 
+        setIsModalOpen(true)
+
       });
     } else {
       setErrors(formResult.errors);
@@ -150,12 +141,19 @@ export default function AnimalForm() {
       console.error("Error al obtener los departamentos:", error);
     }
   }, [])
-
+  const handleChangeTextarea = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
   return (
     <>
-      <form className="space-y-4 mx-auto mt-10 flex flex-col items-center">
+      <p className="text-[24px] font-bold text-black flex justify-center mt-6">¡Haz tu publicación!</p>
+      <form className="space-y-4 mx-auto mt-10 flex flex-col items-center w-[60%]">
         <div>  
-          <InputField
+          <InputFieldFull
             id="nombre"
             name="nombre"
             type="text"
@@ -164,56 +162,46 @@ export default function AnimalForm() {
             onChange={handleInputChange}
             required
           />
-          {errors.nombre && <div className="text-red-500 animate-shake pl-5 text-xs mt-2 w-[334px]">{errors.nombre}</div>}
+          {errors.nombre && <div className="text-red-500 animate-shake pl-5 text-xs mt-2">{errors.nombre}</div>}
         </div>
-        <div>
-          <InputField
-            id="peso"
-            name="peso"
-            type="text"
-            placeholder="Peso"
-            value={formData.peso}
-            onChange={handleInputChange}
-            required
-          />
-          {errors.peso && <div className="text-red-500 animate-shake pl-5 text-xs mt-2 w-[334px]">{errors.peso}</div>}
-        </div>
+        
+        <div className='flex justify-between gap-4'>
+          <div>
+            <Select value={selectedSexo} onValueChange={setSelectedSexo}>
+              <SelectTrigger className="rounded-full w-[250px] shadow-[0_4px_4px_rgba(0,0,0,0.25)] mb-2">
+                <SelectValue placeholder="Selecciona el sexo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Sexo</SelectLabel>
+                  <SelectItem value="macho">Macho</SelectItem>
+                  <SelectItem value="hembra">Hembra</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            {errors.select && <div className="text-red-500 animate-shake pl-5 text-xs mt-2">{errors.select}</div>}
+          </div>
 
-        <div>
-          <Select value={selectedSexo} onValueChange={setSelectedSexo}>
-            <SelectTrigger className="rounded-full w-[330px]">
-              <SelectValue placeholder="Selecciona el sexo" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Sexo</SelectLabel>
-                <SelectItem value="macho">Macho</SelectItem>
-                <SelectItem value="hembra">Hembra</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          {errors.select && <div className="text-red-500 animate-shake pl-5 text-xs mt-2 w-[334px]">{errors.select}</div>}
-        </div>
-
-        <div>
-          <Select value={selectedTipoAnimal} onValueChange={setSelectedTipoAnimal}>
-            <SelectTrigger className="w-[330px] rounded-full">
-              <SelectValue placeholder="Selecciona el tipo de animal" />
-            </SelectTrigger>
-            <SelectContent >
-              <SelectGroup>
-                <SelectLabel>Tipo de Animal</SelectLabel>
-                <SelectItem value="1">Perro</SelectItem>
-                <SelectItem value="2">Gato</SelectItem>
-                <SelectItem value="3">Ave</SelectItem>
-                <SelectItem value="4">Otro</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          {errors.tipoAnimal && <div className="text-red-500 animate-shake pl-5 text-xs mt-2 w-[334px]">{errors.tipoAnimal}</div>}
+          <div>
+            <Select value={selectedTipoAnimal} onValueChange={setSelectedTipoAnimal}>
+              <SelectTrigger className="w-[250px] rounded-full shadow-[0_4px_4px_rgba(0,0,0,0.25)] mb-2">
+                <SelectValue placeholder="Selecciona el tipo de animal" />
+              </SelectTrigger>
+              <SelectContent >
+                <SelectGroup>
+                  <SelectLabel>Tipo de Animal</SelectLabel>
+                  <SelectItem value="1">Perro</SelectItem>
+                  <SelectItem value="2">Gato</SelectItem>
+                  <SelectItem value="3">Ave</SelectItem>
+                  <SelectItem value="4">Otro</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            {errors.tipoAnimal && <div className="text-red-500 animate-shake pl-5 text-xs mt-2 w-[334px]">{errors.tipoAnimal}</div>}
+          </div>
         </div>
         <div className='grid grid-cols-2 gap-4'>
-          <InputField
+          <InputFieldSmall
             id="anos"
             name="anos"
             type="text"
@@ -223,7 +211,7 @@ export default function AnimalForm() {
             required
           />
           {errors.anos && <div className="text-red-500 animate-shake pl-5 text-xs mt-2 w-[334px]">{errors.anos}</div>}
-          <InputField
+          <InputFieldSmall
             id="meses"
             name="meses"
             type="text"
@@ -235,35 +223,44 @@ export default function AnimalForm() {
           {errors.meses && <div className="text-red-500 animate-shake pl-5 text-xs mt-2 w-[334px]">{errors.meses}</div>}
         </div>
 
-        <div>
-          <Select value={selectedDepartamento} onValueChange={setSelectedDepartamento}>
-            <SelectTrigger className="rounded-full w-[330px]">
-              <SelectValue placeholder="Selecciona el departamento" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Departamento</SelectLabel>
-                {departamentos && departamentos.length > 0 ? (
-                  departamentos.map((departamento, index) => (
-                    <SelectItem key={index} value={departamento.id.toString()} >{departamento.descripcion}</SelectItem>
-                  ))
-                ) : (
-                  <SelectItem value="perro">No hay departamentos disponibles</SelectItem>
-                )}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          {errors.departamento && <div className="text-red-500 animate-shake pl-5 text-xs mt-2 w-[334px]">{errors.departamento}</div>}
+        <div className='flex justify-between gap-4'>
+          <div>
+            <InputFieldSmall
+              id="peso"
+              name="peso"
+              type="text"
+              placeholder="Peso (kg)"
+              value={formData.peso}
+              onChange={handleInputChange}
+              required
+            />
+            {errors.peso && <p className="text-red-500 animate-shake pl-5 text-xs mt-2">{errors.peso}</p>}
+          </div>
+          
+          <div>
+            <Select value={selectedDepartamento} onValueChange={setSelectedDepartamento}>
+              <SelectTrigger className="rounded-full w-[250px] shadow-[0_4px_4px_rgba(0,0,0,0.25)] mb-2">
+                <SelectValue placeholder="Selecciona el departamento" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Departamento</SelectLabel>
+                  {departamentos && departamentos.length > 0 ? (
+                    departamentos.map((departamento, index) => (
+                      <SelectItem key={index} value={departamento.id.toString()} >{departamento.descripcion}</SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="perro">No hay departamentos disponibles</SelectItem>
+                  )}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            {errors.departamento && <div className="text-red-500 animate-shake pl-5 text-xs mt-2 w-[334px]">{errors.departamento}</div>}
+          </div>
         </div>
         <div>
-          <input
-            id="descripcion"
-            name="descripcion"
-            placeholder="Descripción"
-            value={formData.descripcion}
-            onChange={handleInputChange}
-            className="focus:outline-none focus:border-blue-800/2 placeholder:text-gray-400 text-xs text-black bg-white rounded-[20px] pl-5 pt-2 mt-5 w-[330px] h-[100px] shadow-[0_4px_4px_rgba(0,0,0,0.25)]"
-          />
+          <Textarea placeholder="Aqui puedes agregar una informacion adicional, como sus vacunas, condiciones médicas, etc." value={formData.descripcion} onChange={handleChangeTextarea} id="descripcion"
+            name="descripcion" className='w-[520px] h-[100px] shadow-[0_4px_4px_rgba(0,0,0,0.25)] mb-2' />
           {errors.descripcion && <div className="text-red-500 animate-shake pl-5 text-xs mt-2 w-[334px]">{errors.descripcion}</div>}
         </div>
         <div
@@ -320,8 +317,28 @@ export default function AnimalForm() {
           Registrarme
         </button>
         
-
+        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>¡Éxito!</DialogTitle>
+            </DialogHeader>
+            <div className="py-4">
+              La publicacion fue publicada exitosamente.
+            </div>
+            <DialogFooter>
+              <Button onClick={handleRefresh} className="w-full bg-[#FFA07A]">
+                ¡Aceptar!
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+        {/* <FontAwesomeIcon
+          icon={faPaw}
+          className="absolute bottom-20 opacity-30 transform rotate-12 text-[500px] z-0 text-orange-100 pointer-events-none" // pointer-events-none para que no interfiera con clics
+        /> */}
       </form>
+      
+
     </>
   );
 }
