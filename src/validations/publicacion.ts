@@ -55,7 +55,7 @@ export function publicacionValidator(formData: FormData) {
         isValid = false;
     }
 
-    if (anos === '' && meses === '') {
+    if (anos === null && meses === null) {
         errors.anos = 'La edad es requerida';
         isValid = false;
     }
@@ -104,6 +104,7 @@ export function publicacionValidator(formData: FormData) {
         errors.peso = 'El peso es requerido';
         isValid = false;
     }
+
 
     return { isValid, errors };
   }

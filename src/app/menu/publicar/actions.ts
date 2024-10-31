@@ -54,7 +54,6 @@ export async function imagenCloudinary (formData: FormData) {
     }
   }
 
-  
 
   // Función que valida los datos del formulario y envía los datos al servidor
   export async function crearPublicacion(formData: FormData) {
@@ -88,7 +87,7 @@ export async function imagenCloudinary (formData: FormData) {
             descripcion: publicacion.descripcion,
             id_departamento: publicacion.id_departamento,
             imagen: publicacion.imagen,
-            anos: publicacion.anos,
+            anios: publicacion.anos,
             meses: publicacion.meses,
             fecha_creacion: new Date().toISOString(),
           },
