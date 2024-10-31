@@ -31,7 +31,8 @@ const PetList = ({ pets }: { pets: Pet[] }) => {
               key={pet.id_publicacion}
               id={pet.id_publicacion}
               nombre={pet.nombre}
-              edad={pet.edad}
+              anios={pet.anios}
+              meses={pet.meses}
               ciudad={ciudad}
               imagen={pet.imagen}
               footerBg={colors.footerBg}

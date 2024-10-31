@@ -2,6 +2,8 @@ interface Pet {
   id_publicacion: number;
   nombre: string;
   edad: number;
+  anios: number;
+  meses: number;
   ciudad: string;
   departamentos: {
     descripcion: string;

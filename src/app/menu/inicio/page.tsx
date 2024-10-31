@@ -94,10 +94,10 @@ export default function Home() {
     }
   }, [])
 
-  
+
   useEffect(() => {
     console.log("useEffect called");
-  
+
     const handleScroll = () => {
       console.log("Scroll event triggered");
       if (stickyRef.current) {
@@ -108,15 +108,15 @@ export default function Home() {
         console.log('stickyRef.current is null');
       }
     };
-  
+
     document.addEventListener('scroll', handleScroll); // Cambiado a `document`
-    
+
     return () => document.removeEventListener('scroll', handleScroll);
   }, [stickyRef]);
-  
-  
-  
-  
+
+
+
+
 
   /* cada que cambiemos las mascotas seleccionadas las volvera a renderizar */
   useEffect(() => {
@@ -141,7 +141,7 @@ export default function Home() {
               <div>
                 <div className="flex gap-2 text-sm text-gray-400 items-center">Ubicación <FontAwesomeIcon icon={faChevronDown} className="w-3" /></div>
                 <span className="font-extrabold">{depaSeleccionado === 0 ? 'Todos' : departamentos.find(dep => dep.id === depaSeleccionado)?.descripcion},</span> HN
-                
+
               </div>
             </MenuButton>
           </div>
@@ -150,17 +150,17 @@ export default function Home() {
             transition
             className="absolute left-0 z-40 mt-2 w-max origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none justify-start data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in grid grid-cols-3 gap-x-4"
           >
-                  <MenuItem key={0} onClick={() => {
-        seleccionarMascotasPorIdCatIdDepa(0, 0);
-        }} as="div" className="flex justify-start justify-center"> 
-          <a
-            onClick={() => setCurrentIndex(0)}
-            className="block text-left w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:text-gray-900 text-center"
-          >
-            Todos
-          </a>
-        </MenuItem>
-  {departamentos && departamentos.length > 0 ? (
+            <MenuItem key={0} onClick={() => {
+              seleccionarMascotasPorIdCatIdDepa(0, 0);
+            }} as="div" className="flex justify-start justify-center">
+              <a
+                onClick={() => setCurrentIndex(0)}
+                className="block text-left w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:text-gray-900 text-center"
+              >
+                Todos
+              </a>
+            </MenuItem>
+            {departamentos && departamentos.length > 0 ? (
               departamentos.map((departamento, index) => (
                 <MenuItem key={departamento.id} onClick={() => {
                   seleccionarMascotasPorIdCatIdDepa(0, departamento.id);
@@ -309,9 +309,8 @@ export default function Home() {
       <h2 className="text-texto mt-5 font-montserrat text-xl font-medium">Categorias</h2>
       <div
         ref={stickyRef}
-        className={`py-2 w-full sticky z-20 top-0 bg-white transition-shadow duration-300 ${
-          isSticky ? 'shadow-[0_4px_8px_rgba(0,0,255,0.2),0_2px_4px_rgba(0,0,0,0.1)]' : ''
-        }`}
+        className={`py-2 w-full sticky z-20 top-0 bg-white transition-shadow duration-300 ${isSticky ? 'shadow-[0_4px_8px_rgba(0,0,255,0.2),0_2px_4px_rgba(0,0,0,0.1)]' : ''
+          }`}
       >
         <section className="flex justify-between h-[40px] gap-4">
           <div

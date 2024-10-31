@@ -26,7 +26,8 @@ export const getCategoriaEspecifica = async (id: number, idDepartamento: number)
     if (id === 0 && idDepartamento === 0) {
         const { data, error } = await supabase
             .from('publicaciones')
-            .select('id_publicacion, nombre, edad, ciudad, imagen , departamentos (descripcion)')
+            .select('id_publicacion, nombre, edad, anios, meses, ciudad, imagen , departamentos (descripcion)')
+            .eq('estado_adopcion', true);
         
         if (error) {
             console.error('Error obtener mascotas:', error);
@@ -38,8 +39,9 @@ export const getCategoriaEspecifica = async (id: number, idDepartamento: number)
     if (idDepartamento === 0) {
         const { data, error } = await supabase
             .from('publicaciones')
-            .select('id_publicacion, nombre, edad, ciudad, imagen , departamentos (descripcion)')
-            .eq('tipo_animal', id);
+            .select('id_publicacion, nombre, edad, anios, meses, ciudad, imagen , departamentos (descripcion)')
+            .eq('tipo_animal', id)
+            .eq('estado_adopcion', true);
         if (error) {
             console.error('Error obtener mascotas:', error);
             throw new Error(error.message);
@@ -50,8 +52,9 @@ export const getCategoriaEspecifica = async (id: number, idDepartamento: number)
     if (id === 0) {
         const { data, error } = await supabase
             .from('publicaciones')
-            .select('id_publicacion, nombre, edad, ciudad, imagen , departamentos (descripcion)')
-            .eq('id_departamento', idDepartamento);
+            .select('id_publicacion, nombre, edad, anios, meses, ciudad, imagen , departamentos (descripcion)')
+            .eq('id_departamento', idDepartamento)
+            .eq('estado_adopcion', true);
         if (error) {
             console.error('Error obtener mascotas:', error);
             throw new Error(error.message);
@@ -62,7 +65,8 @@ export const getCategoriaEspecifica = async (id: number, idDepartamento: number)
         .from('publicaciones')
         .select('*, departamentos (descripcion)')
         .eq('tipo_animal', id)
-        .eq('id_departamento', idDepartamento);
+        .eq('id_departamento', idDepartamento)
+        .eq('estado_adopcion', true);
          return data;
         }
 

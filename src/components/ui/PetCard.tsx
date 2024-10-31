@@ -12,7 +12,8 @@ import { useEffect, useState } from "react";
 interface InputProps { // Propiedades que recibe el componente
   id: number; // Debe ser un número
   nombre: string;
-  edad: number;
+  anios: number;
+  meses: number;
   ciudad: string;
   imagen: string;
   footerBg: string;
@@ -24,7 +25,8 @@ const PetCard = ({
   ciudad,
   imagen,
   id,
-  edad,
+  anios,
+  meses,
   footerBg,
   svgBg,
 }: InputProps) => {
@@ -67,11 +69,12 @@ const PetCard = ({
         <Image
           src={imagen}
           alt="perro"
-          className="w-full h-full object-cover"
-          width={50}
-          height={50}
+          className="object-cover"
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           style={{ objectFit: 'cover' }}
         />
+
         <div className="absolute top-2 right-2 bg-white rounded-full w-8 h-8 flex items-center justify-center hover:scale-110" onClick={handleLike}>
           <FontAwesomeIcon icon={faHeart} className={`${isLiked ? 'text-red-500' : 'text-gray-400'}`} />
         </div>
@@ -89,7 +92,13 @@ const PetCard = ({
         style={{ backgroundColor: footerBg }} // Aplica el color de fondo dinámico
       >
         <div className="flex items-center space-x-2 z-10">
-          <p>{edad} años</p>
+          <p>
+            {anios === 0 
+              ? `${meses} ${meses === 1 ? 'mes' : 'meses'}` // Solo meses si la edad es menor a 1 año
+              : anios === 1 
+              ? `1 año, ${meses} ${meses === 1 ? 'mes' : 'meses'}` // Mostrar año y meses si la edad es 1 año
+              : `${anios} años`} 
+          </p>
         </div>
         <div className="flex items-center space-x-2 z-10">
           <FontAwesomeIcon icon={faMapMarkerAlt} />

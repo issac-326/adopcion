@@ -45,15 +45,16 @@ export default function PetInformation({ id, id_usuario }: { id: string, id_usua
   return (
     <div className="bg-white min-h-screen flex flex-col lg:flex-row-reverse p-5">
       {/* Imagen de la mascota */}
-<div className="flex-1 flex justify-center items-center rounded-br-[50px] mt-8 lg:mt-0">
-  <Image
-    src={mascota.imagen}
-    alt="Mascota"
-    width={300}
-    height={300}
-    className="shadow-[0_0px_15px_rgba(0,0,0,0.8)] rounded-lg sm:w-[200px] sm:h-[200px] lg:w-[500px] lg:h-[500px]"
-  />
-</div>
+      <div className="flex-1 flex justify-center items-center rounded-br-[50px] mt-8 lg:mt-0">
+          <Image
+            src={mascota.imagen}
+            alt="Mascota"
+            width={300} // Tamaño deseado
+            height={300} // Tamaño deseado
+            className="shadow-[0_0px_15px_rgba(0,0,0,0.8)] rounded-lg object-cover sm:w-[200px] sm:h-[200px] lg:w-[500px] lg:h-[500px]"
+            style={{ objectFit: 'cover' }}
+          />
+      </div>
 
       {/* Información */}
       <div className="flex-1 flex flex-col justify-between p-8">
@@ -90,7 +91,11 @@ export default function PetInformation({ id, id_usuario }: { id: string, id_usua
               <FontAwesomeIcon icon={faPaw} className="absolute top-5 right-4 text-green-500 opacity-30 rotate-[-30deg] text-[30px] sm:text-[40px]" />
             </div>
             <div className="flex-1 bg-orange-200 p-3 rounded-lg relative hover:scale-110 transition-transform mr-4 mb-4 lg:mb-0">
-              <h2 className="font-bold">{mascota.edad} años</h2>
+              <h2 className="font-bold">
+                {mascota.anios === 0 
+                  ? `${mascota.meses} ${mascota.meses === 1 ? 'mes' : 'meses'}` // Solo meses si los años son 0
+                  : `${mascota.anios} ${mascota.anios === 1 ? 'año' : 'años'}`} 
+              </h2>
               <p className="text-xs text-gray-500">Edad</p>
               <FontAwesomeIcon icon={faPaw} className="absolute top-5 right-4 text-orange-500 opacity-30 rotate-[-30deg] text-[30px] sm:text-[40px]" />
             </div>
