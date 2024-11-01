@@ -13,15 +13,16 @@ export function publicacionValidator(formData: FormData) {
     };
   
     // Obtén los valores de los campos
-    const nombre = formData.get('nombre') as string;
-    const sexo = formData.get('sexo') as string;
-    const tipoAnimal = formData.get('tipoAnimal') as string;
-    const descripcion = formData.get('descripcion') as string;
-    const anos = Number(formData.get('anos'))
-    const meses = Number(formData.get('meses'));
-    const departamento = formData.get('departamento') as string;
-    const imagen = formData.get('imagen') as string;
-    const peso = formData.get('peso') as string;
+    const nombre = formData.nombre as string;
+    const sexo = formData.sexo as string;
+    const tipoAnimal = formData.tipoAnimal as string;
+    const descripcion = formData.descripcion as string;
+    const anos = Number(formData.anos); // ya que formData es un objeto React
+    const meses = Number(formData.meses);
+    const departamento = formData.departamento as string;
+    const imagen = formData.imagen as string;
+    const peso = formData.peso as string;
+    
   
     let isValid = true;
   

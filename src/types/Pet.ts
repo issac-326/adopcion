@@ -1,7 +1,7 @@
 interface Pet {
   id_publicacion: number;
   nombre: string;
-  edad: number;
+  anios: number;
   ciudad: string;
   departamentos: {
     descripcion: string;

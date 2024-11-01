@@ -56,6 +56,9 @@ export default function AnimalForm() {
     peso: '',
   });
 
+  const userId = localStorage.getItem('userId');
+
+
 
   const onDrop = async (acceptedFiles: File[]) => {
     // Verifica que se haya seleccionado al menos un archivo
@@ -95,6 +98,10 @@ export default function AnimalForm() {
 
 
   const handleSignUp = async (formData: FormData) => {
+    if (!userId) {
+      throw new Error('El ID de usuario no fue proporcionado');
+    }
+    
     formData.append('sexo', selectedSexo);
     formData.append('tipoAnimal', selectedTipoAnimal);
     formData.append('departamento', selectedDepartamento);
@@ -116,7 +123,7 @@ export default function AnimalForm() {
           formData.append('imagen', dataClo.secure_url);
         }
         // Crear la publicación
-        const formResult = await crearPublicacion(formData);
+        const formResult = await crearPublicacion(formData, userId);
         setIsModalOpen(true)
 
       });
@@ -173,8 +180,8 @@ export default function AnimalForm() {
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="macho">Macho</SelectItem>
-                  <SelectItem value="hembra">Hembra</SelectItem>
+                  <SelectItem value="2">Macho</SelectItem>
+                  <SelectItem value="1">Hembra</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -312,7 +319,7 @@ export default function AnimalForm() {
         )}
 
         <button formAction={handleSignUp} className="hover:scale-105 mt-12 w-[270px] h-[40px] bg-[#FFA07A] rounded-[20px] text-sm text-white">
-          Registrarme
+          Dar en adopción
         </button>
         
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>

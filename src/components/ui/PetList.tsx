@@ -36,7 +36,7 @@ const PetList: React.FC<PetListProps> = ({ pets, areMyPets = false }) => {
               key={pet.id_publicacion}
               id={pet.id_publicacion}
               nombre={pet.nombre}
-              edad={pet.edad}
+              edad={pet.anios}
               ciudad={ciudad}
               imagen={pet.imagen}
               footerBg={colors.footerBg}
