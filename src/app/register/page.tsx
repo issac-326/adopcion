@@ -10,26 +10,27 @@ import { useRouter } from "next/navigation";
 import { faPaw } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-
-
 export default function Register() {
   const router = useRouter();
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [userExists, setUserExists] = useState(false);
   const [formData, setFormData] = useState({
+    firstName: '',
+    middleName: '',
+    lastName1: '',
+    lastName2: '',
     email: '',
     password: '',
     confirmPassword: '',
-    phone: ''
+    phone: '',
+    image: '',
   });
-  const [isSuccess, setIsSuccess] = useState(false); // Control de éxito
+  const [isSuccess, setIsSuccess] = useState(false);
 
-  // Función que valida los datos del formulario y envía los datos al servidor
   const handleSignUp = async (formData: FormData) => {
     const formResult = signupValidator(formData);
 
-    // Si hay errores en la validación, se muestran en pantalla; si no, se registra al usuario
     if (formResult.isValid) {
       setUserExists(false);
       try {
@@ -46,12 +47,11 @@ export default function Register() {
     }
   };
 
-  // Función que captura el cambio en los inputs y actualiza el estado
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value
+      [name]: value,
     });
   };
 
@@ -66,59 +66,123 @@ export default function Register() {
           <p className="text-[12px] text-black">Crea tu cuenta</p>
         </div>
 
-        {/* Input del correo */}
-        <div>
+         {/* Fila de nombres */}
+         <div className="flex space-x-4">
+          <div className="flex flex-col">
+            <InputField
+              id="firstName"
+              name="firstName"
+              type="text"
+              placeholder="Primer Nombre"
+              value={formData.firstName}
+              onChange={handleInputChange}
+            />
+            {errors.firstName && <div className="text-red-500 text-xs animate-shake mt-2">{errors.firstName}</div>}
+          </div>
+
+          <div className="flex flex-col">
+            <InputField
+              id="middleName"
+              name="middleName"
+              type="text"
+              placeholder="Segundo Nombre (opcional)"
+              value={formData.middleName}
+              onChange={handleInputChange}
+            />
+          </div>
+        </div>
+
+        {/* Fila de apellidos */}
+        <div className="flex space-x-4 mt-4">
+          <div className="flex flex-col">
+            <InputField
+              id="lastName1"
+              name="lastName1"
+              type="text"
+              placeholder="Primer Apellido"
+              value={formData.lastName1}
+              onChange={handleInputChange}
+            />
+            {errors.lastName1 && <div className="text-red-500 text-xs animate-shake mt-2">{errors.lastName1}</div>}
+          </div>
+
+          <div className="flex flex-col">
+            <InputField
+              id="lastName2"
+              name="lastName2"
+              type="text"
+              placeholder="Segundo Apellido (opcional)"
+              value={formData.lastName2}
+              onChange={handleInputChange}
+            />
+          </div>
+        </div>
+
+        {/* Fila de correo y teléfono */}
+        <div className="flex space-x-4 mt-4">
+          <div className="flex flex-col">
+            <InputField
+              id="email"
+              name="email"
+              type="text"
+              placeholder="Correo"
+              value={formData.email}
+              onChange={handleInputChange}
+            />
+            {errors.email && <div className="text-red-500 text-xs mt-2 w-56 break-words">{errors.email}</div>}
+            {userExists && <div className="text-red-500 text-xs animate-shake mt-2">El correo ya está registrado</div>}
+          </div>
+
+          <div className="flex flex-col">
+            <InputField
+              id="phone"
+              name="phone"
+              type="text"
+              placeholder="Teléfono"
+              value={formData.phone}
+              onChange={handleInputChange}
+            />
+            {errors.phone && <div className="text-red-500 text-xs mt-2 w-56 break-words">{errors.phone}</div>}
+          </div>
+        </div>
+
+        {/* Fila de contraseña */}
+        <div className="flex space-x-4 mt-4">
+          <div className="flex flex-col">
+            <InputField
+              id="password"
+              name="password"
+              type="password"
+              placeholder="Contraseña"
+              value={formData.password}
+              onChange={handleInputChange}
+            />
+            {errors.password && <div className="text-red-500 text-xs mt-2 w-56 break-words">{errors.password}</div>}
+          </div>
+
+          <div className="flex flex-col">
+            <InputField
+              id="confirmPassword"
+              name="confirmPassword"
+              type="password"
+              placeholder="Confirmar Contraseña"
+              value={formData.confirmPassword}
+              onChange={handleInputChange}
+            />
+            {errors.confirmPassword && <div className="text-red-500 text-xs mt-2 w-56 break-words">{errors.confirmPassword}</div>}
+          </div>
+        </div>
+
+        {/* Fila para la imagen */}
+        <div className="mt-4 w-full flex flex-col">
           <InputField
-            id="email"
-            name="email"
+            id="image"
+            name="image"
             type="text"
-            placeholder="correo"
-            value={formData.email}
+            placeholder="URL de la Imagen"
+            value={formData.image}
             onChange={handleInputChange}
           />
-          {errors.email && <div className="text-red-500 pl-5 text-xs animate-shake mt-2 text-left">{errors.email}</div>}
-          {userExists && <div className="text-red-500 pl-5 text-xs animate-shake mt-2 text-left">El correo ya esta registrado</div>}
-        </div>
-
-        {/* Input de la contraseña */}
-        <div>
-          <InputField
-            id="password"
-            name="password"
-            type="password"
-            placeholder="contraseña"
-            value={formData.password}
-            onChange={handleInputChange}
-          />
-          {errors.password && <div className="text-red-500 animate-shake pl-5 text-xs mt-2 w-[334px]">{errors.password}</div>}
-
-
-        </div>
-
-        {/* Input de confirmación de contraseña */}
-        <div>
-          <InputField
-            id="confirmPassword"
-            name="confirmPassword"
-            type="password"
-            placeholder="confirmar contraseña"
-            value={formData.confirmPassword}
-            onChange={handleInputChange}
-          />
-          {errors.confirmPassword && <div className="text-red-500 animate-shake pl-5 text-xs mt-2">{errors.confirmPassword}</div>}
-        </div>
-
-        {/* Input del teléfono */}
-        <div>
-          <InputField
-            id="phone"
-            name="phone"
-            type="text"
-            placeholder="telefono"
-            value={formData.phone}
-            onChange={handleInputChange}
-          />
-          {errors.phone && <div className="text-red-500 animate-shake pl-5 text-xs mt-2">{errors.phone}</div>}
         </div>
 
         {/* Botón de envío */}
@@ -128,9 +192,10 @@ export default function Register() {
 
         <div className="flex mt-6 justify-center">
           <p className="text-xs text-black">¿Ya tienes una cuenta?</p>
-          <Link href="/login" className="text-xs text-[#FFA07A] pl-2">¡Inicia sesión aqui!</Link>
+          <Link href="/login" className="text-xs text-[#FFA07A] pl-2">¡Inicia sesión aquí!</Link>
         </div>
       </form>
+
       <div className="absolute bottom-0 right-0 flex items-center justify-center">
         <img
           src="/Logo.svg"
