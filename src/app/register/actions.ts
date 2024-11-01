@@ -31,6 +31,7 @@ export async function addUser(formData: FormData) {
     const hashedPassword = bcrypt.hashSync(user.password, salt);
 
     // Insertar el usuario
+    // Insertar el usuario con imagen predeterminada
     const { data, error: insertError } = await supabase
       .from('usuarios')
       .insert([
@@ -52,3 +53,5 @@ export async function addUser(formData: FormData) {
     throw error;
   }
 }
+
+
