@@ -176,7 +176,6 @@ export default function AnimalForm() {
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectLabel>Sexo</SelectLabel>
                   <SelectItem value="macho">Macho</SelectItem>
                   <SelectItem value="hembra">Hembra</SelectItem>
                 </SelectGroup>
@@ -192,7 +191,6 @@ export default function AnimalForm() {
               </SelectTrigger>
               <SelectContent >
                 <SelectGroup>
-                  <SelectLabel>Tipo de Animal</SelectLabel>
                   <SelectItem value="1">Perro</SelectItem>
                   <SelectItem value="2">Gato</SelectItem>
                   <SelectItem value="3">Ave</SelectItem>

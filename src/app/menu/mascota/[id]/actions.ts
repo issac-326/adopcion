@@ -9,7 +9,8 @@ export const getMascotaEspecifica = async (id: number) => {
   .from('publicaciones')
   .select(`
     nombre,
-    edad,
+    anios,
+    meses,
     color,
     peso,
     vacunas,

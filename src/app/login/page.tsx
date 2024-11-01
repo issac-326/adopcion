@@ -75,7 +75,7 @@ export default function Login() {
           </div>
           <div>
             <InputField id="password" name="password" type="password" placeholder="Contraseña" value={formData.password} onChange={handleInputChange} />
-            <div className="text-right"><Link href="/reset-password" className="text-xs text-[#fff] pl-2 text-[#fe8a5b]">Olvidé mi contraseña</Link></div>
+            <div className="text-right"><Link href="/reset-password" className="text-xs pl-2 text-[#fe8a5b]">Olvidé mi contraseña</Link></div>
           </div>
 
           <div className="mt-5">
@@ -83,7 +83,7 @@ export default function Login() {
           </div>
 
           <button formAction={handleLogin} className="mt-8 w-[270px] h-[40px] hover:scale-105 bg-[#FE8A5B] rounded-[20px] text-sm text-white hover:bg-[#ff9060]">
-            {isSending ? 'Iniciando sesión...' : 'Iniciar sesión'}
+            {isSending ? 'Cargando...' : 'Iniciar sesión'}
           </button>
         </div>
         <div className="flex mt-8 justify-center">

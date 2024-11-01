@@ -24,7 +24,7 @@ const InputField: React.FC<InputProps> = ({
   readOnly = false,
 }) => {
   return (
-    <div className="relative w-[330px] mb-2">
+    <div className="relative w-[330px] mt-5">
       <input
         id={id}
         name={name}

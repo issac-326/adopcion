@@ -188,7 +188,6 @@ useEffect(() => {
     setSelectedCategory(0);
     setHasMorePets(true);
     setSelectedMascotas([]);
-    setPage(0);
   }, [depaSeleccionado]);
 
   // Este efecto solo se ejecuta cuando cambia 'selectedCategory'
@@ -198,8 +197,8 @@ useEffect(() => {
     }
     // Solo se ejecuta después del primer renderizado
     setSelectedMascotas([]);
-    setPage(0);
     setHasMorePets(true);
+    setPage(0);
   }, [selectedCategory]);
 
   /* Traer los departamentos al cargar la pagina */
@@ -243,7 +242,7 @@ useEffect(() => {
               <div>
                 <div className="flex gap-2 text-sm text-gray-400 items-center">Ubicación <FontAwesomeIcon icon={faChevronDown} className="w-3" /></div>
                 <span className="font-extrabold">{depaSeleccionado === 0 ? 'Todos' : departamentos.find(dep => dep.id === depaSeleccionado)?.descripcion},</span> HN
-                
+
               </div>
             </MenuButton>
           </div>

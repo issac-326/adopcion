@@ -12,11 +12,13 @@ import { useEffect, useState } from "react";
 interface InputProps { // Propiedades que recibe el componente
   id: number; // Debe ser un número
   nombre: string;
-  edad: number;
+  anios: number;
+  meses: number;
   ciudad: string;
   imagen: string;
   footerBg: string;
   svgBg: string;
+  isMyPet: boolean;
 }
 
 const PetCard = ({
@@ -24,9 +26,11 @@ const PetCard = ({
   ciudad,
   imagen,
   id,
-  edad,
+  anios,
+  meses,
   footerBg,
   svgBg,
+  isMyPet = false,
 }: InputProps) => {
   const router = useRouter();
   const userId = localStorage.getItem('userId');
@@ -61,18 +65,20 @@ const PetCard = ({
 <div
   className="flex flex-col cursor-pointer hover:scale-102 transition-transform duration-300 relative border w-full h-[272px] rounded-lg shadow-lg overflow-hidden"
   key={id}
-  onClick={() => router.push(`/menu/mascota/${id}`)} // Redirige al hacer clic en el contenedor
+  onClick={() => router.push(isMyPet ? `/menu/mascota/${id}` : `/menu/perfil/mascotas/${id}`)
+} // Redirige al hacer clic en el contenedor
 >
   <header className="relative h-4/5 overflow-hidden">
     <Image
       src={imagen}
       alt="perro"
-      className="w-full h-full object-cover"
-      width={50}
-      height={50}
+      className="object-cover"
+      fill
+      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
       style={{ objectFit: 'cover' }}
     />
-    <div
+
+    {!isMyPet && (    <div
       className="absolute top-2 right-2 bg-white rounded-full w-8 h-8 flex items-center justify-center hover:scale-110"
       onClick={(e) => {
         e.stopPropagation();
@@ -80,7 +86,8 @@ const PetCard = ({
       }}
     >
       <FontAwesomeIcon icon={faHeart} className={`${isLiked ? 'text-red-500' : 'text-gray-400'}`} />
-    </div>
+    </div>)}
+
     <h1
       className="absolute bottom-0 right-2 text-white font-semibold text-2xl z-10"
       style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)' }}
@@ -89,17 +96,23 @@ const PetCard = ({
     </h1>
   </header>
 
-  <footer
-    className="flex flex-col h-1/4 text-black py-4 items-center justify-center w-full relative font-montserrat font-semibold rounded-b-lg"
-    style={{ backgroundColor: footerBg }}
-  >
-    <div className="flex items-center space-x-2 z-10">
-      <p>{edad} años</p>
-    </div>
-    <div className="flex items-center space-x-2 z-10">
-      <FontAwesomeIcon icon={faMapMarkerAlt} />
-      <p className='text-black-800 text-sm font-light'>{ciudad}</p>
-    </div>
+      <footer
+        className="flex flex-col h-1/4 text-black py-4 items-center justify-center w-full relative font-montserrat font-semibold rounded-b-lg" // Añadir rounded-b-lg
+        style={{ backgroundColor: footerBg }} // Aplica el color de fondo dinámico
+      >
+        <div className="flex items-center space-x-2 z-10">
+          <p>
+            {anios === 0 
+              ? `${meses} ${meses === 1 ? 'mes' : 'meses'}` // Solo meses si la edad es menor a 1 año
+              : anios === 1 
+              ? `1 año, ${meses} ${meses === 1 ? 'mes' : 'meses'}` // Mostrar año y meses si la edad es 1 año
+              : `${anios} años`} 
+          </p>
+        </div>
+        <div className="flex items-center space-x-2 z-10">
+          <FontAwesomeIcon icon={faMapMarkerAlt} />
+          <p className='text-black-800 text-sm font-light'>{ciudad}</p>
+        </div>
 
     <svg
       width="70"
