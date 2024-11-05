@@ -4,37 +4,78 @@ import Link from "next/link";
 import { signupValidator } from "@/validations/signup";
 import React, { useState } from 'react';
 import InputField from "@/components/ui/InputField";
-import { addUser } from "./actions";
+import { addUser, imagenCloudinary } from "./actions";
 import SuccessNotification from "@/components/ui/SuccesNotification";
 import { useRouter } from "next/navigation";
 import { faPaw } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useDropzone } from "react-dropzone";
+import { toast } from "react-toastify";
+
+
 
 export default function Register() {
   const router = useRouter();
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [userExists, setUserExists] = useState(false);
+  const [imagen, setImagen] = useState("/usuario-default.jpg"); 
+  const [newImage, setNewImage] = useState<File | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [formData, setFormData] = useState({
-    firstName: '',
-    middleName: '',
-    lastName1: '',
-    lastName2: '',
+    firstName:'',
+    middleName:'',
+    lastName1:'',
+    lastName2:'',
     email: '',
     password: '',
     confirmPassword: '',
-    phone: '',
-    image: '',
+    phone: ''
   });
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false); // Control de éxito
 
+  // Configuración de useDropzone con el estado isDragActive
+const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  onDrop: (acceptedFiles: File[]) => {
+    if (acceptedFiles.length > 0) {
+      setNewImage(acceptedFiles[0]);
+      setImagen(URL.createObjectURL(acceptedFiles[0])); // Muestra una vista previa de la imagen seleccionada
+    }
+  },
+  accept: { 'image/*': [] },
+  multiple: false,
+  maxSize: 10000000
+});
+
+
+// Función para subir la nueva imagen a Cloudinary y actualizar la base de datos
+const handleImageChange = async () => {
+  console.log(newImage)
+  if (!newImage) return;
+
+  const formData = new FormData();
+  formData.append('file', newImage);
+
+  const { data: dataClo, error } = await imagenCloudinary(formData);
+  if (error) {
+    toast.error("Error al subir la imagen");
+    console.error("Error al subir la imagen:", error);
+    return;
+  }
+
+  const image1 = dataClo.secure_url;
+  setImageUrl(image1);
+};
+
+  // Función que valida los datos del formulario y envía los datos al servidor
   const handleSignUp = async (formData: FormData) => {
     const formResult = signupValidator(formData);
 
+    // Si hay errores en la validación, se muestran en pantalla; si no, se registra al usuario
     if (formResult.isValid) {
       setUserExists(false);
       try {
-        const data = await addUser(formData);
+        const data = await addUser(formData,imageUrl);
         console.log('User added successfully:', data);
         router.push('/login');
         setIsSuccess(true);
@@ -47,11 +88,12 @@ export default function Register() {
     }
   };
 
+  // Función que captura el cambio en los inputs y actualiza el estado
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value,
+      [name]: value
     });
   };
 
@@ -66,6 +108,37 @@ export default function Register() {
           <p className="text-[12px] text-black">Crea tu cuenta</p>
         </div>
 
+        
+
+        {/* Imagen de perfil y área de arrastrar y soltar */}
+        <div className="flex flex-col items-center mb-6">
+    <img src={imagen} alt="Imagen de perfil" className="w-40 h-40 rounded-full mb-4 object-cover"  />
+    
+    <div className=" flex items-center justify-between w-full">
+    <div
+    {...getRootProps()}
+    className={` rounded-full px-4 py-2 transition duration-300 ease-in-out flex flex-col justify-center items-center border ${
+      isDragActive ? "border-blue-500 bg-blue-100" : "border-gray-300"
+    } cursor-pointer hover:border-blue-500 hover:bg-blue-50`}
+  >
+    <input {...getInputProps()} />
+    <p className="text-gray-600 text-center">
+      {isDragActive ? "Editando" : "Editar"}
+    </p>
+  </div>
+  
+
+    {newImage && (
+      <button
+        type="button"
+        onClick={handleImageChange}
+        className="border ml-2 border-gray-300 hover:border-blue-500 text-gray-600 rounded-full px-4 py-2 transition duration-300 ease-in-out"
+      >
+        Confirmar
+      </button>
+    )}
+  </div>
+</div>
          {/* Fila de nombres */}
          <div className="flex space-x-4">
           <div className="flex flex-col">
@@ -173,18 +246,6 @@ export default function Register() {
           </div>
         </div>
 
-        {/* Fila para la imagen */}
-        <div className="mt-4 w-full flex flex-col">
-          <InputField
-            id="image"
-            name="image"
-            type="text"
-            placeholder="URL de la Imagen"
-            value={formData.image}
-            onChange={handleInputChange}
-          />
-        </div>
-
         {/* Botón de envío */}
         <button formAction={handleSignUp} className="hover:scale-105 mt-12 w-[270px] h-[40px] bg-[#FFA07A] rounded-[20px] text-sm text-white hover:bg-[#ff9060]">
           Registrarme
@@ -192,10 +253,9 @@ export default function Register() {
 
         <div className="flex mt-6 justify-center">
           <p className="text-xs text-black">¿Ya tienes una cuenta?</p>
-          <Link href="/login" className="text-xs text-[#FFA07A] pl-2">¡Inicia sesión aquí!</Link>
+          <Link href="/login" className="text-xs text-[#FFA07A] pl-2">¡Inicia sesión aqui!</Link>
         </div>
       </form>
-
       <div className="absolute bottom-0 right-0 flex items-center justify-center">
         <img
           src="/Logo.svg"
