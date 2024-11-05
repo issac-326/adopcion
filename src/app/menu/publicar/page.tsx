@@ -9,7 +9,7 @@ import { publicacionValidator } from '@/validations/publicacion';
 import { PhotoIcon } from '@heroicons/react/24/solid'
 import { type DropzoneState, useDropzone } from 'react-dropzone';
 import { imagenCloudinary, crearPublicacion } from './actions';
-import InputField from '@/components/ui/InputField';
+import { toast } from "react-toastify";
 import InputFieldSmall from '@/components/ui/InputFieldSmall';
 import Departamentos from '@/types/Departamentos';
 import InputFieldFull from '@/components/ui/InputFieldFull';
@@ -33,9 +33,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { useRouter } from 'next/navigation';
 
 
 export default function AnimalForm() {
+  const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -126,8 +128,12 @@ export default function AnimalForm() {
           formData.append('imagen', dataClo.secure_url);
         }
         // Crear la publicación
-        const formResult = await crearPublicacion(formData, userId);
-        setIsModalOpen(true)
+        const formResult = await crearPublicacion(formData);
+        /* setIsModalOpen(true) */
+        toast.success("¡Mascota publicada con éxito!");
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
 
       });
     } else {
