@@ -65,7 +65,7 @@ const PetCard = ({
 <div
   className="flex flex-col cursor-pointer hover:scale-102 transition-transform duration-300 relative border w-full h-[272px] rounded-lg shadow-lg overflow-hidden"
   key={id}
-  onClick={() => router.push(isMyPet ? `/menu/mascota/${id}` : `/menu/perfil/mascotas/${id}`)
+  onClick={() => router.push(isMyPet ? `/menu/mascota/${id}` : `/menu/mascota/${id}`)
 } // Redirige al hacer clic en el contenedor
 >
   <header className="relative h-4/5 overflow-hidden">
