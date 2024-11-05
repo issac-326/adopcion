@@ -88,18 +88,23 @@ const ProfilePage = () => {
     return (
         <>
             <div
-                className="relative w-200 h-200 flex rounded-t-xl justify-center items-center mt-6 gap-10 moving-gradient"
+                className="relative w-200 h-200 flex rounded-t-xl justify-between items-center mt-6 gap-10 moving-gradient"
             >
-                <Image src={user?.imagen} alt="profile" width={170} height={170} />
-                <div>
-                    <h1 className="text-lg font-semibold">
-                        {user?.nombre1} {user?.apellido1}
-                    </h1>
-                    <p className="text-sm text-gray-600 font-medium">
-                        Tegucigalpa, Honduras
-                    </p>
+                <div className="flex items-center">
+
+                    <Image src={user?.imagen} alt="profile" width={170} height={170} />
+                    <div>
+                        <h1 className="text-lg font-semibold">
+                            {user?.nombre1} {user?.apellido1}
+                        </h1>
+                        <p className="text-sm text-gray-600 font-medium">
+                            Tegucigalpa, Honduras
+                        </p>
+                    </div>
                 </div>
-                <div className="flex justify-center items-center rounded-full absolute bottom-2 right-2 hover:cursor-pointer hover:scale-105 bg-white w-8 h-8" onClick={() => router.push('/menu/configuraciones/perfil')}>
+                <div className="flex justify-center items-center gap-2 rounded-full absolute bottom-2 right-2 hover:cursor-pointer hover:scale-105 bg-white text-xs py-1 px-2" onClick={() => router.push('/menu/configuraciones/perfil')}>
+                    <span>                    editar
+                    </span>
                     <FontAwesomeIcon icon={faPenToSquare} />
                 </div>
             </div>

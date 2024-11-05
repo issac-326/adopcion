@@ -71,29 +71,6 @@ const ProfilePage = () => {
     fetchProfile();
   }, [router]);
 
-  useEffect(() => {
-    const fetchPets = async () => {
-      if (!userId) {
-        return;
-      }
-
-            setLoadingPets(true);
-
-            try {
-                const pets = await getMyPets(userId);
-                setMyPets(pets || []);
-            } catch (error) {
-                console.error("Error fetching pets:", error);
-                toast.error("Error al obtener las mascotas.");
-            } finally {
-                setLoadingPets(false);
-            }
-        };
-
-        fetchPets();
-    }, [userId]);
-
-
   const submitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);

@@ -13,6 +13,13 @@ import Departamentos from '@/types/Departamentos';
 import InputFieldFull from '@/components/ui/InputFieldFull';
 import { Textarea } from "@/components/ui/textarea"
 import { getPet, updatePet } from './actions';
+import { useRouter } from 'next/navigation';
+import { toast } from "react-toastify";
+import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+
+
 
 import {
     Dialog,
@@ -62,6 +69,8 @@ export default function AnimalFormEdit({ params }) {
     const [isEditing, setIsEditing] = useState(false);
     const [image, setImage] = useState(''); // Estado para manejar la imagen
     const userId = localStorage.getItem('userId');
+
+    const router = useRouter();
 
 
     const onDrop = async (acceptedFiles: File[]) => {
@@ -156,18 +165,18 @@ export default function AnimalFormEdit({ params }) {
 
     const handleEdit = async (event) => {
         event.preventDefault(); // Prevenir el comportamiento predeterminado del formulario
-    
+
         if (!userId) {
             throw new Error('El ID de usuario no fue proporcionado');
         }
-    
+
         // Validación del formulario
         const formResult = publicacionValidator(formData);
         if (!formResult.isValid) {
             setErrors(formResult.errors);
             return; // Salir si la validación falla
         }
-    
+
         // Si el formulario es válido, comenzar la actualización
         startTransition(async () => {
             if (acceptedFiles.length > 0) {
@@ -179,15 +188,15 @@ export default function AnimalFormEdit({ params }) {
                     console.error("Error al subir la imagen:", error?.message || "Sin datos de imagen");
                     return;
                 }
-    
+
                 // Actualiza el imagen con la url de la imagen subida
                 const updatedFormData = {
                     ...formData,
                     imagen: dataClo.secure_url
                 };
-    
+
                 console.log("Imagen subida:", dataClo.secure_url);
-    
+
                 // Crear la publicación con la imagen actualizada
                 try {
                     const formResult = await updatePet(updatedFormData, id);
@@ -195,7 +204,7 @@ export default function AnimalFormEdit({ params }) {
                 } catch (err) {
                     console.error("Error al actualizar la mascota:", err);
                 }
-    
+
             } else {
                 // Si no hay imagen para subir, continuar con la actualización
                 try {
@@ -207,7 +216,7 @@ export default function AnimalFormEdit({ params }) {
             }
         });
     };
-    
+
 
 
     const handleSelectSexChange = (value: string) => {
@@ -233,18 +242,29 @@ export default function AnimalFormEdit({ params }) {
 
     return (
         <>
+
             {pet && formData && (<>
-                <header className='w-[60%] mx-auto flex justify-between gap-10'>
-                    <p className="text-[24px] font-bold text-black flex justify-center mt-6">¡Editando la Información de {name}!</p>
-                    <div className="relative group">
-                        {/* Imagen de la mascota */}
-                        <Image
-                            src={image}
-                            alt="Imagen de la mascota"
-                            width={120}
-                            height={120}
-                            className="h-30 w-30 mt-2 mx-auto rounded-full aspect-square object-cover border-4 border-[#FFA07A]/50"
-                        />
+                <header className='relative w-full'>
+                    <div className='w-[60%] mx-auto flex justify-between gap-10'>
+                        <p className="text-[24px] font-bold text-black flex justify-center mt-6">¡Editando la Información de {name}!</p>
+                        <div className="relative group">
+                            {/* Imagen de la mascota */}
+                            <Image
+                                src={image}
+                                alt="Imagen de la mascota"
+                                width={120}
+                                height={120}
+                                className="h-30 w-30 mt-2 mx-auto rounded-full aspect-square object-cover border-4 border-[#FFA07A]/50"
+                            />
+                        </div>
+
+                    </div>
+
+                    {/* Botón para regresar */}
+                    <div className="absolute top-4 left-4 rounded-full w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center cursor-pointer hover:scale-110" onClick={() => { router.push('/menu/perfil') }}>
+                        <button className="ml-[20px] lg:ml-[30px]">
+                            <FontAwesomeIcon icon={faAngleLeft} className="text-red-500 text-[24px] lg:text-[32px]" />
+                        </button>
                     </div>
                 </header>
 
@@ -417,33 +437,39 @@ export default function AnimalFormEdit({ params }) {
                     )}
 
                     <button onClick={handleEdit} className="hover:scale-105 hover:bg-[#ff9060] mt-16 mx-auto w-[270px] h-[40px] bg-[#FFA07A] rounded-[20px] text-sm text-white">
-                        Guardar cambios
+                        Actualizar
                     </button>
-
 
                     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
                         <DialogContent>
                             <DialogHeader>
-                                <DialogTitle>¡Éxito!</DialogTitle>
+                                <DialogTitle>Confirmar cambios</DialogTitle>
                             </DialogHeader>
                             <div className="py-4">
-                                La publicacion fue publicada exitosamente.
+                                ¿Estás seguro de que deseas guardar los cambios en los datos de {name}?
                             </div>
                             <DialogFooter>
-                                <Button className="w-full bg-[#FFA07A]">
-                                    ¡Aceptar!
+                                <Button
+                                    onClick={() => {
+                                        setIsModalOpen(false);
+                                        router.push('/menu/perfil');
+                                        toast.success('Los datos de la mascota han sido actualizados exitosamente 🎉');
+                                    }}
+                                    className="w-full text-white bg-[#FFA07A]"
+                                >
+                                    Guardar cambios
+                                </Button>
+                                <Button
+                                    onClick={() => { setIsModalOpen(false); }}
+                                    className="w-full bg-gray-300 text-[#4b4f5c]"
+                                >
+                                    Cancelar
                                 </Button>
                             </DialogFooter>
                         </DialogContent>
                     </Dialog>
-                    {/* <FontAwesomeIcon
-          icon={faPaw}
-          className="absolute bottom-20 opacity-30 transform rotate-12 text-[500px] z-0 text-orange-100 pointer-events-none" // pointer-events-none para que no interfiera con clics
-        /> */}
+
                 </form></>)}
-
-
-
         </>
     );
 }

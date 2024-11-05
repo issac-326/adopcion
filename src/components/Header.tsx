@@ -65,7 +65,7 @@ export default function Header() {
             onClick={() => handleMenuItemClick(index)} // Cambia aquí
             key={index}
             variant="ghost"
-            className={`w-full justify-start hover:bg-gradient-to-r from-[#f9b49b] to-[#ffdcc9] transition-transform duration-300 text-medium ${selectedIndex === index ? 'bg-[#FE8A5B]/60' : ''}`}
+            className={`w-full justify-start hover:bg-[#fe8a5b]/60 transition-transform duration-300 text-medium ${selectedIndex === index ? 'bg-[#fe8a5b] text-white hover:bg-[#fe8a5b]' : ''}`}
           >
             {item.icon}
             <Link href={`/menu/${item.label.toLowerCase()}`}>
@@ -75,7 +75,7 @@ export default function Header() {
         ))}
         <Button
           variant="ghost"
-          className="w-full justify-start hover:bg-gradient-to-r from-[#f9b49b] to-[#ffdcc9] transition-transform duration-300 text-medium"
+          className="w-full justify-start hover:bg-[#fe8a5b]/60 transition-transform duration-300 text-medium"
           onClick={cerrarSesion}
         >
           <FontAwesomeIcon icon={faSignOutAlt} className="w-5 h-5" />

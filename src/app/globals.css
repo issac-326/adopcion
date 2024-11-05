@@ -30,6 +30,25 @@ html, body {
   }
 }
 
+.image-container {
+  perspective: 1000px; /* Da la ilusión de profundidad */
+}
+
+.image-3d {
+  width: 170px;
+  height: 170px;
+  border-radius: 50%; /* Hace que la imagen sea circular */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Sombra inicial */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transiciones suaves */
+  transform: rotateX(0deg) rotateY(0deg); /* Rotación inicial */
+}
+
+.image-3d:hover {
+  transform: rotateX(10deg) rotateY(-10deg) scale(1.05); /* Efecto 3D al hacer hover */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); /* Más profundidad en hover */
+}
+
+
 .moving-gradient {
   background-image: linear-gradient(to top, #007adf 0%, #00ecbc 100%);
   background-size: 200% 200%; /* Aumenta el tamaño del fondo para permitir el movimiento */
