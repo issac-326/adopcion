@@ -57,9 +57,8 @@ export const getFavoritos = async (idUsuario: number) => {
     // Ahora obtenemos las publicaciones que coinciden con estos ids y que tienen estado_adopcion = true
     const { data: publicacionesData, error: publicacionesError } = await supabase
       .from('publicaciones')
-      .select('id_publicacion, nombre, edad, anios, meses, ciudad, imagen, departamentos (descripcion)')
+      .select('id_publicacion, nombre, estado_adopcion, anios, meses, ciudad, imagen, departamentos (descripcion)')
       .in('id_publicacion', idsPublicacionesFavoritas)
-      .eq('estado_adopcion', true);
 
     if (publicacionesError) {
       console.error('Error al obtener publicaciones favoritas:', publicacionesError);

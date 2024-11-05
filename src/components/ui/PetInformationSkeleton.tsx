@@ -1,4 +1,4 @@
-const PetInformationSkeleton = () => {
+const PetInformationSkeleton = ({ isMyPet = false }: { isMyPet?: boolean }) => {
     return (
         <div className="bg-white min-h-screen flex flex-col lg:flex-row-reverse p-5 animate-pulse">
             {/* Imagen de la mascota */}
@@ -20,7 +20,8 @@ const PetInformationSkeleton = () => {
                             <div className="bg-gray-200 h-6 w-2/3 rounded mb-2"></div>
                             <div className="bg-gray-200 h-4 w-1/2 rounded"></div>
                         </div>
-                        <div className="bg-gray-200 w-8 h-8 sm:w-10 sm:h-10 lg:w-14 lg:h-14 rounded-full cursor-not-allowed"></div>
+                        {!isMyPet && (<div className="bg-gray-200 w-8 h-8 sm:w-10 sm:h-10 lg:w-14 lg:h-14 rounded-full cursor-not-allowed"></div>)}
+                        
                     </div>
 
                     {/* Descripción y detalles */}
@@ -48,7 +49,7 @@ const PetInformationSkeleton = () => {
                     </div>
 
                     {/* Dueño */}
-                    <div className="flex items-center mb-6">
+                    {!isMyPet && (<div className="flex items-center mb-6">
                         <div className="w-[30px] h-[30px] sm:w-[40px] sm:h-[40px] lg:w-[60px] lg:h-[60px] overflow-hidden rounded-full">
                             <div className="bg-gray-200 w-full h-full rounded-full"></div>
                         </div>
@@ -56,13 +57,15 @@ const PetInformationSkeleton = () => {
                             <div className="bg-gray-200 h-4 w-24 rounded mb-1"></div>
                             <div className="bg-gray-200 h-3 w-20 rounded"></div>
                         </div>
-                    </div>
+                    </div>)}
+
                 </div>
 
                 {/* Botón de Adoptar */}
-                <div>
+                {!isMyPet && (<div>
                     <div className="bg-gray-200 h-10 w-full sm:w-full lg:w-3/5 rounded-3xl mx-auto block"></div>
-                </div>
+                </div>)}
+
             </div>
         </div>
     );

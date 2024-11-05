@@ -21,7 +21,9 @@ export const getMascotaEspecifica = async (id: number) => {
     descripcion,
     departamentos(descripcion),
     usuarios (nombre1, imagen),
-    categorias (tipo_mascotas)
+    categorias (tipo_mascotas),
+    estado_adopcion,
+    visible
   `)
   .eq('id_publicacion', id)
   .single(); // Obtener un solo registro

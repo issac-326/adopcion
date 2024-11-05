@@ -19,6 +19,8 @@ interface InputProps { // Propiedades que recibe el componente
   footerBg: string;
   svgBg: string;
   isMyPet: boolean;
+  disponible: boolean;
+  isInicio?: boolean;
 }
 
 const PetCard = ({
@@ -31,11 +33,13 @@ const PetCard = ({
   footerBg,
   svgBg,
   isMyPet = false,
+  disponible, 
+  isInicio = true
 }: InputProps) => {
   const router = useRouter();
   const userId = localStorage.getItem('userId');
   const [isLiked, setIsLiked] = useState(false);
-  const [loading, setLoading] = useState(true);  
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchMascota = async () => {
@@ -51,7 +55,7 @@ const PetCard = ({
 
     fetchMascota();
   }, [id, userId]);
-  
+
   const handleLike = async () => {
     try {
       await favorito(Number(id), userId, isLiked);
@@ -63,30 +67,43 @@ const PetCard = ({
 
   return (
 <div
-  className="flex flex-col cursor-pointer hover:scale-102 transition-transform duration-300 relative border w-full h-[272px] rounded-lg shadow-lg overflow-hidden"
+  className={`flex flex-col cursor-pointer hover:scale-102 transition-transform duration-300 relative w-full h-[272px] rounded-lg shadow-lg overflow-hidden 
+    ${!disponible ? 'opacity-80 grayscale-[80%]' : 'border'}`}
   key={id}
-  onClick={() => router.push(isMyPet ? `/menu/mascota/${id}` : `/menu/mascota/${id}`)
-} // Redirige al hacer clic en el contenedor
+  onClick={() =>
+    router.push(isMyPet 
+      ? `/menu/perfil/mascotas/${id}` 
+      : `/menu/mascota/${id}?inicio=${isInicio}`
+    )
+  }
 >
   <header className="relative h-4/5 overflow-hidden">
     <Image
       src={imagen}
       alt="perro"
-      className="object-cover"
+      className={`object-cover ${!disponible ? 'blur-[2px]' : ''}`} 
       fill
       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
       style={{ objectFit: 'cover' }}
     />
 
-    {!isMyPet && (    <div
-      className="absolute top-2 right-2 bg-white rounded-full w-8 h-8 flex items-center justify-center hover:scale-110"
-      onClick={(e) => {
-        e.stopPropagation();
-        handleLike();
-      }}
-    >
-      <FontAwesomeIcon icon={faHeart} className={`${isLiked ? 'text-red-500' : 'text-gray-400'}`} />
-    </div>)}
+    {!disponible && (
+      <div className="absolute inset-0 bg-gray-900 bg-opacity-60 flex justify-center items-center">
+        <span className="text-white text-3xl font-extrabold animate-pulse">¡Adoptado!</span>
+      </div>
+    )}
+
+    {!isMyPet && (
+      <div
+        className="absolute top-2 right-2 bg-white rounded-full w-8 h-8 flex items-center justify-center hover:scale-110"
+        onClick={(e) => {
+          e.stopPropagation();
+          handleLike();
+        }}
+      >
+        <FontAwesomeIcon icon={faHeart} className={`${isLiked ? 'text-red-500' : 'text-gray-400'}`} />
+      </div>
+    )}
 
     <h1
       className="absolute bottom-0 right-2 text-white font-semibold text-2xl z-10"
@@ -96,23 +113,23 @@ const PetCard = ({
     </h1>
   </header>
 
-      <footer
-        className="flex flex-col h-1/4 text-black py-4 items-center justify-center w-full relative font-montserrat font-semibold rounded-b-lg" // Añadir rounded-b-lg
-        style={{ backgroundColor: footerBg }} // Aplica el color de fondo dinámico
-      >
-        <div className="flex items-center space-x-2 z-10">
-          <p>
-            {anios === 0 
-              ? `${meses} ${meses === 1 ? 'mes' : 'meses'}` // Solo meses si la edad es menor a 1 año
-              : anios === 1 
-              ? `1 año, ${meses} ${meses === 1 ? 'mes' : 'meses'}` // Mostrar año y meses si la edad es 1 año
-              : `${anios} años`} 
-          </p>
-        </div>
-        <div className="flex items-center space-x-2 z-10">
-          <FontAwesomeIcon icon={faMapMarkerAlt} />
-          <p className='text-black-800 text-sm font-light'>{ciudad}</p>
-        </div>
+  <footer
+    className="flex flex-col h-1/4 text-black py-4 items-center justify-center w-full relative font-montserrat font-semibold rounded-b-lg"
+    style={{ backgroundColor: footerBg }}
+  >
+    <div className="flex items-center space-x-2 z-10">
+      <p>
+        {anios === 0
+          ? `${meses} ${meses === 1 ? 'mes' : 'meses'}`
+          : anios === 1
+            ? `1 año, ${meses} ${meses === 1 ? 'mes' : 'meses'}`
+            : `${anios} años`}
+      </p>
+    </div>
+    <div className="flex items-center space-x-2 z-10">
+      <FontAwesomeIcon icon={faMapMarkerAlt} />
+      <p className="text-black-800 text-sm font-light">{ciudad}</p>
+    </div>
 
     <svg
       width="70"
@@ -131,8 +148,6 @@ const PetCard = ({
     </svg>
   </footer>
 </div>
-
-
 
   );
 };

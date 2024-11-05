@@ -13,15 +13,16 @@ export function publicacionValidator(formData: FormData) {
     };
   
     // Obtén los valores de los campos
-    const nombre = formData.get('nombre') as string;
-    const sexo = formData.get('sexo') as string;
-    const tipoAnimal = formData.get('tipoAnimal') as string;
-    const descripcion = formData.get('descripcion') as string;
-    const anos = formData.get('anos') as string;
-    const meses = formData.get('meses') as string
-    const departamento = formData.get('departamento') as string;
-    const image = formData.get('image') as string;
-    const peso = formData.get('peso') as string;
+    const nombre = formData.nombre as string;
+    const sexo = formData.sexo as string;
+    const tipoAnimal = formData.tipoAnimal as string;
+    const descripcion = formData.descripcion as string;
+    const anos = Number(formData.anos); // ya que formData es un objeto React
+    const meses = Number(formData.meses);
+    const departamento = formData.departamento as string;
+    const imagen = formData.imagen as string;
+    const peso = formData.peso as string;
+    
   
     let isValid = true;
   
@@ -111,7 +112,7 @@ export function publicacionValidator(formData: FormData) {
         isValid = false;
     }
 
-    if (image === null) {
+    if (imagen === null) {
       errors.image = 'La imagen es requerida';
       isValid = false;
     }

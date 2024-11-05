@@ -9,7 +9,7 @@ import { publicacionValidator } from '@/validations/publicacion';
 import { PhotoIcon } from '@heroicons/react/24/solid'
 import { type DropzoneState, useDropzone } from 'react-dropzone';
 import { imagenCloudinary, crearPublicacion } from './actions';
-import InputField from '@/components/ui/InputField';
+import { toast } from "react-toastify";
 import InputFieldSmall from '@/components/ui/InputFieldSmall';
 import Departamentos from '@/types/Departamentos';
 import InputFieldFull from '@/components/ui/InputFieldFull';
@@ -33,9 +33,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { useRouter } from 'next/navigation';
 
 
 export default function AnimalForm() {
+  const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -56,6 +58,9 @@ export default function AnimalForm() {
     peso: '',
     image: '',
   });
+
+  const userId = localStorage.getItem('userId');
+
 
 
   const onDrop = async (acceptedFiles: File[]) => {
@@ -96,6 +101,10 @@ export default function AnimalForm() {
 
 
   const handleSignUp = async (formData: FormData) => {
+    if (!userId) {
+      throw new Error('El ID de usuario no fue proporcionado');
+    }
+    
     formData.append('sexo', selectedSexo);
     formData.append('tipoAnimal', selectedTipoAnimal);
     formData.append('departamento', selectedDepartamento);
@@ -120,7 +129,11 @@ export default function AnimalForm() {
         }
         // Crear la publicación
         const formResult = await crearPublicacion(formData);
-        setIsModalOpen(true)
+        /* setIsModalOpen(true) */
+        toast.success("¡Mascota publicada con éxito!");
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
 
       });
     } else {
@@ -176,8 +189,8 @@ export default function AnimalForm() {
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="macho">Macho</SelectItem>
-                  <SelectItem value="hembra">Hembra</SelectItem>
+                  <SelectItem value="2">Macho</SelectItem>
+                  <SelectItem value="1">Hembra</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -320,13 +333,9 @@ export default function AnimalForm() {
           />
         )}
 
-
-        <div className='flex justify-center'>
-          <button formAction={handleSignUp} className="hover:scale-105 mt-2 w-[270px] h-[40px] bg-[#FFA07A] rounded-[20px] text-sm text-white">
-            Registrarme
-          </button>
-        </div>
-        
+        <button formAction={handleSignUp} className="hover:scale-105 hover:bg-[#ff9060] my-20 w-[270px] h-[40px] bg-[#FFA07A] rounded-[20px] text-sm text-white mx-auto">
+          Dar en adopción
+        </button>
         
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
           <DialogContent>

@@ -56,10 +56,10 @@ export async function imagenCloudinary (formData: FormData) {
 
 
   // Función que valida los datos del formulario y envía los datos al servidor
-  export async function crearPublicacion(formData: FormData) {
+  export async function crearPublicacion(formData: FormData, userId: string) {
     try {
       const publicacion: Publicaciones = {
-        id_usuario: 7,
+        id_usuario: userId,
         fecha_creacion: new Date().toISOString(),
         peso: Number(formData.get('peso')), // Convierte a número
         nombre: formData.get('nombre') as string,
