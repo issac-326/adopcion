@@ -46,6 +46,11 @@ export function publicacionValidator(formData: FormData) {
         isValid = false;
     }
 
+    if (sexo === '') {
+      errors.sexo = 'El sexo es requerido';
+      isValid = false;
+  }
+
     if (tipoAnimal === '') {
         errors.tipoAnimal = 'El tipo animal es requerido';
         isValid = false;
@@ -56,7 +61,7 @@ export function publicacionValidator(formData: FormData) {
         isValid = false;
     }
 
-    if (anos === null && meses === null) {
+    if (anos === '' && meses === '') {
         errors.anos = 'La edad es requerida';
         isValid = false;
     }
@@ -84,14 +89,15 @@ export function publicacionValidator(formData: FormData) {
         }
     }
 
-    if (meses > 11 || meses < 0) {
-        
-        errors.meses = 'Meses no puede ser mayor que 11';
+    const mesess = parseInt(meses, 10); // Convertir a número entero
+    const anoss = parseInt(anos, 10); // Convertir a número entero
+
+    if (mesess > 11 || mesess < 0) {
+        errors.meses = 'Meses no puede ser mayor que 11 o menor que 0';
         isValid = false;
-        
     }
 
-    if (anos < 0) {
+    if (anoss < 0) {
         errors.anos = 'Años no puede ser menor que 0';
         isValid = false;
     }
@@ -106,7 +112,10 @@ export function publicacionValidator(formData: FormData) {
         isValid = false;
     }
 
-
+    if (imagen === null) {
+      errors.image = 'La imagen es requerida';
+      isValid = false;
+    }
     return { isValid, errors };
   }
   

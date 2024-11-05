@@ -13,9 +13,10 @@ const colorPairs = [
 interface PetListProps {
   pets: Pet[];
   areMyPets?: boolean;
+  isInicio?: boolean;
 }
 
-const PetList: React.FC<PetListProps> = ({ pets, areMyPets = false }) => {  
+const PetList: React.FC<PetListProps> = ({ pets, areMyPets = false, isInicio = true }) => {  
   const [pet, setPet] = useState<Pet[]>([]);
 
   useEffect(() => {
@@ -36,12 +37,15 @@ const PetList: React.FC<PetListProps> = ({ pets, areMyPets = false }) => {
               key={pet.id_publicacion}
               id={pet.id_publicacion}
               nombre={pet.nombre}
-              edad={pet.anios}
+              anios={pet.anios}
+              meses={pet.meses}
               ciudad={ciudad}
               imagen={pet.imagen}
               footerBg={colors.footerBg}
               svgBg={colors.svgBg}
               isMyPet={areMyPets}
+              disponible={pet.estado_adopcion}
+              isInicio={isInicio}
             />
           );
         })}

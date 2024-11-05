@@ -2,11 +2,12 @@
 
 import React, { useEffect, useState } from 'react';
 import { getDepartamentos } from "@/app/menu/inicio/actions";
+import Image from 'next/image';
 import { Button } from "@/components/ui/button";
 import { publicacionValidator } from '@/validations/publicacion';
 import { PhotoIcon } from '@heroicons/react/24/solid'
 import { type DropzoneState, useDropzone } from 'react-dropzone';
-import { imagenCloudinary, crearPublicacion } from './actions';
+import { imagenCloudinary } from '@/app/menu/publicar/actions';
 import InputFieldSmall from '@/components/ui/InputFieldSmall';
 import Departamentos from '@/types/Departamentos';
 import InputFieldFull from '@/components/ui/InputFieldFull';
@@ -33,10 +34,22 @@ import {
 } from "@/components/ui/select"
 
 
+interface PetFormData {
+    nombre: string;
+    sexo: string;
+    imagen: string;
+    descripcion: string;
+    anos: string;
+    meses: string;
+    departamento: string;
+    peso: string;
+}
+
 export default function AnimalFormEdit({ params }) {
     const { id } = params;
     const [pet, setPet] = useState(null);
-    const [formData, setFormData] = useState<FormData>();
+    const [formData, setFormData] = useState<PetFormData>();
+    const [name, setName] = useState('');
 
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [errors, setErrors] = useState<Record<string, string>>({});
@@ -46,10 +59,9 @@ export default function AnimalFormEdit({ params }) {
     const [selectedDepartamento, setSelectedDepartamento] = useState("");
     const [departamentos, setDepartamentos] = useState<Departamentos[]>([]);
     const [text, setText] = useState('');
-
-
+    const [isEditing, setIsEditing] = useState(false);
+    const [image, setImage] = useState(''); // Estado para manejar la imagen
     const userId = localStorage.getItem('userId');
-
 
 
     const onDrop = async (acceptedFiles: File[]) => {
@@ -85,6 +97,8 @@ export default function AnimalFormEdit({ params }) {
                 console.log("Mascota obtenida:", data);
                 setPet(data); // Actualizar el estado de la mascota
 
+                setName(data.nombre); // Actualizar el nombre de la mascota
+                setImage(data.imagen); // Actualizar la imagen de la mascota
                 // Actualizar formData directamente con los datos obtenidos
                 setFormData({
                     nombre: data.nombre || '',  // Asegurarse de que haya un valor
@@ -147,42 +161,59 @@ export default function AnimalFormEdit({ params }) {
             throw new Error('El ID de usuario no fue proporcionado');
         }
     
+        // Validación del formulario
         const formResult = publicacionValidator(formData);
-    
-        if (formResult.isValid) {
-            startTransition(async () => {
-                console.log("Formulario válido:", formData); 
-                    if (acceptedFiles.length > 0) {
-                        const formImagen = new FormData();
-                        formImagen.append('file', acceptedFiles[0]);
-                        const { data: dataClo, error } = await imagenCloudinary(formImagen);
-                        if (error) {
-                            console.error("Error al subir la imagen:", error?.message || "Sin datos de imagen");
-                            return;
-                        }
-    
-                        formData.imagen = dataClo.url;
-                    }
-    
-                    try {
-                        const formResult = await updatePet(formData, userId);
-                        setIsModalOpen(true);
-    
-                    } catch (error) {
-                        console.error("Error al actualizar la mascota:", error);
-                    }
-    
-            });
-        } else {
+        if (!formResult.isValid) {
             setErrors(formResult.errors);
+            return; // Salir si la validación falla
         }
+    
+        // Si el formulario es válido, comenzar la actualización
+        startTransition(async () => {
+            if (acceptedFiles.length > 0) {
+                // Cambia esta línea para llamar a la función de subir imagen con formDataUpload
+                const formImagen = new FormData();
+                formImagen.append('file', acceptedFiles[0]);
+                const { data: dataClo, error } = await imagenCloudinary(formImagen);
+                if (error) {
+                    console.error("Error al subir la imagen:", error?.message || "Sin datos de imagen");
+                    return;
+                }
+    
+                // Actualiza el imagen con la url de la imagen subida
+                const updatedFormData = {
+                    ...formData,
+                    imagen: dataClo.secure_url
+                };
+    
+                console.log("Imagen subida:", dataClo.secure_url);
+    
+                // Crear la publicación con la imagen actualizada
+                try {
+                    const formResult = await updatePet(updatedFormData, id);
+                    setIsModalOpen(true);
+                } catch (err) {
+                    console.error("Error al actualizar la mascota:", err);
+                }
+    
+            } else {
+                // Si no hay imagen para subir, continuar con la actualización
+                try {
+                    const formResult = await updatePet(formData, id);
+                    setIsModalOpen(true);
+                } catch (err) {
+                    console.error("Error al actualizar la mascota:", err);
+                }
+            }
+        });
     };
     
+
 
     const handleSelectSexChange = (value: string) => {
         setFormData({
             ...formData,
-            sexo: Number(value)
+            sexo: value
         });
     }
 
@@ -200,12 +231,24 @@ export default function AnimalFormEdit({ params }) {
         });
     }
 
-
     return (
         <>
             {pet && formData && (<>
-                <p className="text-[24px] font-bold text-black flex justify-center mt-6">¡Haz tu publicación!</p>
-                <form className="space-y-4 mx-auto mt-10 flex flex-col items-center w-[60%]">
+                <header className='w-[60%] mx-auto flex justify-between gap-10'>
+                    <p className="text-[24px] font-bold text-black flex justify-center mt-6">¡Editando la Información de {name}!</p>
+                    <div className="relative group">
+                        {/* Imagen de la mascota */}
+                        <Image
+                            src={image}
+                            alt="Imagen de la mascota"
+                            width={120}
+                            height={120}
+                            className="h-30 w-30 mt-2 mx-auto rounded-full aspect-square object-cover border-4 border-[#FFA07A]/50"
+                        />
+                    </div>
+                </header>
+
+                <form className="space-y-4 mx-auto mt-5 items-center w-[60%] grid grid-cols-1">
                     <div>
                         <InputFieldFull
                             id="nombre"
@@ -219,10 +262,10 @@ export default function AnimalFormEdit({ params }) {
                         {errors.nombre && <div className="text-red-500 animate-shake pl-5 text-xs mt-2">{errors.nombre}</div>}
                     </div>
 
-                    <div className='flex justify-between gap-4'>
+                    <div className='grid gap-4 grid-cols-2'>
                         <div>
                             <Select value={formData.sexo} onValueChange={handleSelectSexChange}>
-                                <SelectTrigger className="rounded-full w-[250px] shadow-[0_4px_4px_rgba(0,0,0,0.25)] mb-2">
+                                <SelectTrigger className="rounded-full shadow-[0_4px_4px_rgba(0,0,0,0.25)] mb-2">
                                     <SelectValue placeholder="Selecciona el sexo" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -237,7 +280,7 @@ export default function AnimalFormEdit({ params }) {
 
                         <div>
                             <Select value={formData.tipoAnimal.toString()} onValueChange={handleSelectTipoAnimalChange}>
-                                <SelectTrigger className="w-[250px] rounded-full shadow-[0_4px_4px_rgba(0,0,0,0.25)] mb-2">
+                                <SelectTrigger className="rounded-full shadow-[0_4px_4px_rgba(0,0,0,0.25)] mb-2">
                                     <SelectValue placeholder="Selecciona el tipo de animal" />
                                 </SelectTrigger>
                                 <SelectContent >
@@ -275,7 +318,7 @@ export default function AnimalFormEdit({ params }) {
                         {errors.meses && <div className="text-red-500 animate-shake pl-5 text-xs mt-2 w-[334px]">{errors.meses}</div>}
                     </div>
 
-                    <div className='flex justify-between gap-4'>
+                    <div className='grid gap-4 grid-cols-2'>
                         <div>
                             <InputFieldSmall
                                 id="peso"
@@ -291,7 +334,7 @@ export default function AnimalFormEdit({ params }) {
 
                         <div>
                             <Select value={formData.departamento.toString()} onValueChange={handleSelectDeptChange}>
-                                <SelectTrigger className="rounded-full w-[250px] shadow-[0_4px_4px_rgba(0,0,0,0.25)] mb-2">
+                                <SelectTrigger className="rounded-full shadow-[0_4px_4px_rgba(0,0,0,0.25)] mb-2">
                                     <SelectValue placeholder="Selecciona el departamento" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -312,49 +355,57 @@ export default function AnimalFormEdit({ params }) {
                     </div>
                     <div>
                         <Textarea placeholder="Aqui puedes agregar una informacion adicional, como sus vacunas, condiciones médicas, etc." value={formData.descripcion} onChange={handleChangeTextarea} id="descripcion"
-                            name="descripcion" className='w-[520px] h-[100px] shadow-[0_4px_4px_rgba(0,0,0,0.25)] mb-2' />
+                            name="descripcion" className='h-[100px] shadow-[0_4px_4px_rgba(0,0,0,0.25)] mb-2' />
                         {errors.descripcion && <div className="text-red-500 animate-shake pl-5 text-xs mt-2 w-[334px]">{errors.descripcion}</div>}
                     </div>
-                    <div
-                        {...getRootProps()}
-                        className={`mt-4 flex dark:text-gray-400 text-gray-600 flex-col justify-center items-center rounded-lg border border-dashed border-gray-900/25 dark:border-gray-100/25 px-6 py-10 transition-colors duration-500 `}
-                    >
-                        <input name='file' {...getInputProps()} />
-                        {acceptedFiles.length > 0 ? (
-                            <p>Imagen seleccionada: {acceptedFiles[0].name}</p>
-                        ) : (
-                            <>
-                                {isDragAccept && <p>Suelta la imagen</p>}
-                                {isDragReject && <p>Solo se permiten imágenes</p>}
-                                {!isDragActive && (
-                                    <div className="text-center">
-                                        <PhotoIcon className="mx-auto h-12 w-12 text-neutral-400 dark:text-neutral-600" aria-hidden="true" />
-                                        <div className="mt-4 flex text-sm leading-6 text-gray-600">
-                                            <label
-                                                htmlFor="file-upload"
-                                                className="relative cursor-pointer rounded-md  font-semibold text-sec focus-within:outline-none focus-within:ring-2 focus-within:ring-sec focus-within:ring-offset-2 hover:text-sec"
-                                            >
-                                                <span>Subir un archivo</span>
-                                                <input id="file-upload" name="file-upload" type="file" className="sr-only" />
-                                            </label>
-                                            <p className="pl-1">o arrastra y suelta</p>
-                                        </div>
-                                        <p className="text-xs leading-5 text-gray-600">PNG, JPG hasta 10MB</p>
-                                    </div>
-                                )}
-                            </>
-                        )}
+                    <div className="relative group">
+                        {/* Componente de arrastrar y soltar la imagen */}
+                        <div
+                            {...getRootProps()}
+                            className={`mt-4 flex dark:text-gray-400 text-gray-600 flex-col justify-center items-center rounded-lg border border-dashed border-gray-900/25 dark:border-gray-100/25 px-6 py-10 transition-colors duration-500 hover:border-[#FFA07A] hover:bg-[#f5f5f5] dark:hover:bg-neutral-700 hover:shadow-lg`}
+                        >
+                            <input name='file' {...getInputProps()} />
 
-                        {/* Muestra la vista previa de la imagen seleccionada */}
-                        {acceptedFiles.length > 0 && (
-                            <div className="flex justify-center">
-                                <img
-                                    src={URL.createObjectURL(acceptedFiles[0])}
-                                    alt={``}
-                                    className="h-40 w-40 mt-2 mx-auto rounded-full aspect-square object-cover border-4 border-[#FFA07A]/50" />
-                            </div>
-                        )}
+                            {/* Mensajes para el estado de arrastrar y soltar */}
+                            {acceptedFiles.length > 0 ? (
+                                <p>Imagen seleccionada: {acceptedFiles[0].name}</p>
+                            ) : (
+                                <>
+                                    {isDragAccept && <p>Suelta la imagen</p>}
+                                    {isDragReject && <p>Solo se permiten imágenes</p>}
+                                    {!isDragActive && (
+                                        <div className="text-center">
+                                            <PhotoIcon className="mx-auto h-12 w-12 text-neutral-400 dark:text-neutral-600" aria-hidden="true" />
+                                            <div className="mt-4 flex text-sm leading-6 text-gray-600">
+                                                <label
+                                                    htmlFor="file-upload"
+                                                    className="relative cursor-pointer rounded-md font-semibold text-sec focus-within:outline-none focus-within:ring-2 focus-within:ring-sec focus-within:ring-offset-2 hover:text-sec"
+                                                >
+                                                    <span>Subir un archivo</span>
+                                                    <input id="file-upload" name="file-upload" type="file" className="sr-only" />
+                                                </label>
+                                                <p className="pl-1">o arrastra y suelta</p>
+                                            </div>
+                                            <p className="text-xs leading-5 text-gray-600">PNG, JPG hasta 10MB</p>
+                                        </div>
+                                    )}
+                                </>
+                            )}
+
+                            {/* Vista previa de la imagen seleccionada */}
+                            {acceptedFiles.length > 0 && (
+                                <div className="flex justify-center relative group">
+                                    <img
+                                        src={URL.createObjectURL(acceptedFiles[0])}
+                                        alt={`Vista previa de la imagen`}
+                                        className="h-40 w-40 mt-2 mx-auto rounded-full aspect-square object-cover border-4 border-[#FFA07A]/50"
+                                    />
+                                </div>
+                            )}
+                        </div>
                     </div>
+
+
 
                     {/* Renderiza la imagen si imageUrl está definido */}
                     {imageUrl && (
@@ -365,8 +416,8 @@ export default function AnimalFormEdit({ params }) {
                         />
                     )}
 
-                    <button onClick={handleEdit} className="hover:scale-105 mt-12 w-[270px] h-[40px] bg-[#FFA07A] rounded-[20px] text-sm text-white">
-                        Editar
+                    <button onClick={handleEdit} className="hover:scale-105 hover:bg-[#ff9060] mt-16 mx-auto w-[270px] h-[40px] bg-[#FFA07A] rounded-[20px] text-sm text-white">
+                        Guardar cambios
                     </button>
 
 
@@ -379,7 +430,7 @@ export default function AnimalFormEdit({ params }) {
                                 La publicacion fue publicada exitosamente.
                             </div>
                             <DialogFooter>
-                                <Button onClick={handleRefresh} className="w-full bg-[#FFA07A]">
+                                <Button className="w-full bg-[#FFA07A]">
                                     ¡Aceptar!
                                 </Button>
                             </DialogFooter>

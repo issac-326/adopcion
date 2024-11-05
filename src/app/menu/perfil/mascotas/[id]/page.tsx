@@ -8,7 +8,7 @@ export default function MisMascotasPage({ params }) {
   
   return (
     <div>
-        <PetInformation id={id} id_usuario={userId} isMyPet={true}/>
+        <PetInformation id={id} id_usuario={userId} isMyPet={true} isInicio={false}/>
     </div>
   );
 }

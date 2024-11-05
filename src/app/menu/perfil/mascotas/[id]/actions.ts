@@ -38,7 +38,7 @@ if (error) {
 export const deleteMascota = async (id: number) => {
   const { error } = await supabase
     .from('publicaciones')
-    .delete()
+    .update({ visible : false })
     .eq('id_publicacion', id);
 
   if (error) {

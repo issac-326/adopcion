@@ -24,7 +24,7 @@ const InputFieldFull: React.FC<InputProps> = ({
   readOnly = false,
 }) => {
   return (
-    <div className="relative w-[520px] mb-2">
+    <div className="relative w-full mb-2">
       <input
         id={id}
         name={name}
@@ -33,7 +33,7 @@ const InputFieldFull: React.FC<InputProps> = ({
         value={value}
         onChange={onChange}
         readOnly={readOnly}
-        className={`peer h-10 w-full border border-gray-300 rounded-full bg-transparent px-4 pt-5 pb-1 outline-none text-sm transition duration-200 shadow-[0_4px_4px_rgba(0,0,0,0.25)] focus:border-orange-400 ${
+        className={`peer h-10 w-full border border-gray-300 rounded-full bg-transparent px-4 pt-5 pb-1 outline-none text-sm transition duration-200 shadow-[0_4px_4px_rgba(0,0,0,0.25)] focus:border-orange-400 focus:outline-none ${
           readOnly ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : 'bg-white'
         }`}
       />

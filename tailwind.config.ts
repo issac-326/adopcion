@@ -10,6 +10,9 @@ const config: Config = {
   ],
   theme: {
   	extend: {
+		grayscale: {
+			50: '90%',
+		  },
 		fontFamily: {
 			montserrat: ['var(--font-montserrat)', 'sans-serif'], // Añade Montserrat usando la variable de CSS
 		  },

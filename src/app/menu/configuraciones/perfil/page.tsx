@@ -1,17 +1,17 @@
-'use client';  
+'use client';
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
 import { toast } from "react-toastify";
-import { getMyPets, getUserProfile, updateUserProfile } from './actions';
+import { getMyPets, getUserProfile, updateUserProfile, updateUserProfileImage, imagenCloudinary } from './actions';
+import { useDropzone } from 'react-dropzone';
 import InputField from "@/components/ui/InputField"; 
 import { Button } from "@/components/ui/button"; 
-import PetList from "@/components/ui/PetList";
-import PetCardSkeleton from "@/components/ui/petCardSkeleton";
+import Image from "next/image";
 
-const UpdateProfile = () => {
+const ProfilePage = () => {
 
-  const userId = localStorage.getItem('userId'); 
+    const userId = localStorage.getItem('userId');
 
   const [nombre1, setNombre1] = useState("");
   const [nombre2, setNombre2] = useState("");
@@ -19,6 +19,8 @@ const UpdateProfile = () => {
   const [apellido2, setApellido2] = useState("");
   const [telefono, setTelefono] = useState("");
   const [correo, setCorreo] = useState("");
+  const [imagen, setImagen] = useState("/usuario-default.jpg"); // Estado para la imagen de perfil
+  const [newImage, setNewImage] = useState<File | null>(null); // Archivo de nueva imagen
   
   // Estados para almacenar los valores originales del perfil
   const [initialNombre1, setInitialNombre1] = useState("");
@@ -30,8 +32,8 @@ const UpdateProfile = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const [myPets, setMyPets] = useState([]);
-  const [loadingPets, setLoadingPets] = useState(false);
+    const [myPets, setMyPets] = useState([]);
+    const [loadingPets, setLoadingPets] = useState(false);
 
 
   useEffect(() => {
@@ -47,6 +49,7 @@ const UpdateProfile = () => {
             setApellido2(profileData.apellido2 || "");
             setTelefono(profileData.telefono || "");
             setCorreo(profileData.correo || "");
+            setImagen(profileData.imagen || "/usuario-default.jpg"); // Establece la imagen o usa la predeterminada
             
             // Guardar los valores originales
             setInitialNombre1(profileData.nombre1 || "");
@@ -61,7 +64,7 @@ const UpdateProfile = () => {
         }
       } else {
         toast.error("No se encontró ningún ID de usuario. Inicie sesión.");
-        router.push('/Login'); 
+        router.push('/login'); 
       }
     };
 
@@ -74,21 +77,21 @@ const UpdateProfile = () => {
         return;
       }
 
-      setLoadingPets(true);
+            setLoadingPets(true);
 
-      try {
-        const pets = await getMyPets(userId);
-        setMyPets(pets || []);
-      } catch (error) {
-        console.error("Error fetching pets:", error);
-        toast.error("Error al obtener las mascotas.");
-      } finally {
-        setLoadingPets(false);
-      }
-    };
+            try {
+                const pets = await getMyPets(userId);
+                setMyPets(pets || []);
+            } catch (error) {
+                console.error("Error fetching pets:", error);
+                toast.error("Error al obtener las mascotas.");
+            } finally {
+                setLoadingPets(false);
+            }
+        };
 
-    fetchPets();
-  }, [userId]);
+        fetchPets();
+    }, [userId]);
 
 
   const submitHandler = async (e: React.FormEvent) => {
@@ -163,6 +166,45 @@ const UpdateProfile = () => {
     toast.info("No se actualizó el perfil.");
   };
 
+// Configuración de useDropzone con el estado isDragActive
+const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  onDrop: (acceptedFiles: File[]) => {
+    if (acceptedFiles.length > 0) {
+      setNewImage(acceptedFiles[0]);
+      setImagen(URL.createObjectURL(acceptedFiles[0])); // Muestra una vista previa de la imagen seleccionada
+    }
+  },
+  accept: { 'image/*': [] },
+  multiple: false,
+  maxSize: 10000000
+});
+
+// Función para subir la nueva imagen a Cloudinary y actualizar la base de datos
+const handleImageChange = async () => {
+  console.log(newImage)
+  if (!newImage || !userId) return;
+
+  const formData = new FormData();
+  formData.append('file', newImage);
+
+  const { data: dataClo, error } = await imagenCloudinary(formData);
+  if (error) {
+    toast.error("Error al subir la imagen");
+    console.error("Error al subir la imagen:", error);
+    return;
+  }
+
+  const imageUrl = dataClo.secure_url;
+  try {
+    await updateUserProfileImage(userId, imageUrl);
+    toast.success("¡Imagen de perfil actualizada con éxito!");
+    setNewImage(null);
+  } catch (error) {
+    console.error("Error actualizando la imagen de perfil:", error);
+    toast.error("Error al actualizar la imagen de perfil.");
+  }
+};
+
   return (
     <> 
       <div className="flex justify-center items-center min-h-screen">
@@ -176,19 +218,35 @@ const UpdateProfile = () => {
             <p className="text-[12px] text-black">Realiza cambios en tu cuenta</p>
           </div>
 
-          {/* Imagen de perfil y botones */}
-          <div className="flex flex-col items-center mb-6 ml-6">
-            <img
-              src="/usuario-default.jpg"
-              alt="Imagen de perfil"
-              className="w-48 h-48 rounded-full mb-4"
-            />
-          </div>
+        {/* Imagen de perfil y área de arrastrar y soltar */}
+        <div className="flex flex-col items-center mb-6">
+    <img src={imagen} alt="Imagen de perfil" className="w-48 h-48 rounded-full mb-4" />
+    <div
+      {...getRootProps()}
+      className={`mt-4 flex flex-col justify-center items-center rounded-lg border-2 ${
+        isDragActive ? "border-blue-500 bg-blue-100" : "border-gray-300 bg-gray-100"
+      } transition-colors duration-300 ease-in-out px-6 py-10 cursor-pointer hover:border-blue-500 hover:bg-blue-50`}
+    >
+      <input {...getInputProps()} />
+      <p className="text-gray-600 text-center font-semibold">
+        {isDragActive ? "Suelta la imagen aquí..." : "Arrastra y suelta una imagen o haz clic para seleccionar"}
+      </p>
+    </div>
+    {newImage && (
+      <button
+        type="button"
+        onClick={handleImageChange}
+        className="mt-4 bg-[#FFA07A] hover:bg-[#FF8C69] text-white rounded-full px-6 py-2"
+      >
+        Actualizar Imagen
+      </button>
+    )}
+  </div>
 
           {/* Primer y Segundo Nombre */}
           <div className="flex gap-10 mb-4 w-full max-w-2xl mx-auto">
             <div className="w-1/2">
-              <label className="block mb-0 text-black">Primer Nombre</label>
+             
               <InputField
                 id="nombre1"
                 name="nombre1"
@@ -199,7 +257,7 @@ const UpdateProfile = () => {
               />
             </div>
             <div className="w-1/2">
-              <label className="block mb-0 text-black">Segundo Nombre</label>
+              
               <InputField
                 id="nombre2"
                 name="nombre2"
@@ -214,7 +272,7 @@ const UpdateProfile = () => {
           {/* Primer y Segundo Apellido */}
           <div className="flex gap-10 mb-4 w-full max-w-2xl mx-auto">
             <div className="w-1/2">
-              <label className="block mb-0 text-black">Primer Apellido</label>
+            
               <InputField
                 id="apellido1"
                 name="apellido1"
@@ -225,7 +283,7 @@ const UpdateProfile = () => {
               />
             </div>
             <div className="w-1/2">
-              <label className="block mb-0 text-black">Segundo Apellido</label>
+              
               <InputField
                 id="apellido2"
                 name="apellido2"
@@ -240,7 +298,7 @@ const UpdateProfile = () => {
           {/* Correo y Teléfono */}
           <div className="flex gap-10 mb-4 w-full max-w-2xl mx-auto">
             <div className="w-1/2">
-              <label className="block mb-0 text-black">Correo</label>
+              
               <InputField
                 id="correo"
                 name="correo"
@@ -251,7 +309,6 @@ const UpdateProfile = () => {
               />
             </div>
             <div className="w-1/2">
-              <label className="block mb-0 text-black">Teléfono</label>
               <InputField
                 id="telefono"
                 name="telefono"
@@ -277,23 +334,10 @@ const UpdateProfile = () => {
               {loading ? "Actualizando..." : "Actualizar"}
             </Button>
           </div>
-
         </form>
-      </div>
-
-      {loadingPets ?
-        <PetCardSkeleton /> :  
-        <div>
-      <h2 className="text-texto mt-5 font-montserrat text-xl font-medium">Mis Mascotas</h2>
-      <hr className='border-1 boder-white'/>
-      {myPets.length === 0 ? (<p>No ha publicado mascotas</p>) : <PetList pets={myPets} areMyPets={true} />
-    }
-        </div>    
-      }
- 
-
-    </>
-  );
+        </div>
+        </>
+    );
 };
 
-export default UpdateProfile;
+export default ProfilePage;

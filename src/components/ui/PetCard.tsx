@@ -12,12 +12,15 @@ import { useEffect, useState } from "react";
 interface InputProps { // Propiedades que recibe el componente
   id: number; // Debe ser un número
   nombre: string;
-  edad: number;
+  anios: number;
+  meses: number;
   ciudad: string;
   imagen: string;
   footerBg: string;
   svgBg: string;
   isMyPet: boolean;
+  disponible: boolean;
+  isInicio?: boolean;
 }
 
 const PetCard = ({
@@ -25,15 +28,18 @@ const PetCard = ({
   ciudad,
   imagen,
   id,
-  edad,
+  anios,
+  meses,
   footerBg,
   svgBg,
   isMyPet = false,
+  disponible, 
+  isInicio = true
 }: InputProps) => {
   const router = useRouter();
   const userId = localStorage.getItem('userId');
   const [isLiked, setIsLiked] = useState(false);
-  const [loading, setLoading] = useState(true);  
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchMascota = async () => {
@@ -49,7 +55,7 @@ const PetCard = ({
 
     fetchMascota();
   }, [id, userId]);
-  
+
   const handleLike = async () => {
     try {
       await favorito(Number(id), userId, isLiked);
@@ -61,29 +67,43 @@ const PetCard = ({
 
   return (
 <div
-  className="flex flex-col cursor-pointer hover:scale-102 transition-transform duration-300 relative border w-full h-[272px] rounded-lg shadow-lg overflow-hidden"
+  className={`flex flex-col cursor-pointer hover:scale-102 transition-transform duration-300 relative w-full h-[272px] rounded-lg shadow-lg overflow-hidden 
+    ${!disponible ? 'opacity-80 grayscale-[80%]' : 'border'}`}
   key={id}
-  onClick={() => router.push(isMyPet ? `/menu/perfil/mascotas/${id}` : `/menu/mascota/${id}`)
-} // Redirige al hacer clic en el contenedor
+  onClick={() =>
+    router.push(isMyPet 
+      ? `/menu/perfil/mascotas/${id}` 
+      : `/menu/mascota/${id}?inicio=${isInicio}`
+    )
+  }
 >
   <header className="relative h-4/5 overflow-hidden">
     <Image
       src={imagen}
       alt="perro"
-      className="w-full h-full object-cover"
-      width={50}
-      height={50}
+      className={`object-cover ${!disponible ? 'blur-[2px]' : ''}`} 
+      fill
+      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
       style={{ objectFit: 'cover' }}
     />
-    {!isMyPet && (    <div
-      className="absolute top-2 right-2 bg-white rounded-full w-8 h-8 flex items-center justify-center hover:scale-110"
-      onClick={(e) => {
-        e.stopPropagation();
-        handleLike();
-      }}
-    >
-      <FontAwesomeIcon icon={faHeart} className={`${isLiked ? 'text-red-500' : 'text-gray-400'}`} />
-    </div>)}
+
+    {!disponible && (
+      <div className="absolute inset-0 bg-gray-900 bg-opacity-60 flex justify-center items-center">
+        <span className="text-white text-3xl font-extrabold animate-pulse">¡Adoptado!</span>
+      </div>
+    )}
+
+    {!isMyPet && (
+      <div
+        className="absolute top-2 right-2 bg-white rounded-full w-8 h-8 flex items-center justify-center hover:scale-110"
+        onClick={(e) => {
+          e.stopPropagation();
+          handleLike();
+        }}
+      >
+        <FontAwesomeIcon icon={faHeart} className={`${isLiked ? 'text-red-500' : 'text-gray-400'}`} />
+      </div>
+    )}
 
     <h1
       className="absolute bottom-0 right-2 text-white font-semibold text-2xl z-10"
@@ -98,11 +118,17 @@ const PetCard = ({
     style={{ backgroundColor: footerBg }}
   >
     <div className="flex items-center space-x-2 z-10">
-      <p>{edad} años</p>
+      <p>
+        {anios === 0
+          ? `${meses} ${meses === 1 ? 'mes' : 'meses'}`
+          : anios === 1
+            ? `1 año, ${meses} ${meses === 1 ? 'mes' : 'meses'}`
+            : `${anios} años`}
+      </p>
     </div>
     <div className="flex items-center space-x-2 z-10">
       <FontAwesomeIcon icon={faMapMarkerAlt} />
-      <p className='text-black-800 text-sm font-light'>{ciudad}</p>
+      <p className="text-black-800 text-sm font-light">{ciudad}</p>
     </div>
 
     <svg
@@ -122,8 +148,6 @@ const PetCard = ({
     </svg>
   </footer>
 </div>
-
-
 
   );
 };

@@ -44,6 +44,7 @@ export default function Home() {
   const observerRef = useRef(null); // Referencia al sentinela
   const [isInitialRender, setIsInitialRender] = useState(true);
   const [hasMorePets, setHasMorePets] = useState(true);
+  const userId = localStorage.getItem('userId');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -54,7 +55,6 @@ export default function Home() {
       } else {
         console.log("categoriesRef.current es null");
       }
-      console.log("scrolling...");
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -65,17 +65,12 @@ export default function Home() {
     };
   }, []);
 
-
   useLayoutEffect(() => {
     const observer = new IntersectionObserver((entries) => {
-      console.log("entries", entries);
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          console.log("Sentinela visible, cargando más mascotas...");
-          console.log("pagen", page);
           setPage((prevPage) => {
             const newPage = prevPage + 1;
-            console.log("pagenx", newPage);
             return newPage;
           });
           observer.unobserve(entry.target);
@@ -85,7 +80,6 @@ export default function Home() {
 
     if (observerRef.current) {
       observer.observe(observerRef.current); // Observa el div al final de la lista
-      console.log("Observando:", observerRef.current);
     } else {
       console.warn("observerRef.current es null, no se puede observar el sentinela");
     }
@@ -95,41 +89,7 @@ export default function Home() {
         observer.unobserve(observerRef.current);
       }
     };
-  }, [observerRef.current]); 
-
-/*   useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      console.log("entries", entries);
-      if (entries[0].isIntersecting) {
-        setPage((prevPage) => {
-          const newPage = prevPage + 1; // Incrementa la página cuando el sentinela es visible
-          console.log("pagen", newPage);
-          return newPage;
-        });
-      }
-    });
-  
-    console.log("observerRef.current", observerRef.current);
-    if (observerRef.current) {
-      observer.observe(observerRef.current);
-    }
-  
-    return () => {
-      if (observerRef.current) {
-        observer.unobserve(observerRef.current);
-      }
-    };
-  }, [observerRef]); // Asegúrate de que el array de dependencias sea correcto */
-
-useEffect(() => {
-  if (isInitialRender) {
-    setIsInitialRender(false);
-    return;
-  }
-
-    console.log("pagennn", page);
-    seleccionarMascotasPorIdCatIdDepa(selectedCategory, depaSeleccionado , page);
-  }, [page]); 
+  }, [observerRef.current]);
 
   /* obtiene las categorias y las carga en el estado nomas cargar la pagina pone el primer departamento seleccionado que de momento es siempre FM*/
   useEffect(() => {
@@ -148,25 +108,25 @@ useEffect(() => {
     seleccionarMascotasPorIdCatIdDepa(selectedCategory, depaSeleccionado, 0);
   }, []);
 
-  const seleccionarMascotasPorIdCatIdDepa = async (id = 0, id_departamento, page = 0) => {
+  const seleccionarMascotasPorIdCatIdDepa = async (id = 0, id_departamento, page = 0) => { 
     if (!hasMorePets) {
       console.log("No hay más mascotas para cargar.");
       return; // Si no hay más mascotas, detenemos la ejecución
     }
-
+  
     try {
       console.log("Seleccionando mascotas por categoría y departamento:", id, id_departamento, page);
       setLoadingPets(true);
       const limit = 10; // Número de mascotas a cargar por página
       const offset = page * limit;
-
-      const data = await getCategoriaEspecifica(id, id_departamento, limit, offset);
-      
+  
+      const data = await getCategoriaEspecifica(id, id_departamento, limit, offset, userId);
+  
       // Si la cantidad de datos retornados es menor que el límite, ya no hay más mascotas para cargar
       if (data.length < limit) {
         setHasMorePets(false); // Indica que no hay más mascotas
       }
-
+  
       // Añade las nuevas mascotas a la lista existente
       setSelectedMascotas((prevMascotas) => [...prevMascotas, ...(data ?? [])]);
     } catch (error) {
@@ -176,30 +136,48 @@ useEffect(() => {
     }
   };
   
-  
   /* Se ejecuta cuando cambia el departamento */
   useEffect(() => {
     if (isInitialRender) {
-      // La primera vez que se renderiza, marcamos el flag como falso
       setIsInitialRender(false);
       return;
     }
-    // Solo se ejecuta después del primer renderizado
-    setSelectedCategory(0);
+    
+    // Reiniciamos la lista de mascotas, el flag de más mascotas y la paginación
     setHasMorePets(true);
     setSelectedMascotas([]);
+    setPage(0); // Reiniciamos la página
+  
+    // Realizamos la búsqueda directamente con categoría 0 (todas las categorías)
+    seleccionarMascotasPorIdCatIdDepa(0, depaSeleccionado, 0);
   }, [depaSeleccionado]);
-
-  // Este efecto solo se ejecuta cuando cambia 'selectedCategory'
+  
+  /* Se ejecuta cuando cambia la categoría */
   useEffect(() => {
     if (isInitialRender) {
       return;
     }
-    // Solo se ejecuta después del primer renderizado
+    
+    // Reiniciamos la lista de mascotas y el flag de más mascotas
     setSelectedMascotas([]);
     setHasMorePets(true);
-    setPage(0);
+    setPage(0); // Reiniciamos la página
+  
+    // Realizamos la búsqueda cuando cambia la categoría
+    seleccionarMascotasPorIdCatIdDepa(selectedCategory, depaSeleccionado, 0);
   }, [selectedCategory]);
+  
+  /* Se ejecuta cuando cambia la página */
+  useEffect(() => {
+    if (isInitialRender) {
+      setIsInitialRender(false);
+      return;
+    }
+  
+    // Realizamos la búsqueda cuando cambia la página
+    seleccionarMascotasPorIdCatIdDepa(selectedCategory, depaSeleccionado, page);
+  }, [page]);
+  
 
   /* Traer los departamentos al cargar la pagina */
   useEffect(() => {
@@ -217,10 +195,9 @@ useEffect(() => {
       console.error("Error al obtener los departamentos:", error);
     }
   }, [])
-    
 
   /* cada que cambiemos lhas mascotas seleccionadas las volvera a renderizar */
-useEffect(() => {
+  useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % bannerImages.length);
     }, 5000);
@@ -242,7 +219,7 @@ useEffect(() => {
               <div>
                 <div className="flex gap-2 text-sm text-gray-400 items-center">Ubicación <FontAwesomeIcon icon={faChevronDown} className="w-3" /></div>
                 <span className="font-extrabold">{depaSeleccionado === 0 ? 'Todos' : departamentos.find(dep => dep.id === depaSeleccionado)?.descripcion},</span> HN
-                
+
               </div>
             </MenuButton>
           </div>
@@ -251,14 +228,14 @@ useEffect(() => {
             transition
             className="absolute left-0 z-40 mt-2 w-max origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none justify-start data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in grid grid-cols-3 gap-x-4"
           >
-                  <MenuItem key={0} onClick={() => setDepaSeleccionado(0)} as="div" className="flex justify-start justify-center"> 
-          <a
-            className="block text-left w-max-8 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:text-gray-900 text-center"
-          >
-            Todos
-          </a>
-        </MenuItem>
-  {departamentos && departamentos.length > 0 ? (
+            <MenuItem key={0} onClick={() => setDepaSeleccionado(0)} as="div" className="flex justify-start justify-center">
+              <a
+                className="block text-left w-max-8 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:text-gray-900 text-center"
+              >
+                Todos
+              </a>
+            </MenuItem>
+            {departamentos && departamentos.length > 0 ? (
               departamentos.map((departamento, index) => (
                 <MenuItem key={departamento.id} onClick={() => {
                   setDepaSeleccionado(departamento.id)
@@ -405,78 +382,92 @@ useEffect(() => {
       {/* Categorías */}
       <h2 className="text-texto mt-5 font-montserrat text-xl font-medium">Categorias</h2>
       <div
-      id="categorias"
+        id="categorias"
         ref={categoriesRef}
-        className={`py-2 w-full sticky z-20 top-0 bg-white transition-shadow duration-300 ${
-          isSticky ? 'shadow-[0_4px_8px_rgba(0,0,255,0.2),0_2px_4px_rgba(0,0,0,0.1)]' : ''
-        }`}
+        className={`py-2 w-full sticky z-20 top-0 bg-white transition-shadow duration-300 ${isSticky ? 'shadow-[0_4px_8px_rgba(0,0,255,0.2),0_2px_4px_rgba(0,0,0,0.1)]' : ''
+          }`}
       >
         <section className="flex justify-between h-[40px] gap-4">
-          <div
-            className={`flex-1 bg-[#21888d] font-light p-2 rounded-lg relative hover:scale-105 flex items-center justify-center ${selectedCategory === 0 ? 'border-2 border-[#020817]' : ''
-              }`}
-            onClick={() => {
-              setSelectedCategory(0);
-            }}>
-            <p className="font-normal text-base text-center">Todos</p>
-            <FontAwesomeIcon
-              icon={faPaw}
-              rotation={180}
-              className="absolute top-2 right-4 text-[#135556] opacity-30 transform -rotate-12 text-3xl"
-            />
-          </div>
-
           {loading ? (
-            <div>Loading...</div>
-          ) : (
-            categories.map((category, index) => (
+            Array.from({ length: 5 }).map((_, index) => ( // Cambia 5 por el número de skeletons que deseas mostrar
               <div
                 key={index}
-                className={`flex-1 p-2 rounded-lg relative hover:scale-105 border-box flex items-center justify-center font-light ${selectedCategory === category.id_categoria ? 'border-2 border-[#020817]' : ''
+                className="flex-1 p-2 rounded-lg relative border-box flex items-center justify-center font-light bg-gray-300 animate-pulse" // Añadido animate-pulse para el efecto de carga
+                style={{ backgroundColor: 'lightgray' }} // Color de fondo del skeleton
+              >
+                <div className="h-5 w-24 bg-gray-400 rounded mb-2"></div> {/* Simulando el texto */}
+              </div>
+            ))
+          ) : (
+            <>
+              <div
+                className={`flex-1 bg-[#21888d] font-light p-2 rounded-lg relative hover:scale-105 flex items-center justify-center ${selectedCategory === 0 ? 'border-2 border-[#020817]' : ''
                   }`}
-                style={{ backgroundColor: colors[index] }} // Aplicando el color dinámicamente
                 onClick={() => {
-                  setSelectedCategory(category.id_categoria);
+                  setSelectedCategory(0);
                 }}
               >
-                <p className="font-normal text-base text-center">{category.tipo_mascotas}</p>
+                <p className="font-normal text-base text-center">Todos</p>
                 <FontAwesomeIcon
                   icon={faPaw}
                   rotation={180}
-                  style={{ color: colorsPaws[index] }}
-                  className="absolute top-2 right-4 opacity-30 transform -rotate-12 text-3xl"
+                  className="absolute top-2 right-4 text-[#135556] opacity-30 transform -rotate-12 text-3xl"
                 />
               </div>
-            ))
+
+              {categories.map((category, index) => (
+                <div
+                  key={index}
+                  className={`flex-1 p-2 rounded-lg relative hover:scale-105 border-box flex items-center justify-center font-light ${selectedCategory === category.id_categoria ? 'border-2 border-[#020817]' : ''
+                    }`}
+                  style={{ backgroundColor: colors[index] }} // Aplicando el color dinámicamente
+                  onClick={() => {
+                    setSelectedCategory(category.id_categoria);
+                  }}
+                >
+                  <p className="font-normal text-base text-center">{category.tipo_mascotas}</p>
+                  <FontAwesomeIcon
+                    icon={faPaw}
+                    rotation={180}
+                    style={{ color: colorsPaws[index] }}
+                    className="absolute top-2 right-4 opacity-30 transform -rotate-12 text-3xl"
+                  />
+                </div>
+              ))}
+            </>
           )}
+
+
+
+
         </section>
       </div>
 
       {/* Mascotas */}
       <section className="mt-5 flex justify-between items-center">
-        <h2 className="font-montserrat text-xl font-medium">Esperando por ti</h2>
+        <h2 className="font-montserrat text-xl font-medium">Esperando por ti...</h2>
       </section>
 
       {loadingPets ? (
-  <>
-    {selectedMascotas.length > 0 ? (
-      <>
-        <PetList pets={selectedMascotas} />
-      </>
-    ) : (
-      <PetCardSkeleton />
-    )}
-  </>
-) : (
-  <>
-    {selectedMascotas.length > 0 ? (
-      <PetList pets={selectedMascotas} />
-    ) : (
-      <div className='text-[#f5a473]'>No hay mascotas disponibles 😿</div>
-    )}
-    <div id='obsevando' ref={observerRef} />
-  </>
-)}
+        <>
+          {selectedMascotas.length > 0 ? (
+            <>
+              <PetList pets={selectedMascotas} />
+            </>
+          ) : (
+            <PetCardSkeleton />
+          )}
+        </>
+      ) : (
+        <>
+          {selectedMascotas.length > 0 ? (
+            <PetList pets={selectedMascotas} />
+          ) : (
+            <div className='text-[#f5a473]'>No hay mascotas disponibles 😿</div>
+          )}
+          <div id='obsevando' ref={observerRef} />
+        </>
+      )}
 
 
     </>

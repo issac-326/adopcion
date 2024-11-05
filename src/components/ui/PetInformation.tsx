@@ -13,6 +13,7 @@ import { faCircleCheck, faPenToSquare, faTrashCan } from '@fortawesome/free-regu
 import { Button } from "@/components/ui/button";
 import { deleteMascota, markAsAdopted } from '@/app/menu/perfil/mascotas/[id]/actions';
 import confetti from 'canvas-confetti';
+import { toast } from 'react-toastify';
 
 import {
   Dialog,
@@ -22,7 +23,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog"
 
-export default function PetInformation({ id, id_usuario, isMyPet = false }: { id: string, id_usuario: string, isMyPet?: boolean }) {
+export default function PetInformation({ id, id_usuario, isMyPet = false, isInicio = true }: { id: string, id_usuario: string, isMyPet?: boolean, isInicio?: boolean }) {
   const [isLiked, setIsLiked] = useState(false);
   const [mascota, setMascota] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -33,6 +34,8 @@ export default function PetInformation({ id, id_usuario, isMyPet = false }: { id
   const defaults = {
     origin: { y: 0.7 }
   };
+
+  console.log('isInicio:', isInicio);
 
   function fire(particleRatio, opts) {
     confetti({
@@ -96,7 +99,8 @@ export default function PetInformation({ id, id_usuario, isMyPet = false }: { id
     if (!isAdopted) {
       try {
         await deleteMascota(Number(id));
-        router.push('/menu/perfil');
+        toast.success('Mascota eliminada exitosamente');
+        router.push('/menu/perfil?misMascotas=true');
       } catch (error) {
         console.error('Error al eliminar mascota:', error);
       }
@@ -106,10 +110,14 @@ export default function PetInformation({ id, id_usuario, isMyPet = false }: { id
 
     try {
       await markAsAdopted(Number(id));
+      toast.success('Mascota marcada como adoptada exitosamente', {
+        autoClose: 5000,
+      });
       handleConfetti();
       setIsModalOpen(false);
-/*       router.push('/menu/perfil');
- */    } catch (error) {
+      setMascota({ ...mascota, estado_adopcion: false });
+
+     } catch (error) {
       console.error('Error al marcar mascota como adoptada:', error);
     }
     handleConfetti();
@@ -129,16 +137,17 @@ export default function PetInformation({ id, id_usuario, isMyPet = false }: { id
         <Image
           src={mascota.imagen}
           alt="Mascota"
-          width={300}
-          height={300}
-          className="shadow-[0_0px_15px_rgba(0,0,0,0.8)] rounded-lg sm:w-[200px] sm:h-[200px] lg:w-[500px] lg:h-[500px]"
+          width={300} // Tamaño deseado
+          height={300} // Tamaño deseado
+          className="shadow-[0_0px_15px_rgba(0,0,0,0.8)] rounded-lg object-cover sm:w-[200px] sm:h-[200px] lg:w-[500px] lg:h-[500px]"
+          style={{ objectFit: 'cover' }}
         />
       </div>
 
       {/* Información */}
       <div className="flex-1 flex flex-col justify-between p-8">
         {/* Botón para regresar */}
-        <div className="rounded-full w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center cursor-pointer hover:scale-110" onClick={() => { router.push('/menu/inicio') }}>
+        <div className="rounded-full w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center cursor-pointer hover:scale-110" onClick={() => { isInicio ? router.push('/menu/inicio') : router.push('/menu/perfil') }}>
           <button className="ml-[20px] lg:ml-[30px]">
             <FontAwesomeIcon icon={faAngleLeft} className="text-red-500 text-[24px] lg:text-[32px]" />
           </button>
@@ -170,8 +179,12 @@ export default function PetInformation({ id, id_usuario, isMyPet = false }: { id
               <p className="text-xs text-gray-500">Sexo</p>
               <FontAwesomeIcon icon={faPaw} className="absolute top-5 right-4 text-green-500 opacity-30 rotate-[-30deg] text-[30px] sm:text-[40px]" />
             </div>
-            <div className="flex-1 bg-orange-200 p-3 rounded-lg relative transition-transform mr-4 mb-4 lg:mb-0">
-              <h2 className="font-bold">{mascota.edad} años</h2>
+            <div className="flex-1 bg-orange-200 p-3 rounded-lg relative hover:scale-110 transition-transform mr-4 mb-4 lg:mb-0">
+              <h2 className="font-bold">
+                {mascota.anios === 0
+                  ? `${mascota.meses} ${mascota.meses === 1 ? 'mes' : 'meses'}` // Solo meses si los años son 0
+                  : `${mascota.anios} ${mascota.anios === 1 ? 'año' : 'años'}`}
+              </h2>
               <p className="text-xs text-gray-500">Edad</p>
               <FontAwesomeIcon icon={faPaw} className="absolute top-5 right-4 text-orange-500 opacity-30 rotate-[-30deg] text-[30px] sm:text-[40px]" />
             </div>
@@ -218,7 +231,7 @@ export default function PetInformation({ id, id_usuario, isMyPet = false }: { id
           {!isMyPet && (
             <div>
               <button
-                className="w-full sm:w-full lg:w-3/5 py-2 sm:py-3 bg-orange-300 text-white rounded-3xl text-sm sm:text-lg hover:bg-orange-400 transition-colors mx-auto block"
+                className="w-full sm:w-full lg:w-3/5 py-2 sm:py-3 bg-orange-300 text-white rounded-3xl text-sm sm:text-lg transition-colors mx-auto block"
                 onClick={() => router.push(`/menu/mensaje`)}
               >
                 Adoptar
@@ -228,7 +241,7 @@ export default function PetInformation({ id, id_usuario, isMyPet = false }: { id
 
           {isMyPet && mascota.estado_adopcion && (<div className='flex flex-col sm:flex-row justify-around items-center gap-4 py-4'>
             <div
-              className='flex flex-1 justify-center items-center py-2 px-4 gap-2 rounded-lg bg-[#f2b03c] text-[#00] hover:text-white transition-colors cursor-pointer hover:scale-105 transition-scale'
+              className='flex flex-1 justify-center items-center py-2 px-4 gap-2 rounded-lg bg-[#f8c96e] text-[#00] hover:text-white transition-colors cursor-pointer hover:scale-105 transition-scale'
               onClick={() => router.push(`/menu/perfil/mascotas/${id}/editar`)}
             >
               <div>Editar</div>
@@ -236,20 +249,28 @@ export default function PetInformation({ id, id_usuario, isMyPet = false }: { id
             </div>
 
             <div
-              className='flex flex-1 justify-center items-center py-2 px-4 gap-2 rounded-lg bg-[#f2777a] text-[#000] hover:bg-[#DA627D] hover:text-white transition-colors cursor-pointer hover:scale-105 transition-scale'
-              onClick={() => setIsModalOpen(true)}
+              className='flex flex-1 justify-center items-center py-2 px-4 gap-2 rounded-lg bg-[#f5a2a4] text-[#000] hover:text-white transition-colors cursor-pointer hover:scale-105 transition-scale'
+              onClick={() => { setIsModalOpen(true); setIsAdopted(false) }}
             >
               <div>Quitar</div>
               <FontAwesomeIcon icon={faTrashCan} />
             </div>
 
             <div
-              className='flex flex-1 justify-center items-center py-2 px-4 gap-2 rounded-lg bg-[#20F320] text-[#000] hover:bg-[#0f0] hover:text-white transition-colors cursor-pointer hover:scale-105 transition-scale'
+              className='flex flex-1 justify-center items-center py-2 px-4 gap-2 rounded-lg bg-[#84f384] text-[#000] hover:text-white transition-colors cursor-pointer hover:scale-105 transition-scale'
               onClick={() => { setIsModalOpen(true); setIsAdopted(true) }}
             >
               <div>Adoptado</div>
               <FontAwesomeIcon icon={faCircleCheck} />
             </div>
+          </div>)}
+
+          {isMyPet && !mascota.estado_adopcion && (<div
+            className='flex flex-1 justify-center items-center max-h-16 py-2 px-4 gap-2 rounded-lg bg-[#f5a2a4] text-[#000] hover:bg-[#DA627D] hover:text-white transition-colors cursor-pointer hover:scale-105 transition-scale'
+            onClick={() => { setIsModalOpen(true); setIsAdopted(false) }}
+          >
+            <div>Quitar</div>
+            <FontAwesomeIcon icon={faTrashCan} />
           </div>)}
 
 
@@ -260,18 +281,29 @@ export default function PetInformation({ id, id_usuario, isMyPet = false }: { id
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{isAdopted ? 'Adoptado' : '¿Estás seguro de que deseas quitar esta mascota?'}</DialogTitle>
+            <DialogTitle>
+              {isAdopted ? '¡Felicidades, Mascota Adoptada!' : '¿Estás seguro de que quieres decir adiós?'}
+            </DialogTitle>
           </DialogHeader>
+
           <div className="py-4">
-            {isAdopted ? 'Si marcas esta mascota como adoptada, ya no será visible para los demás adopantes.' : 'Si eliminas esta mascota ya no será visible para los demás adopantes.'}
+            {isAdopted
+              ? 'Al marcar esta mascota como adoptada, ya no estará visible para los demás amantes de las mascotas. ¡Buen trabajo!'
+              : 'Si eliminas esta mascota, no podrá ser vista por otros posibles adoptantes. ¿Seguro que quieres hacerlo?'}
           </div>
+
           <DialogFooter>
-            <Button onClick={handleOption} className={`w-full bg-[${isAdopted ? '#0f0' : '#f00'}]`}>
-              {isAdopted ? 'Marcar como adoptado' : 'Eliminar'}
+            <Button
+              onClick={handleOption}
+              className={`w-full ${isAdopted ? 'bg-green-500' : 'bg-red-500'} hover:bg-blue`}
+            >
+              {isAdopted ? '¡Marcar como adoptada!' : '¡Eliminar, adiós!'}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+
     </div>
   );
 }

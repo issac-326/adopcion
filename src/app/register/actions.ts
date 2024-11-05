@@ -30,6 +30,7 @@ export async function addUser(formData: FormData) {
   try {
     const email = formData.get('email');
     const password = formData.get('password');
+    const phone = formData.get('phone');
 
     // Verificar si el usuario ya existe
     const supabase = createClient();
@@ -48,15 +49,15 @@ export async function addUser(formData: FormData) {
     const salt = bcrypt.genSaltSync(10);
     const hashedPassword = bcrypt.hashSync(password, salt);
 
+    // Insertar el usuario con imagen predeterminada
     const { data, error: insertError } = await supabase
       .from('usuarios')
-      .insert([
-        {
+      .insert([{
           correo: email,
-          contrasena: hashedPassword, // Guarda la contraseña encriptada
-          telefono: formData.get('phone'),
-        },
-      ]);
+          contrasena: hashedPassword,
+          telefono: phone,
+          imagen: '/usuario-default.jpg', // Imagen predeterminada
+      }]);
 
     if (insertError) throw insertError;
 
@@ -65,4 +66,5 @@ export async function addUser(formData: FormData) {
     throw error;
   }
 }
+
 

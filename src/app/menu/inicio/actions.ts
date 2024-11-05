@@ -21,54 +21,63 @@ export const getCategorias = async () => {
 };
 
 //Devuelve la mascota especifica por su categoria y su localizacion el id es la cat 
-export const getCategoriaEspecifica = async (id: number= 0, idDepartamento: number, limit: number, offset: number) => {
+export const getCategoriaEspecifica = async (
+    id: number = 0, 
+    idDepartamento: number, 
+    limit: number, 
+    offset: number, 
+    idUsuario: string
+  ) => {
     console.log('ID recibido:', id, idDepartamento, limit, offset);
+    
+    // Base query
     let query = supabase
-        .from('publicaciones')
-        .select('id_publicacion, nombre, edad, ciudad, imagen , departamentos (descripcion)')
-        .range(offset, offset + limit - 1); // Aquí añadimos la paginación
-
+      .from('publicaciones')
+      .select('id_publicacion, nombre, estado_adopcion, anios, meses , ciudad, imagen , departamentos (descripcion)')
+      .eq('estado_adopcion', true)
+      .eq('visible', true)
+      .neq('id_usuario', idUsuario)
+      .range(offset, offset + limit - 1); // Paginación
+  
+    // Caso 1: id === 0 && idDepartamento === 0 -> Todas las publicaciones
     if (id === 0 && idDepartamento === 0) {
-        // Si no hay filtros (todos los registros)
-        const { data, error } = await query;
-        if (error) {
-            console.error('Error al obtener mascotas:', error);
-            throw new Error(error.message);
-        }
-        return data;
+      const { data, error } = await query;
+  
+      if (error) {
+        console.error('Error al obtener publicaciones:', error);
+        throw new Error(error.message);
+      }
+      return data;
     }
-
-    // Filtro por categoría de animal (tipo_animal) pero no por departamento
-    if (idDepartamento === 0) {
-        const { data, error } = await query.eq('tipo_animal', id);
-        if (error) {
-            console.error('Error al obtener mascotas:', error);
-            throw new Error(error.message);
-        }
-        return data;
+  
+    // Caso 2: id !== 0 && idDepartamento === 0 -> Publicaciones de un tipo de animal (id), sin importar el departamento
+    if (id !== 0 && idDepartamento === 0) {
+      query = query.eq('tipo_animal', id);
     }
-
-    // Filtro por departamento sin categoría (todos los tipos de animal en ese departamento)
-    if (id === 0) {
-        const { data, error } = await query.eq('id_departamento', idDepartamento);
-        if (error) {
-            console.error('Error al obtener mascotas:', error);
-            throw new Error(error.message);
-        }
-        return data;
-    }
-
-    // Filtro por categoría de animal y departamento
-    const { data, error } = await query
+  
+    // Caso 3: id !== 0 && idDepartamento !== 0 -> Publicaciones de un tipo de animal y de un departamento
+    if (id !== 0 && idDepartamento !== 0) {
+      query = query
         .eq('tipo_animal', id)
         .eq('id_departamento', idDepartamento);
-    
-    if (error) {
-        console.error('Error al obtener mascotas:', error);
-        throw new Error(error.message);
     }
+  
+    // Caso 4: id === 0 && idDepartamento !== 0 -> Publicaciones de un departamento, sin importar el tipo de animal
+    if (id === 0 && idDepartamento !== 0) {
+      query = query.eq('id_departamento', idDepartamento);
+    }
+  
+    // Ejecuta la consulta final
+    const { data, error } = await query;
+  
+    if (error) {
+      console.error('Error al obtener publicaciones:', error);
+      throw new Error(error.message);
+    }
+  
     return data;
-};
+  };
+  
 
 
 export const getDepartamentos = async () => {
