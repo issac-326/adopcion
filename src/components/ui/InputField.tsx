@@ -39,7 +39,7 @@ const InputField: React.FC<InputProps> = ({
       />
       <label
         htmlFor={id}
-        className="absolute left-3 top-2 bg-transparent px-1 text-gray-500 text-xs transition-all duration-200 peer-placeholder-shown:top-4 peer-placeholder-shown:left-3 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-1 peer-focus:text-xs peer-focus:text-orange-400"
+        className="absolute left-3 top-2 bg-transparent px-1 text-gray-500 text-xs transition-all duration-200 peer-placeholder-shown:left-3 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-1 peer-focus:text-xs peer-focus:text-orange-400 flex items-center"
       >
         {placeholder}
       </label>

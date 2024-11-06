@@ -12,6 +12,7 @@ import { faHeart, faPenToSquare } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const ProfilePage = () => {
+    localStorage.setItem('selectedIndex', '3');
 
     const userId = localStorage.getItem('userId');
     const [isMyPetSelected, setIsMyPetSelected] = useState(true);
@@ -88,27 +89,60 @@ const ProfilePage = () => {
     return (
         <>
             <div
-                className="relative w-200 h-200 flex rounded-t-xl justify-between items-center mt-6 gap-10 moving-gradient"
+                className="relative w-full h-min-300 flex rounded-t-xl justify-between items-center mt-6 gap-10 moving-gradient"
             >
-                <div className="flex items-center">
+                <div className="flex items-center px-6 my-8">
+                    <div className="rounded-full w-36 h-36 overflow-hidden">
+                        <Image
+                            src={user?.imagen}
+                            alt="profile"
+                            width={200}
+                            height={200}
+                            className="object-cover"
+                        />
+                    </div>
 
-                    <Image src={user?.imagen} alt="profile" width={170} height={170} />
-                    <div>
-                        <h1 className="text-lg font-semibold">
+
+                    <div className="ml-6">
+                        <h1 className="text-2xl font-semibold text-gray-1000">
                             {user?.nombre1} {user?.apellido1}
                         </h1>
-                        <p className="text-sm text-gray-600 font-medium">
+                        <p className="text-sm text-gray-700 font-medium">
                             Tegucigalpa, Honduras
                         </p>
                     </div>
                 </div>
-                <div className="flex justify-center items-center gap-2 rounded-full absolute bottom-2 right-2 hover:cursor-pointer hover:scale-105 bg-white text-xs py-1 px-2" onClick={() => router.push('/menu/configuraciones/perfil')}>
-                    <span>                    editar
+
+
+                <div
+                    className="flex items-center gap-2 rounded-full absolute bottom-2 right-2 hover:cursor-pointer bg-white text-xs py-1 px-2 w-8 h-8 hover:w-20 transition-all duration-300 ease-in-out overflow-hidden"
+                    onClick={() => router.push('/menu/configuraciones/perfil')}
+                >
+                    <FontAwesomeIcon icon={faPenToSquare} className="text-base" />
+                    <span className="text-black transition-opacity duration-300 ease-in-out whitespace-nowrap">
+                        editar
                     </span>
-                    <FontAwesomeIcon icon={faPenToSquare} />
                 </div>
             </div>
+            <style jsx>{`
+  .moving-gradient {
+    background: linear-gradient(270deg, #fcbad3, #a3d8f4, #fce38a, #b5e7a0, #f8a978);
+    background-size: 1000% 1000%;
+    animation: gradientAnimation 20s ease infinite;
+  }
 
+  @keyframes gradientAnimation {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+`}</style>
 
 
             <section className="flex justify-center gap-14 border-t-1 text-xs text-gray-600 font-medium">
@@ -129,7 +163,7 @@ const ProfilePage = () => {
                 <PetCardSkeleton /> :
                 <div >
 
-                    {myPets.length === 0 ? (<p>No hay mascotas por mostar 😿</p>) : <PetList pets={myPets} areMyPets={isMyPetSelected} isInicio={false} />
+                    {myPets.length === 0 ? (<p>No hay mascotas por mostar 😿</p>) : <PetList pets={myPets} areMyPets={isMyPetSelected} isInicio={false} onDislike={obtenerFavoritosUsuario} />
                     }
                 </div>
             }

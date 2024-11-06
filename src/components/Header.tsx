@@ -42,6 +42,7 @@ export default function Header() {
   };
 
   const cerrarSesion = async () => {
+    localStorage.removeItem('depaSelectedIndex');
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw new Error(error.message);

@@ -7,6 +7,7 @@ import { faHeart, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 import { verificacionFavoritos, favorito } from '@/app/menu/favoritos/actions';
 import { useEffect, useState } from "react";
+import { on } from "events";
 
 
 interface InputProps { // Propiedades que recibe el componente
@@ -21,6 +22,7 @@ interface InputProps { // Propiedades que recibe el componente
   isMyPet: boolean;
   disponible: boolean;
   isInicio?: boolean;
+  onDislike?: () => void;
 }
 
 const PetCard = ({
@@ -34,7 +36,8 @@ const PetCard = ({
   svgBg,
   isMyPet = false,
   disponible, 
-  isInicio = true
+  isInicio = true,
+  onDislike
 }: InputProps) => {
   const router = useRouter();
   const userId = localStorage.getItem('userId');
@@ -59,7 +62,10 @@ const PetCard = ({
   const handleLike = async () => {
     try {
       await favorito(Number(id), userId, isLiked);
-      setIsLiked(!isLiked); // Alterna el estado después de guardar/eliminar
+      setIsLiked(!isLiked);
+      if (isLiked) {
+        onDislike?.();
+      }
     } catch (error) {
       console.error('Error al actualizar favorito:', error);
     }

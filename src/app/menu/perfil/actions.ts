@@ -109,7 +109,6 @@ export const getFavoritos = async (idUsuario: number) => {
       .from('publicaciones')
       .select('id_publicacion, nombre, anios, estado_adopcion, meses, ciudad, imagen, departamentos (descripcion)')
       .in('id_publicacion', idsPublicacionesFavoritas)
-      .eq('estado_adopcion', true);
 
     if (publicacionesError) {
       console.error('Error al obtener publicaciones favoritas:', publicacionesError);

@@ -29,6 +29,8 @@ const colors = ["#f39893", "#7d86a5", "#f5a473", "#acd094"];
 const colorsPaws = ["#9e4f4a", "#4a6079", "#a95b3c", "#6f8e65"];
 
 export default function Home() {
+  localStorage.setItem('selectedIndex', '0'); 
+  const depa= localStorage.getItem('depaSelectedIndex') ? localStorage.getItem('depaSelectedIndex') : localStorage.setItem('depaSelectedIndex', '0');
   const [selectedMascotas, setSelectedMascotas] = useState<Pet[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number>(0);
   const [categories, setCategories] = useState<Categoria[]>([]);
@@ -37,7 +39,7 @@ export default function Home() {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isOffcanvasOpen, setIsOffcanvasOpen] = useState(false);
   const categoriesRef = useRef(null);
-  const [depaSeleccionado, setDepaSeleccionado] = useState<number | null>(0);
+  const [depaSeleccionado, setDepaSeleccionado] = useState<number | null>(depa ? parseInt(depa) : 0);
   const [isSticky, setIsSticky] = useState(false);
   const [departamentos, setDepartamentos] = useState([]);
   const [page, setPage] = useState(0); // Controla la página actual para la paginación
@@ -143,6 +145,7 @@ export default function Home() {
       return;
     }
     
+    localStorage.setItem('depaSelectedIndex', (depaSeleccionado ?? 0).toString());
     // Reiniciamos la lista de mascotas, el flag de más mascotas y la paginación
     setHasMorePets(true);
     setSelectedMascotas([]);
@@ -401,7 +404,7 @@ export default function Home() {
           ) : (
             <>
               <div
-                className={`flex-1 bg-[#21888d] font-light p-2 rounded-lg relative hover:scale-105 flex items-center justify-center ${selectedCategory === 0 ? 'border-2 border-[#020817]' : ''
+                className={`flex-1 bg-[#21888d] font-light p-2 rounded-lg relative hover:scale-105 flex shadow-[0_4px_4px_rgba(0,0,0,0.25)] items-center justify-center ${selectedCategory === 0 ? 'border-2 border-[#020817]' : ''
                   }`}
                 onClick={() => {
                   setSelectedCategory(0);
@@ -418,7 +421,7 @@ export default function Home() {
               {categories.map((category, index) => (
                 <div
                   key={index}
-                  className={`flex-1 p-2 rounded-lg relative hover:scale-105 border-box flex items-center justify-center font-light ${selectedCategory === category.id_categoria ? 'border-2 border-[#020817]' : ''
+                  className={`flex-1 p-2 rounded-lg relative hover:scale-105 border-box flex items-center justify-center shadow-[0_4px_4px_rgba(0,0,0,0.25)] font-light ${selectedCategory === category.id_categoria ? 'border-2 border-[#020817]' : ''
                     }`}
                   style={{ backgroundColor: colors[index] }} // Aplicando el color dinámicamente
                   onClick={() => {

@@ -228,7 +228,7 @@ export default function PetInformation({ id, id_usuario, isMyPet = false, isInic
           )}
 
           {/* Botón de Adoptar */}
-          {!isMyPet && (
+          {!isMyPet && mascota.estado_adopcion &&(
             <div>
               <button
                 className="w-full sm:w-full lg:w-3/5 py-2 sm:py-3 bg-orange-300 text-white rounded-3xl text-sm sm:text-lg transition-colors mx-auto block"

@@ -37,6 +37,7 @@ import { useRouter } from 'next/navigation';
 
 
 export default function AnimalForm() {
+  localStorage.setItem('selectedIndex', '4'); 
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({});

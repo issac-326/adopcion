@@ -316,26 +316,30 @@ export default function AnimalFormEdit({ params }) {
                         </div>
                     </div>
                     <div className='grid grid-cols-2 gap-4'>
-                        <InputFieldSmall
-                            id="anos"
-                            name="anos"
-                            type="text"
-                            placeholder="Años"
-                            value={formData.anos}
-                            onChange={handleInputChange}
-                            required
-                        />
-                        {errors.anos && <div className="text-red-500 animate-shake pl-5 text-xs mt-2 w-[334px]">{errors.anos}</div>}
-                        <InputFieldSmall
-                            id="meses"
-                            name="meses"
-                            type="text"
-                            placeholder="Meses"
-                            value={formData.meses}
-                            onChange={handleInputChange}
-                            required
-                        />
-                        {errors.meses && <div className="text-red-500 animate-shake pl-5 text-xs mt-2 w-[334px]">{errors.meses}</div>}
+                        <div>
+                            <InputFieldSmall
+                                id="anos"
+                                name="anos"
+                                type="text"
+                                placeholder="Años"
+                                value={formData.anos}
+                                onChange={handleInputChange}
+                                required
+                            />
+                            {errors.anos && <div className="text-red-500 animate-shake pl-5 text-xs mt-2 w-[334px]">{errors.anos}</div>}
+                        </div>
+                        <div>
+                            <InputFieldSmall
+                                id="meses"
+                                name="meses"
+                                type="text"
+                                placeholder="Meses"
+                                value={formData.meses}
+                                onChange={handleInputChange}
+                                required
+                            />
+                            {errors.meses && <div className="text-red-500 animate-shake pl-5 text-xs mt-2 w-[334px]">{errors.meses}</div>}
+                        </div>
                     </div>
 
                     <div className='grid gap-4 grid-cols-2'>

@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { createClient } from '@/utils/supabase/client'; // Asegúrate de que la ruta sea correcta
 
 const Configuracion = () => {
+    localStorage.setItem('selectedIndex', '5'); 
     const [descripcion, setDescripcion] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');

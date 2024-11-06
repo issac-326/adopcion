@@ -3,8 +3,10 @@ import React, { useEffect, useState } from 'react';
 import PetList from '@/components/ui/PetList';
 import Pet from "@/types/Pet";
 import { getFavoritos } from './actions';
+import PetCardSkeleton from '@/components/ui/petCardSkeleton';
 
 export default function Home() {
+  localStorage.setItem('selectedIndex', '1'); 
   const [favoritos, setFavoritos] = useState<Pet[]>([]);
   const [loadingFavorites, setLoadingFavorites] = useState(false);
 
@@ -38,7 +40,8 @@ export default function Home() {
 
       {/* Contenedor de la lista de mascotas con scroll oculto */}
       <div className="overflow-y-auto flex-grow scrollbar-hide">
-        <PetList pets={favoritos} />
+        {loadingFavorites ? <><PetCardSkeleton /><PetCardSkeleton /></> : <PetList pets={favoritos} onDislike={obtenerFavoritosUsuario} />
+        }
       </div>
     </>
   );
