@@ -68,7 +68,7 @@ export default function Login() {
         </button>
       </div>
       <div className="flex mt-8 justify-center">
-        <p className="text-xs text-black">Don't have an account</p>
+        <p className="text-xs text-black">Dont have an account</p>
         <Link href="/register" className="text-xs text-[#FFA07A] pl-2 ">Sign up here</Link>
       </div>
     </form>

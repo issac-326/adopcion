@@ -14,7 +14,7 @@ export const loginUser = async (formData: FormData) => {
 
   
   // Realiza una consulta a la tabla users
-  const { data, error } = await supabase
+  const { data } = await supabase
     .from('users')
     .select('*')
     .eq('email', email)
