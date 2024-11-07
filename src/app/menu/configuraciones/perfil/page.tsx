@@ -12,7 +12,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft } from "@fortawesome/free-solid-svg-icons";
 import { PhotoIcon } from "@heroicons/react/24/solid";
 
-const ProfilePage = ({ rutaRetroceso }) => {
+const ProfilePage = ( ) => {
   const userId = localStorage.getItem('userId');
 
   const [nombre1, setNombre1] = useState("");
