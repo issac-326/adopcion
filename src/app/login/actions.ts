@@ -28,6 +28,6 @@ export const loginUser = async (formData: FormData) => {
   if (!isPasswordValid) {
     throw new Error('Credenciales incorrectas'); // La contraseña es incorrecta
   }
-
+// se borro_
   return data; // Retornar los datos del usuario autenticado
 };
