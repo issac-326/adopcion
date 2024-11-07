@@ -18,8 +18,8 @@ export function publicacionValidator(formData: FormData) {
     const sexo = formData.sexo as string;
     const tipoAnimal = formData.tipoAnimal as string;
     const descripcion = formData.descripcion as string;
-    const anos = Number(formData.anos); // ya que formData es un objeto React
-    const meses = Number(formData.meses);
+    const anos = formData.anos as string; // ya que formData es un objeto React
+    const meses = formData.meses as string;
     const departamento = formData.departamento as string;
     const imagen = formData.imagen as string;
     const peso = formData.peso as string;

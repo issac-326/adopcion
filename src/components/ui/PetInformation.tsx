@@ -34,7 +34,7 @@ export default function PetInformation({ id, id_usuario, isMyPet = false, isInic
   const defaults = {
     origin: { y: 0.7 }
   };
-
+  console.log(id_usuario);
   console.log('isInicio:', isInicio);
 
   function fire(particleRatio, opts) {

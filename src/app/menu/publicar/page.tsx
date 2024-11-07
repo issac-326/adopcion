@@ -131,16 +131,12 @@ export default function AnimalForm() {
           formData.append('imagen', dataClo.secure_url);
         }
         // Crear la publicación
-        try{
-            const formResult = await crearPublicacion(formData, userId);
-            /* setIsModalOpen(true) */
-            toast.success("¡Mascota publicada con éxito!");
-            setTimeout(() => {
-              window.location.reload();
-            }, 1000);
-        } catch(e) {
-          console.log(e)
-        }
+        const formResult = await crearPublicacion(formData, userId);
+        /* setIsModalOpen(true) */
+        toast.success("¡Mascota publicada con éxito!");
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
 
       });
     } else {
