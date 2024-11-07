@@ -9,7 +9,7 @@ export const loginUser = async (formData: FormData) => {
   const supabase = createClient();
 
   const email = formData.get('email');
-  const password = formData.get('password');
+  const password = formData.get('password') as string;
 
   // Realiza una consulta a la tabla usuarios
   const { data, error } = await supabase
