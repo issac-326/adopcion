@@ -120,7 +120,7 @@ export default function PetInformation({ id, id_usuario, isMyPet = false, isInic
      } catch (error) {
       console.error('Error al marcar mascota como adoptada:', error);
     }
-    handleConfetti();
+    /* handleConfetti(); */
 
 
 
