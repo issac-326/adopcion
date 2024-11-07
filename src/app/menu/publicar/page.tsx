@@ -34,6 +34,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { useRouter } from 'next/navigation';
+import { image } from '@nextui-org/theme';
 
 
 export default function AnimalForm() {
@@ -57,7 +58,7 @@ export default function AnimalForm() {
     departamento: '',
     imagen: '',
     peso: '',
-    image: '',
+    image: ''
   });
 
   const userId = localStorage.getItem('userId');
@@ -105,6 +106,7 @@ export default function AnimalForm() {
     if (!userId) {
       throw new Error('El ID de usuario no fue proporcionado');
     }
+    console.log(formData)
     
     formData.append('sexo', selectedSexo);
     formData.append('tipoAnimal', selectedTipoAnimal);
@@ -129,12 +131,16 @@ export default function AnimalForm() {
           formData.append('imagen', dataClo.secure_url);
         }
         // Crear la publicación
-        const formResult = await crearPublicacion(formData);
-        /* setIsModalOpen(true) */
-        toast.success("¡Mascota publicada con éxito!");
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+        try{
+            const formResult = await crearPublicacion(formData, userId);
+            /* setIsModalOpen(true) */
+            toast.success("¡Mascota publicada con éxito!");
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000);
+        } catch(e) {
+          console.log(e)
+        }
 
       });
     } else {

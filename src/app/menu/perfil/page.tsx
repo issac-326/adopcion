@@ -105,13 +105,14 @@ const ProfilePage = () => {
                     </div>
                 </div>
                 ) : (<div className="flex items-center px-6 my-8">
-                    <div className="rounded-full w-36 h-36 overflow-hidden">
+                    <div className="relative group">
+                        {/* Imagen de la mascota */}
                         <Image
                             src={user?.imagen}
-                            alt="profile"
-                            width={200}
-                            height={200}
-                            className="object-cover"
+                            alt="Imagen de la mascota"
+                            width={120}
+                            height={120}
+                            className="h-36 w-36 mt-2 mx-auto rounded-full aspect-square object-cover border-4 border-[#FFA07A]/50"
                         />
                     </div>
 
