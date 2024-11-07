@@ -129,7 +129,7 @@ export default function AnimalForm() {
           formData.append('imagen', dataClo.secure_url);
         }
         // Crear la publicación
-        const formResult = await crearPublicacion(formData);
+        const formResult = await crearPublicacion(formData, userId);
         /* setIsModalOpen(true) */
         toast.success("¡Mascota publicada con éxito!");
         setTimeout(() => {
