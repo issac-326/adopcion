@@ -190,14 +190,14 @@ const ProfilePage = ({ rutaRetroceso }) => {
     <>
       <header className='relative w-full'>
         <div className='w-[60%] mx-auto flex justify-between gap-10'>
-        <div className="mt-6">
-  <p className="text-2xl font-semibold text-gray-900">
-    {nombre1 ? `Hola, ${nombre1}` : 'Hola'}
-  </p>
-  <p className="text-sm text-gray-500 mt-2">
-    Actualiza tu información.
-  </p>
-</div>
+          <div className="mt-6">
+            <p className="text-2xl font-semibold text-gray-900">
+              {nombre1 ? `Hola, ${nombre1}` : 'Hola'}
+            </p>
+            <p className="text-sm text-gray-500 mt-2">
+              Actualiza tu información.
+            </p>
+          </div>
 
 
           <div className="relative group">

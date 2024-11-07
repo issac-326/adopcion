@@ -4,26 +4,64 @@ import Link from "next/link";
 import { signupValidator } from "@/validations/signup";
 import React, { useState } from 'react';
 import InputField from "@/components/ui/InputField";
-import { addUser } from "./actions";
+import { addUser, imagenCloudinary } from "./actions";
 import SuccessNotification from "@/components/ui/SuccesNotification";
 import { useRouter } from "next/navigation";
-import { faPaw } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-
+import { useDropzone } from "react-dropzone";
+import { toast } from "react-toastify";
 
 export default function Register() {
   const router = useRouter();
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [userExists, setUserExists] = useState(false);
+  const [imagen, setImagen] = useState("/usuario-default.jpg"); 
+  const [newImage, setNewImage] = useState<File | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [formData, setFormData] = useState({
+    firstName:'',
+    middleName:'',
+    lastName1:'',
+    lastName2:'',
     email: '',
     password: '',
     confirmPassword: '',
     phone: ''
   });
   const [isSuccess, setIsSuccess] = useState(false); // Control de éxito
+
+  // Configuración de useDropzone con el estado isDragActive
+const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  onDrop: (acceptedFiles: File[]) => {
+    if (acceptedFiles.length > 0) {
+      setNewImage(acceptedFiles[0]);
+      setImagen(URL.createObjectURL(acceptedFiles[0])); // Muestra una vista previa de la imagen seleccionada
+    }
+  },
+  accept: { 'image/*': [] },
+  multiple: false,
+  maxSize: 10000000
+});
+
+
+// Función para subir la nueva imagen a Cloudinary y actualizar la base de datos
+const handleImageChange = async () => {
+  console.log(newImage)
+  if (!newImage) return;
+
+  const formData = new FormData();
+  formData.append('file', newImage);
+
+  const { data: dataClo, error } = await imagenCloudinary(formData);
+  if (error) {
+    toast.error("Error al subir la imagen");
+    console.error("Error al subir la imagen:", error);
+    return;
+  }
+
+  const image1 = dataClo.secure_url;
+  setImageUrl(image1);
+};
 
   // Función que valida los datos del formulario y envía los datos al servidor
   const handleSignUp = async (formData: FormData) => {
@@ -33,7 +71,7 @@ export default function Register() {
     if (formResult.isValid) {
       setUserExists(false);
       try {
-        const data = await addUser(formData);
+        const data = await addUser(formData,imageUrl);
         console.log('User added successfully:', data);
         router.push('/login');
         setIsSuccess(true);
@@ -66,59 +104,142 @@ export default function Register() {
           <p className="text-[12px] text-black">Crea tu cuenta</p>
         </div>
 
-        {/* Input del correo */}
-        <div>
-          <InputField
-            id="email"
-            name="email"
-            type="text"
-            placeholder="correo"
-            value={formData.email}
-            onChange={handleInputChange}
-          />
-          {errors.email && <div className="text-red-500 pl-5 text-xs animate-shake mt-2 text-left">{errors.email}</div>}
-          {userExists && <div className="text-red-500 pl-5 text-xs animate-shake mt-2 text-left">El correo ya esta registrado</div>}
+        
+
+        {/* Imagen de perfil y área de arrastrar y soltar */}
+        <div className="flex flex-col items-center mb-6">
+    <img src={imagen} alt="Imagen de perfil" className="w-40 h-40 rounded-full mb-4 object-cover"  />
+    
+    <div className=" flex items-center justify-between w-full">
+    <div
+    {...getRootProps()}
+    className={` rounded-full px-4 py-2 transition duration-300 ease-in-out flex flex-col justify-center items-center border ${
+      isDragActive ? "border-blue-500 bg-blue-100" : "border-gray-300"
+    } cursor-pointer hover:border-blue-500 hover:bg-blue-50`}
+  >
+    <input {...getInputProps()} />
+    <p className="text-gray-600 text-center">
+      {isDragActive ? "Editando" : "Editar"}
+    </p>
+  </div>
+  
+
+    {newImage && (
+      <button
+        type="button"
+        onClick={handleImageChange}
+        className="border ml-2 border-gray-300 hover:border-blue-500 text-gray-600 rounded-full px-4 py-2 transition duration-300 ease-in-out"
+      >
+        Confirmar
+      </button>
+    )}
+  </div>
+</div>
+         {/* Fila de nombres */}
+         <div className="flex space-x-4">
+          <div className="flex flex-col">
+            <InputField
+              id="firstName"
+              name="firstName"
+              type="text"
+              placeholder="Primer Nombre"
+              value={formData.firstName}
+              onChange={handleInputChange}
+            />
+            {errors.firstName && <div className="text-red-500 text-xs animate-shake mt-2">{errors.firstName}</div>}
+          </div>
+
+          <div className="flex flex-col">
+            <InputField
+              id="middleName"
+              name="middleName"
+              type="text"
+              placeholder="Segundo Nombre (opcional)"
+              value={formData.middleName}
+              onChange={handleInputChange}
+            />
+          </div>
         </div>
 
-        {/* Input de la contraseña */}
-        <div>
-          <InputField
-            id="password"
-            name="password"
-            type="password"
-            placeholder="contraseña"
-            value={formData.password}
-            onChange={handleInputChange}
-          />
-          {errors.password && <div className="text-red-500 animate-shake pl-5 text-xs mt-2 w-[334px]">{errors.password}</div>}
+        {/* Fila de apellidos */}
+        <div className="flex space-x-4 mt-4">
+          <div className="flex flex-col">
+            <InputField
+              id="lastName1"
+              name="lastName1"
+              type="text"
+              placeholder="Primer Apellido"
+              value={formData.lastName1}
+              onChange={handleInputChange}
+            />
+            {errors.lastName1 && <div className="text-red-500 text-xs animate-shake mt-2">{errors.lastName1}</div>}
+          </div>
 
-
+          <div className="flex flex-col">
+            <InputField
+              id="lastName2"
+              name="lastName2"
+              type="text"
+              placeholder="Segundo Apellido (opcional)"
+              value={formData.lastName2}
+              onChange={handleInputChange}
+            />
+          </div>
         </div>
 
-        {/* Input de confirmación de contraseña */}
-        <div>
-          <InputField
-            id="confirmPassword"
-            name="confirmPassword"
-            type="password"
-            placeholder="confirmar contraseña"
-            value={formData.confirmPassword}
-            onChange={handleInputChange}
-          />
-          {errors.confirmPassword && <div className="text-red-500 animate-shake pl-5 text-xs mt-2">{errors.confirmPassword}</div>}
+        {/* Fila de correo y teléfono */}
+        <div className="flex space-x-4 mt-4">
+          <div className="flex flex-col">
+            <InputField
+              id="email"
+              name="email"
+              type="text"
+              placeholder="Correo"
+              value={formData.email}
+              onChange={handleInputChange}
+            />
+            {errors.email && <div className="text-red-500 text-xs mt-2 w-56 break-words">{errors.email}</div>}
+            {userExists && <div className="text-red-500 text-xs animate-shake mt-2">El correo ya está registrado</div>}
+          </div>
+
+          <div className="flex flex-col">
+            <InputField
+              id="phone"
+              name="phone"
+              type="text"
+              placeholder="Teléfono"
+              value={formData.phone}
+              onChange={handleInputChange}
+            />
+            {errors.phone && <div className="text-red-500 text-xs mt-2 w-56 break-words">{errors.phone}</div>}
+          </div>
         </div>
 
-        {/* Input del teléfono */}
-        <div>
-          <InputField
-            id="phone"
-            name="phone"
-            type="text"
-            placeholder="telefono"
-            value={formData.phone}
-            onChange={handleInputChange}
-          />
-          {errors.phone && <div className="text-red-500 animate-shake pl-5 text-xs mt-2">{errors.phone}</div>}
+        {/* Fila de contraseña */}
+        <div className="flex space-x-4 mt-4">
+          <div className="flex flex-col">
+            <InputField
+              id="password"
+              name="password"
+              type="password"
+              placeholder="Contraseña"
+              value={formData.password}
+              onChange={handleInputChange}
+            />
+            {errors.password && <div className="text-red-500 text-xs mt-2 w-56 break-words">{errors.password}</div>}
+          </div>
+
+          <div className="flex flex-col">
+            <InputField
+              id="confirmPassword"
+              name="confirmPassword"
+              type="password"
+              placeholder="Confirmar Contraseña"
+              value={formData.confirmPassword}
+              onChange={handleInputChange}
+            />
+            {errors.confirmPassword && <div className="text-red-500 text-xs mt-2 w-56 break-words">{errors.confirmPassword}</div>}
+          </div>
         </div>
 
         {/* Botón de envío */}

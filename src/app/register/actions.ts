@@ -26,8 +26,37 @@ export async function login(formData: FormData) {
   redirect('/')
 }
 
-export async function addUser(formData: FormData) {
+export async function imagenCloudinary(formData: FormData) {
+  const cloudinaryUploadUrl = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`;
+
   try {
+    formData.append('upload_preset', 'mascotas'); // En este caso estoy usando el preset que se usa en mascotas temporalmente
+
+    const response = await fetch(cloudinaryUploadUrl, {
+      method: 'POST',
+      body: formData
+    });
+
+    const data = await response.json();
+    return { data: data, error: null };
+  } catch (error) {
+    return {
+      data: null,
+      error: {
+        message: 'Error al subir la imagen'
+      }
+    };
+  }
+}
+
+
+
+export async function addUser(formData: FormData, imageUrl: string | null) {
+  try {
+    const firstName = formData.get('firstName');
+    const middleName = formData.get('middleName');
+    const lastName1 = formData.get('lastName1');
+    const lastName2 = formData.get('lastName2');
     const email = formData.get('email');
     const password = formData.get('password');
     const phone = formData.get('phone');
@@ -53,10 +82,14 @@ export async function addUser(formData: FormData) {
     const { data, error: insertError } = await supabase
       .from('usuarios')
       .insert([{
-          correo: email,
-          contrasena: hashedPassword,
-          telefono: phone,
-          imagen: '/usuario-default.jpg', // Imagen predeterminada
+        nombre1: firstName,
+        nombre2: middleName,
+        apellido1: lastName1,
+        apellido2: lastName2,
+        correo: email,
+        contrasena: hashedPassword,
+        telefono: phone,
+        imagen: imageUrl  || "/usuario-default.jpg", // Imagen predeterminada
       }]);
 
     if (insertError) throw insertError;
@@ -66,5 +99,3 @@ export async function addUser(formData: FormData) {
     throw error;
   }
 }
-
-

@@ -16,6 +16,7 @@ const ProfilePage = () => {
 
     const userId = localStorage.getItem('userId');
     const [isMyPetSelected, setIsMyPetSelected] = useState(true);
+    const [loadingUser, setLoadingUser] = useState(false);
 
     const router = useRouter();
 
@@ -62,11 +63,15 @@ const ProfilePage = () => {
     };
 
     const obtenerUserProfile = async () => {
+        setLoadingUser(true);
         try {
             const usuario = await getUserProfile(userId);
             setUser(usuario);
+
         } catch (error) {
             console.error("Error al obtener el perfil del usuario:", error);
+        } finally {
+            setLoadingUser(false);
         }
     }
 
@@ -91,7 +96,15 @@ const ProfilePage = () => {
             <div
                 className="relative w-full h-min-300 flex rounded-t-xl justify-between items-center mt-6 gap-10 moving-gradient"
             >
-                <div className="flex items-center px-6 my-8">
+                {loadingUser ? (<div className="flex items-center px-6 my-8">
+                    <div className="rounded-full w-36 h-36 overflow-hidden bg-gray-300 animate-pulse"></div>
+
+                    <div className="ml-6">
+                        <div className="h-6 w-48 bg-gray-300 animate-pulse mb-2"></div>
+                        <div className="h-4 w-32 bg-gray-300 animate-pulse"></div>
+                    </div>
+                </div>
+                ) : (<div className="flex items-center px-6 my-8">
                     <div className="rounded-full w-36 h-36 overflow-hidden">
                         <Image
                             src={user?.imagen}
@@ -112,7 +125,7 @@ const ProfilePage = () => {
                         </p>
                     </div>
                 </div>
-
+                )}
 
                 <div
                     className="flex items-center gap-2 rounded-full absolute bottom-2 right-2 hover:cursor-pointer bg-white text-xs py-1 px-2 w-8 h-8 hover:w-20 transition-all duration-300 ease-in-out overflow-hidden"
