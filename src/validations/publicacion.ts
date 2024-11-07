@@ -1,5 +1,6 @@
 
 export function publicacionValidator(formData: FormData) {
+  console.log(formData)
     const errors: Error = {
         nombre: '',
         sexo: '',
@@ -17,11 +18,13 @@ export function publicacionValidator(formData: FormData) {
     const sexo = formData.sexo as string;
     const tipoAnimal = formData.tipoAnimal as string;
     const descripcion = formData.descripcion as string;
-    const anos = Number(formData.anos); // ya que formData es un objeto React
-    const meses = Number(formData.meses);
+    const anos = formData.anos as string; // ya que formData es un objeto React
+    const meses = formData.meses as string;
     const departamento = formData.departamento as string;
     const imagen = formData.imagen as string;
     const peso = formData.peso as string;
+
+
     
   
     let isValid = true;
@@ -74,13 +77,6 @@ export function publicacionValidator(formData: FormData) {
         }
     }
     
-    if (meses) {
-        const anosregex = /^[0-9]+$/; 
-        if (!anosregex.test(meses)) {
-          errors.meses = 'Valor no valido';
-          isValid = false;
-        }
-    }
     if (peso) {
         const anosregex = /^[0-9]+$/; 
         if (!anosregex.test(peso)) {
@@ -116,6 +112,17 @@ export function publicacionValidator(formData: FormData) {
       errors.image = 'La imagen es requerida';
       isValid = false;
     }
+
+    if (meses !== undefined && meses !== null && meses !== '') {
+      const mesesRegex = /^[0-9]+$/;
+      if (!mesesRegex.test(String(meses))) {
+        errors.meses = 'Valor no válido';
+        isValid = false;
+      }
+    }
+    
+
+
     return { isValid, errors };
   }
   

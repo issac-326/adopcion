@@ -9,7 +9,7 @@ export default function MascotaPage({ params }) {
   const { id } = params; // Obtenemos el ID de la mascota desde la URL
   const userId = typeof window !== 'undefined' ? localStorage.getItem('userId') : null; // Verificar si estamos en cliente antes de acceder a localStorage
   const [isInicio, setIsInicio] = useState(false);
-
+console.log(userId);
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const queryParams = new URLSearchParams(window.location.search);
@@ -20,7 +20,7 @@ export default function MascotaPage({ params }) {
 
   return (
     <div>
-      <PetInformation id={id} isInicio={isInicio} userId={userId}/>
+      <PetInformation id={id} isInicio={isInicio} id_usuario={userId}/>
     </div>
   );
 }

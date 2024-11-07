@@ -71,6 +71,8 @@ export async function imagenCloudinary (formData: FormData) {
         descripcion: formData.get('descripcion') as string,
         imagen: formData.get('imagen') as string, // Asegúrate de que esto sea la URL correcta
       };
+
+      console.log(publicacion)
       
   
       const supabase = createClient();

@@ -6,8 +6,6 @@ import InputField from "@/components/ui/InputField";
 import React, { useState } from 'react';
 import { loginUser } from "./actions";
 import { useRouter } from "next/navigation";
-import { faPaw } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function Login() {
   const router = useRouter();
