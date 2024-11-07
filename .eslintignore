@@ -1,2 +1,3 @@
 src/utils/database.types.ts
 src/utils/supabase/*.js
+src/app/action.ts
