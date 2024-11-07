@@ -28,7 +28,13 @@ export default function Login() {
       console.log('User added successfully:', data);
       router.push('/home');
     } catch (error) {
-      console.error("Error en el registro:", error);
+      if (error instanceof Error) {
+        setearError(error.message);
+      } else {
+        setearError('An unknown error occurred');
+      }
+    } finally {
+      setIsSending(false);
     }
 
   }

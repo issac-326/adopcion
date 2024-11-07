@@ -20,6 +20,9 @@ interface Categoria {
 
 const bannerImages = [
   '/adopta.png',
+  '/carrusel/2.png',
+  '/carrusel/1.avif',
+  '/carrusel/3.png',
   '/denuncia-animal.png',
   '/publica-mascota.png',
   '/navega-filtros.png'

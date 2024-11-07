@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { getDepartamentos } from "@/app/menu/inicio/actions";
 import Image from 'next/image';
 import { Button } from "@/components/ui/button";
-import { publicacionValidator } from '@/validations/publicacion';
+import { editPublicacionValidator } from '@/validations/editPublicacion';
 import { PhotoIcon } from '@heroicons/react/24/solid'
 import { type DropzoneState, useDropzone } from 'react-dropzone';
 import { imagenCloudinary } from '@/app/menu/publicar/actions';
@@ -171,7 +171,7 @@ export default function AnimalFormEdit({ params }) {
         }
 
         // Validación del formulario
-        const formResult = publicacionValidator(formData);
+        const formResult = editPublicacionValidator(formData);
         if (!formResult.isValid) {
             setErrors(formResult.errors);
             return; // Salir si la validación falla

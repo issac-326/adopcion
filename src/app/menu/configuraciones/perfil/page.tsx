@@ -68,6 +68,7 @@ const ProfilePage = ( ) => {
 
   const submitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
+    await handleImageChange();
     setLoading(true);
 
     const phoneRegexp = /^\d{8}$/;
@@ -161,6 +162,31 @@ const ProfilePage = ( ) => {
     maxSize: 10000000
   });
 
+  // Función para subir la nueva imagen a Cloudinary y actualizar la base de datos
+  const handleImageChange = async () => {
+    console.log(newImage)
+    if (!newImage || !userId) return;
+
+    const formData = new FormData();
+    formData.append('file', newImage);
+
+    const { data: dataClo, error } = await imagenCloudinary(formData);
+    if (error) {
+      toast.error("Error al subir la imagen");
+      console.error("Error al subir la imagen:", error);
+      return;
+    }
+
+    const imageUrl = dataClo.secure_url;
+    try {
+      await updateUserProfileImage(userId, imageUrl);
+      setNewImage(null);
+    } catch (error) {
+      console.error("Error actualizando la imagen de perfil:", error);
+      toast.error("Error al actualizar la imagen de perfil.");
+    }
+  };
+
   return (
     <>
       <header className='relative w-full'>
@@ -230,6 +256,7 @@ const ProfilePage = ( ) => {
           </div>
         </div>
 
+        {/* Botones */}
         <div className="flex justify-end gap-4 w-full max-w-2xl mx-auto mt-4">
           <Button type="button" variant="secondary" className="bg-gray-300 text-black hover:bg-gray-400" onClick={handleCancel}>
             Cancelar

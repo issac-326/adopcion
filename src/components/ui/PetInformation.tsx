@@ -25,7 +25,26 @@ import {
 
 export default function PetInformation({ id, id_usuario, isMyPet = false, isInicio = true }: { id: string, id_usuario: string, isMyPet?: boolean, isInicio?: boolean }) {
   const [isLiked, setIsLiked] = useState(false);
-  const [mascota, setMascota] = useState(null);
+  interface Mascota {
+    nombre: string;
+    anios: number;
+    meses: number;
+    color: string;
+    peso: number;
+    vacunas: boolean | null;
+    condicion_medica: string | null;
+    imagen: string;
+    ciudad: string;
+    sexo: boolean;
+    descripcion: string;
+    departamentos: { descripcion: string }[];
+    usuarios: { nombre1: string; imagen: string };
+    categorias: { tipo_mascotas: string }[];
+    estado_adopcion: boolean;
+    visible: boolean;
+  }
+  
+  const [mascota, setMascota] = useState<Mascota | null>(null);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAdopted, setIsAdopted] = useState(false);
@@ -37,7 +56,7 @@ export default function PetInformation({ id, id_usuario, isMyPet = false, isInic
   console.log(id_usuario);
   console.log('isInicio:', isInicio);
 
-  function fire(particleRatio, opts) {
+  function fire(particleRatio: number, opts: object) {
     confetti({
       ...defaults,
       ...opts,
@@ -110,12 +129,19 @@ export default function PetInformation({ id, id_usuario, isMyPet = false, isInic
 
     try {
       await markAsAdopted(Number(id));
-      toast.success('Mascota marcada como adoptada exitosamente', {
-        autoClose: 5000,
-      });
+      toast.success(
+        <p>
+          ¡Felicidades, has encontrado un nuevo hogar para{' '}
+          <span className='font-medium'>{mascota?.nombre}</span>! 🎉
+        </p>,
+        {
+          autoClose: 5000,
+        }
+      );
+      
       handleConfetti();
       setIsModalOpen(false);
-      setMascota({ ...mascota, estado_adopcion: false });
+      setMascota(mascota ? { ...mascota, estado_adopcion: false } : null);
 
      } catch (error) {
       console.error('Error al marcar mascota como adoptada:', error);
@@ -163,7 +189,7 @@ export default function PetInformation({ id, id_usuario, isMyPet = false, isInic
               <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2">{mascota.nombre}</h1>
               <div className="text-gray-500 flex items-center">
                 <FontAwesomeIcon icon={faLocationDot} className="text-blue-500 mr-2 sm:text-sm" />
-                {mascota.ciudad}, {mascota.departamentos.descripcion}
+                {mascota.ciudad}, {mascota.departamentos[0]?.descripcion}
               </div>
             </div>
             {!isMyPet && (<button className="w-8 h-8 sm:w-10 sm:h-10 lg:w-14 lg:h-14 rounded-full bg-white shadow-[0_0px_7px_rgba(0,0,0,0.6)]  cursor-pointer" onClick={handleLike}>
@@ -207,7 +233,7 @@ export default function PetInformation({ id, id_usuario, isMyPet = false, isInic
             {mascota.condicion_medica && (
               <div><span className="font-semibold">Condición Médica:</span> {mascota.condicion_medica}</div>
             )}
-            <div><span className="font-semibold">Especie:</span> {mascota.categorias.tipo_mascotas || 'Indefinido'}</div>
+            <div><span className="font-semibold">Especie:</span> {mascota.categorias[0]?.tipo_mascotas || 'Indefinido'}</div>
             <div className="text-base mt-4"><span className="font-semibold">Descripción:</span> {mascota.descripcion || 'Indefinido'}</div>
           </div>
 

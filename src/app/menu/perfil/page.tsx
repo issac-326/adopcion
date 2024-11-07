@@ -177,7 +177,7 @@ const ProfilePage = () => {
                 <PetCardSkeleton /> :
                 <div >
 
-                    {myPets.length === 0 ? (<p>No hay mascotas por mostar 😿</p>) : <PetList pets={myPets} areMyPets={isMyPetSelected} isInicio={false} onDislike={obtenerFavoritosUsuario} />
+                    {myPets.length === 0 ? (<p>No hay mascotas por mostar 😿</p>) : <PetList pets={myPets} areMyPets={isMyPetSelected} isInicio={false} onDislike={obtenerFavoritosUsuario} isLikedP={true}/>
                     }
                 </div>
             }
