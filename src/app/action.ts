@@ -1,10 +1,10 @@
 // utils/supabase/server.js
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@/utils/supabase/server';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const supabase = createClient();
 
 export async function enviarReporte(formData) {
     const { descripcion } = Object.fromEntries(formData); // Extraer la descripción del formulario
