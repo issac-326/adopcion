@@ -48,7 +48,7 @@ const Configuracion = () => {
         fetchUserProfile(); // Llama a la función para obtener el perfil al cargar el componente
     }, []);
 
-    const handleChangePassword = async (event) => {
+    const handleChangePassword = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setErrorOldPassword('');
         setError('');
