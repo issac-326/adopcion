@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
 import { toast } from "react-toastify";
-import { getMyPets, getUserProfile, updateUserProfile, updateUserProfileImage, imagenCloudinary } from './actions';
+import { getUserProfile, updateUserProfile, updateUserProfileImage, imagenCloudinary } from './actions';
 import { useDropzone } from 'react-dropzone';
 import InputField from "@/components/ui/InputField";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft } from "@fortawesome/free-solid-svg-icons";
 import { PhotoIcon } from "@heroicons/react/24/solid";
 
-const ProfilePage = ({ rutaRetroceso }) => {
+const ProfilePage = () => {
 
   const userId = localStorage.getItem('userId');
 
@@ -76,6 +76,7 @@ const ProfilePage = ({ rutaRetroceso }) => {
 
   const submitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
+    await handleImageChange();
     setLoading(true);
 
     // Validación del teléfono
@@ -178,7 +179,6 @@ const ProfilePage = ({ rutaRetroceso }) => {
     const imageUrl = dataClo.secure_url;
     try {
       await updateUserProfileImage(userId, imageUrl);
-      toast.success("¡Imagen de perfil actualizada con éxito!");
       setNewImage(null);
     } catch (error) {
       console.error("Error actualizando la imagen de perfil:", error);
@@ -334,20 +334,7 @@ const ProfilePage = ({ rutaRetroceso }) => {
               <p className="text-xs leading-5 text-gray-600">PNG, JPG hasta 10MB</p>
             </div>
           </div>
-
-          {/* Botón para actualizar imagen, si ya se ha seleccionado una */}
-          {newImage && (
-            <button
-              type="button"
-              onClick={handleImageChange}
-              className="mt-4 bg-[#FFA07A] hover:bg-[#FF8C69] text-white rounded-full px-6 py-2"
-            >
-              Actualizar Imagen
-            </button>
-          )}
         </div>
-
-
 
         {/* Botones */}
         <div className="flex justify-end gap-4 w-full max-w-2xl mx-auto mt-4">

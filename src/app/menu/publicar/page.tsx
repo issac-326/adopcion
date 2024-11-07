@@ -89,8 +89,6 @@ export default function AnimalForm() {
     maxSize: 10000000
   })
 
-
-
   // Función que captura el cambio en los inputs y actualiza el estado
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -99,8 +97,6 @@ export default function AnimalForm() {
       [name]: value
     });
   };
-
-
 
   const handleSignUp = async (formData: FormData) => {
     if (!userId) {
@@ -127,6 +123,7 @@ export default function AnimalForm() {
             return
           }
 
+          console.log("Imagen subida:", dataClo);
           // Actualiza el imagen con la url de la imagen subida
           formData.append('imagen', dataClo.secure_url);
         }
@@ -134,9 +131,8 @@ export default function AnimalForm() {
         const formResult = await crearPublicacion(formData, userId);
         /* setIsModalOpen(true) */
         toast.success("¡Mascota publicada con éxito!");
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+        router.push('/menu/perfil');
+
 
       });
     } else {
@@ -160,6 +156,7 @@ export default function AnimalForm() {
       console.error("Error al obtener los departamentos:", error);
     }
   }, [])
+
   const handleChangeTextarea = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData({
@@ -167,6 +164,7 @@ export default function AnimalForm() {
       [name]: value
     });
   };
+
   return (
     <>
       <p className="text-[24px] font-bold text-black flex justify-center mt-6">¡Haz tu publicación!</p>

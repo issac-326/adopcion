@@ -39,7 +39,8 @@ export const getMyPets = async (userId: string) => {
       .from('publicaciones')
       .select('id_publicacion, nombre, anios, meses, ciudad, estado_adopcion, imagen , departamentos (descripcion)')
       .eq('id_usuario', userId)
-      .eq('visible', true);
+      .eq('visible', true)
+      .order('fecha_creacion', { ascending: false });
      
     if (error) {
       console.error('Error updating profile:', error);

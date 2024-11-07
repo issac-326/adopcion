@@ -15,9 +15,10 @@ interface PetListProps {
   areMyPets?: boolean;
   isInicio?: boolean;
   onDislike?: () => void;
+  isLikedP?: boolean;
 }
 
-const PetList: React.FC<PetListProps> = ({ pets, areMyPets = false, isInicio = true, onDislike }) => {  
+const PetList: React.FC<PetListProps> = ({ pets, areMyPets = false, isInicio = true, onDislike, isLikedP = false }) => {  
   const [pet, setPet] = useState<Pet[]>([]);
 
   useEffect(() => {
@@ -48,6 +49,7 @@ const PetList: React.FC<PetListProps> = ({ pets, areMyPets = false, isInicio = t
               disponible={pet.estado_adopcion}
               isInicio={isInicio}
               onDislike={onDislike}
+              isLikedP={isLikedP}
             />
           );
         })}

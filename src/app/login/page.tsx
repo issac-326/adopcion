@@ -37,7 +37,11 @@ export default function Login() {
       console.log('User added successfully:', data);
       router.push('/menu/inicio');
     } catch (error) {
-      setearError(error.message);
+      if (error instanceof Error) {
+        setearError(error.message);
+      } else {
+        setearError('An unknown error occurred');
+      }
     } finally {
       setIsSending(false);
     }

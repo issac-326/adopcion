@@ -23,6 +23,7 @@ interface InputProps { // Propiedades que recibe el componente
   disponible: boolean;
   isInicio?: boolean;
   onDislike?: () => void;
+  isLikedP?: boolean;
 }
 
 const PetCard = ({
@@ -37,11 +38,12 @@ const PetCard = ({
   isMyPet = false,
   disponible, 
   isInicio = true,
-  onDislike
+  onDislike,
+  isLikedP = false,
 }: InputProps) => {
   const router = useRouter();
   const userId = localStorage.getItem('userId');
-  const [isLiked, setIsLiked] = useState(false);
+  const [isLiked, setIsLiked] = useState(isLikedP);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

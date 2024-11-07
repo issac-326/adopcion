@@ -40,7 +40,7 @@ export default function Home() {
 
       {/* Contenedor de la lista de mascotas con scroll oculto */}
       <div className="overflow-y-auto flex-grow scrollbar-hide">
-        {loadingFavorites ? <><PetCardSkeleton /><PetCardSkeleton /></> : <PetList pets={favoritos} onDislike={obtenerFavoritosUsuario} />
+        {loadingFavorites ? <><PetCardSkeleton /><PetCardSkeleton /></> : <PetList pets={favoritos} onDislike={obtenerFavoritosUsuario} isLikedP={true} />
         }
       </div>
     </>
