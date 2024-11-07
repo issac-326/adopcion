@@ -28,15 +28,9 @@ export default function Login() {
       console.log('User added successfully:', data);
       router.push('/home');
     } catch (error) {
-      if (error instanceof Error) {
-        setearError(error.message);
-      } else {
-        setearError('An unknown error occurred');
-      }
-    } finally {
-      setIsSending(false);
-    }
+      console.error('An error occurred:', error);
 
+    } 
   }
   
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
