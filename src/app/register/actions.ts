@@ -6,6 +6,27 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 import bcrypt from 'bcryptjs';
 
+import { CometChat } from '@cometchat-pro/chat'; // Asegúrate de que este import es correcto según tu proyecto
+
+const AUTH_KEY = process.env.NEXT_PUBLIC_COMETCHAT_AUTH_KEY!;
+
+export const registerUserCometchat = async (uid: string, name: string) => {
+  try {
+    // Crear un nuevo objeto CometChat.User con el UID y el nombre del usuario
+    const user = new CometChat.User(uid);
+    user.setName(name); // Establecer el nombre del usuario
+
+    // Registrar al usuario con el UID, nombre y otros parámetros si lo deseas
+    await CometChat.createUser(user, AUTH_KEY); // Reemplaza 'YOUR_AUTH_KEY' con tu clave de autenticación
+
+    console.log("User registered successfully");
+    return { success: true };
+  } catch (error) {
+    console.error("Error registering user:", error);
+    return { success: false, error: (error as Error).message };
+  }
+};
+
 export async function login(formData: FormData) {
   const supabase = createClient()
 
