@@ -3,10 +3,10 @@
 import localFont from "next/font/local";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
-import { ToastContainer } from 'react-toastify'; 
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useEffect } from "react";
-import { CometChat } from "@cometchat-pro/chat";
+import { useEffect, useState } from "react";
+import dynamic from 'next/dynamic';
 
 // Carga de fuentes locales
 const geistSans = localFont({
@@ -38,9 +38,15 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [isMounted, setIsMounted] = useState(false);
+
   useEffect(() => {
+    setIsMounted(true);
+    
     const initCometChat = async () => {
       try {
+        const { CometChat } = await import('@cometchat-pro/chat');
+        
         // Inicializar CometChat
         const appID = COMETCHAT_CONSTANTS.APP_ID;
         const region = COMETCHAT_CONSTANTS.REGION;
@@ -57,14 +63,24 @@ export default function RootLayout({
       }
     };
 
-    initCometChat();
+    if (typeof window !== 'undefined') {
+      initCometChat();
+    }
 
     // Limpieza al desmontar el componente
     return () => {
-      CometChat.logout();
+      if (typeof window !== 'undefined') {
+        import('@cometchat-pro/chat').then(({ CometChat }) => {
+          CometChat.logout();
+        });
+      }
     };
   }, []);
- 
+
+  if (!isMounted) {
+    return null; // o un componente de carga
+  }
+
   return (
     <html lang="en">
       <head>
