@@ -15,7 +15,6 @@ export const registerUserCometchat = async (uid: string, name: string) => {
     // Crear un nuevo objeto CometChat.User con el UID y el nombre del usuario
     const user = new CometChat.User(uid);
     user.setName(name); // Establecer el nombre del usuario
-
     // Registrar al usuario con el UID, nombre y otros parámetros si lo deseas
     await CometChat.createUser(user, AUTH_KEY); // Reemplaza 'YOUR_AUTH_KEY' con tu clave de autenticación
 
