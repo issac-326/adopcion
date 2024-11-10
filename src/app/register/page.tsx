@@ -4,11 +4,29 @@ import Link from "next/link";
 import { signupValidator } from "@/validations/signup";
 import React, { useState } from 'react';
 import InputField from "@/components/ui/InputField";
-import { addUser, imagenCloudinary } from "./actions";
+import { addUser, imagenCloudinary, registerCometChatUser } from "./actions";
 import SuccessNotification from "@/components/ui/SuccesNotification";
 import { useRouter } from "next/navigation";
 import { useDropzone } from "react-dropzone";
 import { toast } from "react-toastify";
+
+interface usuario {
+  apellido1: string | null;
+  apellido2: string | null;
+  contrasena: string;
+  correo: string;
+  fecha_creacion: string | null;
+  id_estado: number | null;
+  id_mascota_favorita: number | null;
+  id_tipo_usuario: number | null;
+  id_usuario: number;
+  imagen: string | null;
+  nombre1: string;
+  nombre2: string | null;
+  reset_token: string | null;
+  telefono: string | null;
+}
+
 
 export default function Register() {
   const router = useRouter();
@@ -17,6 +35,7 @@ export default function Register() {
   const [userExists, setUserExists] = useState(false);
   const [imagen, setImagen] = useState("/usuario-default.jpg"); 
   const [newImage, setNewImage] = useState<File | null>(null);
+  const [data, setData] = useState<usuario | null | undefined>(null); 
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     firstName:'',
@@ -45,44 +64,40 @@ const { getRootProps, getInputProps, isDragActive } = useDropzone({
 
 
 // Función para subir la nueva imagen a Cloudinary y actualizar la base de datos
-const handleImageChange = async () => {
-  console.log(newImage)
-  if (!newImage) return;
+const handleSignUp = async (formData: FormData) => {
+  const formResult = signupValidator(formData);
 
-  const formData = new FormData();
-  formData.append('file', newImage);
+  if (formResult.isValid) {
+    setUserExists(false);
+    try {
+      // Agregamos al usuario
+      const user = await addUser(formData, imageUrl);
+      setData(user); // Actualizamos el estado para uso posterior
 
-  const { data: dataClo, error } = await imagenCloudinary(formData);
-  if (error) {
-    toast.error("Error al subir la imagen");
-    console.error("Error al subir la imagen:", error);
-    return;
+      // Usamos directamente el objeto user en lugar de data
+      if (user && user.id_usuario) {
+        const formCometChat = new FormData();
+        formCometChat.append('uid', user.id_usuario.toString());
+        formCometChat.append('name', user.nombre1);
+        formCometChat.append('email', user.correo);
+
+        // Registra al usuario en CometChat
+        const cometChat = await registerCometChatUser(formCometChat);
+      }
+
+      setIsSuccess(true);
+      router.push('/login');
+
+    } catch (error) {
+      setUserExists(true);
+      console.error("Error en el registro:", error);
+    }
+  } else {
+    setErrors(formResult.errors);
   }
-
-  const image1 = dataClo.secure_url;
-  setImageUrl(image1);
 };
 
-  // Función que valida los datos del formulario y envía los datos al servidor
-  const handleSignUp = async (formData: FormData) => {
-    const formResult = signupValidator(formData);
 
-    // Si hay errores en la validación, se muestran en pantalla; si no, se registra al usuario
-    if (formResult.isValid) {
-      setUserExists(false);
-      try {
-        const data = await addUser(formData,imageUrl);
-        console.log('User added successfully:', data);
-        router.push('/login');
-        setIsSuccess(true);
-      } catch (error) {
-        setUserExists(true);
-        console.error("Error en el registro:", error);
-      }
-    } else {
-      setErrors(formResult.errors);
-    }
-  };
 
   // Función que captura el cambio en los inputs y actualiza el estado
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

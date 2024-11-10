@@ -3,13 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "gen-types": "npx supabase gen types typescript --project-id zzggmzxulgmpmjixxdbd > ./src/utils/database.types.ts"
   },
   "dependencies": {
+    "@cometchat-pro/chat": "^3.0.13",
+    "@cometchat/chat-uikit-react": "^4.3.21",
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
     "@fortawesome/free-regular-svg-icons": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
@@ -42,7 +44,7 @@
     "nodemailer": "^6.9.15",
     "npm": "^10.9.0",
     "react": "^18",
-    "react-dom": "^18",
+    "react-dom": "^18.3.1",
     "react-dropzone": "^14.2.10",
     "react-toastify": "^10.0.6",
     "tailwind-merge": "^2.5.2",
