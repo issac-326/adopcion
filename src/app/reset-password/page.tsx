@@ -31,7 +31,7 @@ export default function ResetPassword() {
       router.push('/reset-password/code');
     } catch (error) {
       if (error instanceof Error) {
-        handleErrorNotification(error.message);  // Asigna el mensaje de error aquí
+        handleErrorNotification(error.message);
       } else {
         handleErrorNotification('An unknown error occurred');
       }

@@ -1,5 +1,5 @@
 'use server'
-import { redirect } from 'next/navigation';
+
 import { createClient } from '@/utils/supabase/server';
 
 export const sendCode = async (formData: FormData, email: string) => {

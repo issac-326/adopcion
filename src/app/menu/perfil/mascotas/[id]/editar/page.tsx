@@ -45,6 +45,7 @@ interface PetFormData {
     nombre: string;
     sexo: string;
     imagen: string;
+    tipoAnimal: string;
     descripcion: string;
     anos: string;
     meses: string;
@@ -52,7 +53,11 @@ interface PetFormData {
     peso: string;
 }
 
-export default function AnimalFormEdit({ params }) {
+interface Params {
+    id: string;
+}
+
+export default function AnimalFormEdit({ params }: { params: Params }) {
     const { id } = params;
     const [pet, setPet] = useState(null);
     const [formData, setFormData] = useState<PetFormData>();
@@ -163,7 +168,16 @@ export default function AnimalFormEdit({ params }) {
         });
     };
 
-    const handleEdit = async (event) => {
+    interface FormResult {
+        isValid: boolean;
+        errors: Record<string, string>;
+    }
+
+    interface CloudinaryResponse {
+        secure_url: string;
+    }
+
+    const handleEdit = async (event: React.FormEvent<HTMLButtonElement>) => {
         event.preventDefault(); // Prevenir el comportamiento predeterminado del formulario
 
         if (!userId) {
@@ -171,7 +185,7 @@ export default function AnimalFormEdit({ params }) {
         }
 
         // Validación del formulario
-        const formResult = editPublicacionValidator(formData);
+        const formResult: FormResult = editPublicacionValidator(formData);
         if (!formResult.isValid) {
             setErrors(formResult.errors);
             return; // Salir si la validación falla
@@ -183,16 +197,7 @@ export default function AnimalFormEdit({ params }) {
                 // Cambia esta línea para llamar a la función de subir imagen con formDataUpload
                 const formImagen = new FormData();
                 formImagen.append('file', acceptedFiles[0]);
-                const { data: dataClo, error } = await imagenCloudinary(formImagen);
-                if (error) {
-                    console.error("Error al subir la imagen:", error?.message || "Sin datos de imagen");
-                    return;
-                }
-
-                // Actualiza el imagen con la url de la imagen subida
-                const updatedFormData = {
-                    ...formData,
-                    imagen: dataClo.secure_url
+                const { data: dataClo, error }: { data: CloudinaryResponse; error:
                 };
 
                 console.log("Imagen subida:", dataClo.secure_url);
