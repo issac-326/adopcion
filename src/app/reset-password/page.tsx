@@ -30,7 +30,11 @@ export default function ResetPassword() {
       localStorage.setItem('email', formData.get('email') as string);
       router.push('/reset-password/code');
     } catch (error) {
-      handleErrorNotification(error.message);  // Asigna el mensaje de error aquí
+      if (error instanceof Error) {
+        handleErrorNotification(error.message);  // Asigna el mensaje de error aquí
+      } else {
+        handleErrorNotification('An unknown error occurred');
+      }
     }
   };
 

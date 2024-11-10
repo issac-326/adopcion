@@ -1,6 +1,25 @@
 'use server'
 import { createClient } from '@/utils/supabase/server';
 
+interface Publicacion {
+  nombre: string;
+  anios: number;
+  meses: number;
+  color: string;
+  peso: number;
+  vacunas: string;
+  condicion_medica: string;
+  imagen: string;
+  ciudad: string;
+  sexo: string;
+  descripcion: string;
+  departamentos: { descripcion: string };
+  usuarios: { nombre1: string; imagen: string };
+  categorias: { tipo_mascotas: string };
+  estado_adopcion: string;
+  visible: boolean;
+}
+
 const supabase = createClient();
 
 export const getMascotaEspecifica = async (id: number) => {

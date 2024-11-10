@@ -58,7 +58,7 @@ export async function addUser(formData: FormData, imageUrl: string | null) {
     const lastName1 = formData.get('lastName1');
     const lastName2 = formData.get('lastName2');
     const email = formData.get('email');
-    const password = formData.get('password');
+    const password = formData.get('password') as string;
     const phone = formData.get('phone');
 
     // Verificar si el usuario ya existe

@@ -1,7 +1,17 @@
 
 export function publicacionValidator(formData: FormData) {
   console.log(formData)
-    const errors: Error = {
+    const errors: {
+        nombre: string;
+        sexo: string;
+        tipoAnimal: string;
+        descripcion: string;
+        anos: string;
+        meses: string;
+        departamento: string;
+        imagen: string;
+        peso: string;
+    } = {
         nombre: '',
         sexo: '',
         tipoAnimal: '',
@@ -102,7 +112,7 @@ export function publicacionValidator(formData: FormData) {
     }
 
     if (imagen === null) {
-      errors.image = 'La imagen es requerida';
+      errors.imagen = 'La imagen es requerida';
       isValid = false;
     }
 

@@ -34,7 +34,8 @@ export default function NewPassword() {
       confirmPassword: ''
     });
 
-    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*.])(?=.{6,})/.test(formData.get('password'))) {
+    const password = formData.get('password') as string | null;
+    if (password && !/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*.])(?=.{6,})/.test(password)) {
       setErrors((prev) => ({
         ...prev,
         password: 'La contraseña debe tener al menos una mayúscula, una minúscula y un carácter especial.'

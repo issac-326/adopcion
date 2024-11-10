@@ -20,7 +20,13 @@ const Configuracion = () => {
     const [error, setError] = useState('');
     const [passwordSuccess, setPasswordSuccess] = useState('');
     const [reportSuccess, setReportSuccess] = useState('');
-    const [user, setUser] = useState(null); // Estado para el perfil del usuario
+    interface UserProfile {
+        imagen: string;
+        nombre1: string;
+        apellido1: string;
+    }
+    
+    const [user, setUser] = useState<UserProfile | null>(null); // Estado para el perfil del usuario
     const supabase = createClient();
     const [loadingUser, setLoadingUser] = useState(true);
     const userId = localStorage.getItem('userId');
@@ -48,11 +54,15 @@ const Configuracion = () => {
         fetchUserProfile(); // Llama a la función para obtener el perfil al cargar el componente
     }, []);
 
-    const handleChangePassword = async (event) => {
+    const handleChangePassword = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setErrorOldPassword('');
         setError('');
     
+        if (!userId) {
+            setError('No se encontró el ID de usuario.');
+            return;
+        }
         const isPasswordEqual = await comparePasswords(currentPassword, userId);
     
         // Validación de la contraseña actual
@@ -89,7 +99,7 @@ const Configuracion = () => {
      };
     
 
-    const handleReportSubmit = async (event) => {
+    const handleReportSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setError('');
         setReportSuccess('');
@@ -121,7 +131,11 @@ const Configuracion = () => {
             setReportSuccess('Reporte enviado con éxito.');
             setDescripcion('');
         } catch (err) {
-            setError(err.message);
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError('Error desconocido');
+            }
         }
     };
 
@@ -149,7 +163,7 @@ const Configuracion = () => {
                 ) : (<div className="flex items-center px-6 py-2 my-2 relative">
                     <div className="rounded-full w-20 h-20 overflow-hidden">
                         <Image
-                            src={user?.imagen}
+                            src={user?.imagen || '/user-default.jpg'}
                             alt="profile"
                             width={200}
                             height={200}
@@ -219,7 +233,7 @@ const Configuracion = () => {
                             {error && <p className="text-red-600 text-sm">{error}</p>}
                         </div>
 
-                        <button type="button" onClick={handleChangePassword} className="bg-[#ffa07a] text-white py-2 px-4 rounded-lg font-semibold hover:bg-[#ff9060]">
+                        <button type="submit" className="bg-[#ffa07a] text-white py-2 px-4 rounded-lg font-semibold hover:bg-[#ff9060]">
                             Cambiar
                         </button>
                     </form>
@@ -271,8 +285,13 @@ const Configuracion = () => {
     );
 };
 
-// Componente Modal separado para reutilizar
-const Modal = ({ closeModal, title, children }) => (
+interface ModalProps {
+    closeModal: () => void;
+    title: string;
+    children: React.ReactNode;
+}
+
+const Modal = ({ closeModal, title, children }: ModalProps) => (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
         <div className="relative bg-white w-full max-w-2xl p-6 rounded-lg shadow-lg mx-4">
             <button onClick={closeModal} className="absolute top-4 right-4 text-gray-600 hover:text-gray-800">

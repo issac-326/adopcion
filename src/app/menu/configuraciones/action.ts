@@ -5,7 +5,7 @@ import { createClient } from '@/utils/supabase/server';
 const supabase = createClient();
 import bcrypt from 'bcryptjs';
 
-export const getUserProfile = async (userId) => {
+export const getUserProfile = async (userId: string) => {
     try {
         const { data, error } = await supabase
             .from('usuarios') // Asegúrate de que 'users' sea el nombre correcto de tu tabla

@@ -2,7 +2,6 @@ interface Pet {
   estado_adopcion: boolean;
   id_publicacion: number;
   nombre: string;
-  edad: number;
   anios: number;
   meses: number;
   ciudad: string;

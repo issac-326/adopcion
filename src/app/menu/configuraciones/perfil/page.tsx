@@ -14,6 +14,7 @@ import { PhotoIcon } from "@heroicons/react/24/solid";
 
 const ProfilePage = () => {
 
+  localStorage.setItem('selectedIndex', '4'); 
   const userId = localStorage.getItem('userId');
 
   const [nombre1, setNombre1] = useState("");

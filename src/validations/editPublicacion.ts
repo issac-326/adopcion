@@ -1,7 +1,19 @@
 
-export function editPublicacionValidator(formData: FormData) {
+export function editPublicacionValidator(formData: any) {
     console.log(formData)
-      const errors: Error = {
+      interface ValidationError {
+          nombre: string;
+          sexo: string;
+          tipoAnimal: string;
+          descripcion: string;
+          anos: string;
+          meses: string;
+          departamento: string;
+          imagen: string;
+          peso: string;
+      }
+
+      const errors: ValidationError = {
           nombre: '',
           sexo: '',
           tipoAnimal: '',
@@ -18,7 +30,7 @@ export function editPublicacionValidator(formData: FormData) {
       const sexo = formData.sexo as string;
       const tipoAnimal = formData.tipoAnimal as string;
       const descripcion = formData.descripcion as string;
-      const anos = formData.anos as string; // ya que formData es un objeto React
+      const anos = formData.anos as string;
       const meses = formData.meses as string;
       const departamento = formData.departamento as string;
       const imagen = formData.imagen as string;
@@ -109,7 +121,7 @@ export function editPublicacionValidator(formData: FormData) {
       }
   
       if (imagen === null) {
-        errors.image = 'La imagen es requerida';
+        errors.imagen = 'La imagen es requerida';
         isValid = false;
       }
   

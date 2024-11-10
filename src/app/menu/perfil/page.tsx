@@ -20,9 +20,26 @@ const ProfilePage = () => {
 
     const router = useRouter();
 
-    const [myPets, setMyPets] = useState([]);
+    interface Pet {
+        id_publicacion: number;
+        nombre: string;
+        anios: number;
+        meses: number;
+        ciudad: string;
+        estado_adopcion: boolean;
+        imagen: string;
+        departamentos: { descripcion: string; } | null;
+    }
+
+    const [myPets, setMyPets] = useState<Pet[]>([]);
     const [loadingPets, setLoadingPets] = useState(false);
-    const [user, setUser] = useState(null);
+    interface UserProfile {
+        nombre1: string;
+        apellido1: string;
+        imagen: string;
+    }
+    
+    const [user, setUser] = useState<UserProfile | null>(null);
 
     //trae las mascotas publicadas de este usuario
     const fetchPets = async () => {
@@ -65,8 +82,12 @@ const ProfilePage = () => {
     const obtenerUserProfile = async () => {
         setLoadingUser(true);
         try {
-            const usuario = await getUserProfile(userId);
-            setUser(usuario);
+            if (userId) {
+                const usuario = await getUserProfile(userId);
+                setUser(usuario);
+            } else {
+                console.error("User ID is null");
+            }
 
         } catch (error) {
             console.error("Error al obtener el perfil del usuario:", error);
@@ -108,7 +129,7 @@ const ProfilePage = () => {
                     <div className="relative group">
                         {/* Imagen de la mascota */}
                         <Image
-                            src={user?.imagen}
+                            src={user?.imagen || '/default-image.png'}
                             alt="Imagen de la mascota"
                             width={120}
                             height={120}

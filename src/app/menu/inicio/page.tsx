@@ -43,32 +43,17 @@ export default function Home() {
   const [isOffcanvasOpen, setIsOffcanvasOpen] = useState(false);
   const categoriesRef = useRef(null);
   const [depaSeleccionado, setDepaSeleccionado] = useState<number | null>(depa ? parseInt(depa) : 0);
-  const [isSticky, setIsSticky] = useState(false);
-  const [departamentos, setDepartamentos] = useState([]);
+  interface Departamento {
+    id: number;
+    descripcion: string;
+  }
+  
+  const [departamentos, setDepartamentos] = useState<Departamento[]>([]);
   const [page, setPage] = useState(0); // Controla la página actual para la paginación
   const observerRef = useRef(null); // Referencia al sentinela
   const [isInitialRender, setIsInitialRender] = useState(true);
   const [hasMorePets, setHasMorePets] = useState(true);
-  const userId = localStorage.getItem('userId');
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (categoriesRef.current) {
-        const rect = categoriesRef.current.getBoundingClientRect();
-        console.log("recto", rect);  // Esto debe imprimir la información de posición
-        setIsSticky(rect.top <= 0);
-      } else {
-        console.log("categoriesRef.current es null");
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-
-    // Remueve el listener cuando el componente se desmonta
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
+  const userId = localStorage.getItem('userId') || '';
 
   useLayoutEffect(() => {
     const observer = new IntersectionObserver((entries) => {
@@ -113,25 +98,36 @@ export default function Home() {
     seleccionarMascotasPorIdCatIdDepa(selectedCategory, depaSeleccionado, 0);
   }, []);
 
-  const seleccionarMascotasPorIdCatIdDepa = async (id = 0, id_departamento, page = 0) => { 
+  interface MascotaData {
+    id: number;
+    name: string;
+    // Add other properties as needed
+  }
+
+  interface CategoriaEspecificaResponse {
+    length: number;
+    data: MascotaData[];
+  }
+
+  const seleccionarMascotasPorIdCatIdDepa = async (id: number = 0, id_departamento: number | null, page: number = 0): Promise<void> => { 
     if (!hasMorePets) {
       console.log("No hay más mascotas para cargar.");
       return; // Si no hay más mascotas, detenemos la ejecución
     }
-  
+
     try {
       console.log("Seleccionando mascotas por categoría y departamento:", id, id_departamento, page);
       setLoadingPets(true);
       const limit = 10; // Número de mascotas a cargar por página
       const offset = page * limit;
-  
-      const data = await getCategoriaEspecifica(id, id_departamento, limit, offset, userId);
-  
+
+      const data: CategoriaEspecificaResponse = await getCategoriaEspecifica(id, id_departamento ?? 0, limit, offset, userId);
+
       // Si la cantidad de datos retornados es menor que el límite, ya no hay más mascotas para cargar
       if (data.length < limit) {
         setHasMorePets(false); // Indica que no hay más mascotas
       }
-  
+
       // Añade las nuevas mascotas a la lista existente
       setSelectedMascotas((prevMascotas) => [...prevMascotas, ...(data ?? [])]);
     } catch (error) {
@@ -358,7 +354,7 @@ export default function Home() {
         id="hs-offcanvas-right"
         className={`hs-overlay ${isOffcanvasOpen ? 'translate-x-0' : 'translate-x-full hidden'} fixed top-0 end-0 transition-all duration-300 transform h-full max-w-xs w-full z-[80] bg-white border-s dark:bg-neutral-800 dark:border-neutral-700`}
         role="dialog"
-        tabIndex="-1"
+        tabIndex={-1}
         aria-labelledby="hs-offcanvas-right-label"
       >
         <div className="flex justify-between items-center py-3 px-4 border-b dark:border-neutral-700">
@@ -390,8 +386,7 @@ export default function Home() {
       <div
         id="categorias"
         ref={categoriesRef}
-        className={`py-2 w-full sticky z-20 top-0 bg-white transition-shadow duration-300 ${isSticky ? 'shadow-[0_4px_8px_rgba(0,0,255,0.2),0_2px_4px_rgba(0,0,0,0.1)]' : ''
-          }`}
+        className={`py-2 w-full sticky z-20 top-0 bg-white transition-shadow duration-300}`}
       >
         <section className="flex justify-between h-[40px] gap-4">
           {loading ? (

@@ -13,6 +13,9 @@ function generateResetToken() {
 export const searchUser = async (formData: FormData) => {
   const supabase = createClient();
   const email = formData.get('email')?.toString();
+  if (!email) {
+    throw new Error('El correo es requerido');
+  }
 
   // Busca al usuario en la base de datos por correo
   const { data, error } = await supabase
@@ -30,7 +33,7 @@ export const searchUser = async (formData: FormData) => {
   const tokenExpiry = new Date();
 
   // Actualiza la base de datos con el código 
-  const { dataUpdated, errorUpdated} = await supabase
+  const { data: updatedData, error: errorUpdated } = await supabase
     .from('usuarios')
     .update({ reset_token: resetToken })
     .eq('correo', email);
@@ -39,7 +42,7 @@ export const searchUser = async (formData: FormData) => {
     throw new Error('Error al generar el código de restablecimiento');
   }
 
-  console.log(dataUpdated);
+  console.log(updatedData);
   
   // Envía el correo al usuario con el código de restablecimiento
   await sendResetEmail(email, resetToken);
