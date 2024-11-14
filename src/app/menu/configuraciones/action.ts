@@ -2,67 +2,94 @@
 'use server';
 
 import { createClient } from '@/utils/supabase/server';
-const supabase = createClient();
+import { getAuthenticatedUserIdOrThrow } from '@/utils/auth/auth';
 import bcrypt from 'bcryptjs';
 
-export const getUserProfile = async (userId: string) => {
+const supabase = createClient();
+
+/**
+ * Obtiene el perfil del usuario autenticado desde la base de datos.
+ * @returns Los datos del perfil del usuario autenticado.
+ * @throws Error si ocurre algún problema al obtener los datos.
+ */
+export const getUserProfile = async () => {
+    const userId = getAuthenticatedUserIdOrThrow();
+
     try {
         const { data, error } = await supabase
-            .from('usuarios') // Asegúrate de que 'users' sea el nombre correcto de tu tabla
+            .from('usuarios') // Nombre de la tabla de usuarios
             .select('*')
             .eq('id_usuario', userId)
             .single();
 
-        if (error) throw error;
+        if (error) {
+            console.error("Error al obtener el perfil del usuario:", error);
+            throw new Error('No se pudo obtener el perfil del usuario');
+        }
 
         return data;
     } catch (error) {
-        console.error("Error fetching user profile:", error);
+        console.error("Error al obtener el perfil del usuario:", error);
         throw error;
     }
 };
 
-
-export async function enviarReporte(formData: FormData) {
-    const supabase = createClient();
-
+/**
+ * Envía un reporte de soporte utilizando los datos del formulario.
+ * @param formData - Objeto `FormData` que contiene la descripción del reporte.
+ * @returns Los datos del reporte insertado en la base de datos.
+ * @throws Error si ocurre algún problema al insertar el reporte.
+ */
+export const enviarReporte = async (formData: FormData) => {
+    const userId = getAuthenticatedUserIdOrThrow();
     const { descripcion } = Object.fromEntries(formData);
     const fecha = new Date().toISOString();
-    const id_usuario = null;
 
     const { data, error } = await supabase
         .from('reportes_soporte')
-        .insert([{ descripcion, fecha, id_usuario }]);
+        .insert([{ descripcion, fecha, id_usuario: userId }]);
 
-    if (error) throw new Error(error.message);
+    if (error) {
+        console.error("Error al enviar el reporte:", error);
+        throw new Error(error.message);
+    }
 
     return data;
-}
+};
 
-// Cambia la contraseña del usuario en la base de datos
-
-export const comparePasswords = async (password: string, userId: string) => {
-
-    const supabase = createClient();
+/**
+ * Compara la contraseña proporcionada con la contraseña almacenada en la base de datos para el usuario autenticado.
+ * @param password - Contraseña ingresada para verificar.
+ * @returns `true` si la contraseña es correcta, `false` de lo contrario.
+ * @throws Error si ocurre algún problema en la comparación de contraseñas.
+ */
+export const comparePasswords = async (password: string): Promise<boolean> => {
+    const userId = getAuthenticatedUserIdOrThrow();
 
     const { data, error } = await supabase
-        .from('usuarios') 
+        .from('usuarios')
         .select('contrasena')
         .eq('id_usuario', userId)
         .single();
 
     if (error || !data) {
-        throw new Error('Credenciales incorrectas'); 
+        console.error("Error al comparar contraseñas:", error);
+        throw new Error('Credenciales incorrectas');
     }
 
     // Compara la contraseña ingresada con la almacenada
     const isPasswordValid = await bcrypt.compare(password, data.contrasena);
-
     return isPasswordValid;
-}
+};
 
-export const changePassword = async (newPassword: string, userId: string) => {
-    const supabase = createClient();
+/**
+ * Cambia la contraseña del usuario autenticado en la base de datos.
+ * @param newPassword - Nueva contraseña a establecer para el usuario.
+ * @returns Los datos del usuario actualizado.
+ * @throws Error si ocurre algún problema al actualizar la contraseña.
+ */
+export const changePassword = async (newPassword: string) => {
+    const userId = getAuthenticatedUserIdOrThrow();
 
     const salt = bcrypt.genSaltSync(10);
     const hashedNewPassword = bcrypt.hashSync(newPassword, salt);
@@ -73,11 +100,12 @@ export const changePassword = async (newPassword: string, userId: string) => {
         .eq('id_usuario', userId);
 
     if (error) {
+        console.error("Error al cambiar la contraseña:", error);
         throw new Error(error.message);
     }
 
     return data;
+};
 
-}
 
 

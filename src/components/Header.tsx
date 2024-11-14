@@ -42,15 +42,19 @@ export default function Header() {
   };
 
   const cerrarSesion = async () => {
-    localStorage.removeItem('depaSelectedIndex');
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw new Error(error.message);
-
-      // Limpiar localStorage
-      localStorage.removeItem("userId");
-      localStorage.removeItem("selectedIndex"); // Limpiar el índice seleccionado al cerrar sesión
-
+      // Llamamos al endpoint para borrar la cookie en el servidor
+      const response = await fetch('/api/auth', {
+        method: 'POST',
+      });
+  
+      if (!response.ok) {
+        throw new Error('No se pudo cerrar sesión');
+      }
+  
+      // Limpiar localStorage en caso de que guardes otros datos
+      localStorage.removeItem("selectedIndex");
+  
       // Redirigir a la página de login
       router.replace('/login');
     } catch (err) {

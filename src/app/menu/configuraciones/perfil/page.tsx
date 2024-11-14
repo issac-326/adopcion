@@ -13,18 +13,14 @@ import { faAngleLeft } from "@fortawesome/free-solid-svg-icons";
 import { PhotoIcon } from "@heroicons/react/24/solid";
 
 const ProfilePage = () => {
-
-  localStorage.setItem('selectedIndex', '4'); 
-  const userId = localStorage.getItem('userId');
-
   const [nombre1, setNombre1] = useState("");
   const [nombre2, setNombre2] = useState("");
   const [apellido1, setApellido1] = useState("");
   const [apellido2, setApellido2] = useState("");
   const [telefono, setTelefono] = useState("");
   const [correo, setCorreo] = useState("");
-  const [imagen, setImagen] = useState("/usuario-default.png"); 
-  const [newImage, setNewImage] = useState<File | null>(null); 
+  const [imagen, setImagen] = useState("/usuario-default.webp");
+  const [newImage, setNewImage] = useState<File | null>(null);
 
   const [initialNombre1, setInitialNombre1] = useState("");
   const [initialNombre2, setInitialNombre2] = useState("");
@@ -37,31 +33,26 @@ const ProfilePage = () => {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      if (userId) {
-        try {
-          const profileData = await getUserProfile(userId);
-          if (profileData) {
-            setNombre1(profileData.nombre1 || "");
-            setNombre2(profileData.nombre2 || "");
-            setApellido1(profileData.apellido1 || "");
-            setApellido2(profileData.apellido2 || "");
-            setTelefono(profileData.telefono || "");
-            setCorreo(profileData.correo || "");
-            setImagen(profileData.imagen || "/usuario-default.webp");
-            
-            setInitialNombre1(profileData.nombre1 || "");
-            setInitialNombre2(profileData.nombre2 || "");
-            setInitialApellido1(profileData.apellido1 || "");
-            setInitialApellido2(profileData.apellido2 || "");
-            setInitialTelefono(profileData.telefono || "");
-          }
-        } catch (error) {
-          console.error("Error fetching profile data:", error);
-          toast.error("Error al obtener los datos del perfil.");
+      try {
+        const profileData = await getUserProfile();
+        if (profileData) {
+          setNombre1(profileData.nombre1 || "");
+          setNombre2(profileData.nombre2 || "");
+          setApellido1(profileData.apellido1 || "");
+          setApellido2(profileData.apellido2 || "");
+          setTelefono(profileData.telefono || "");
+          setCorreo(profileData.correo || "");
+          setImagen(profileData.imagen || "/usuario-default.webp");
+
+          setInitialNombre1(profileData.nombre1 || "");
+          setInitialNombre2(profileData.nombre2 || "");
+          setInitialApellido1(profileData.apellido1 || "");
+          setInitialApellido2(profileData.apellido2 || "");
+          setInitialTelefono(profileData.telefono || "");
         }
-      } else {
-        toast.error("No se encontró ningún ID de usuario. Inicie sesión.");
-        router.push('/login');
+      } catch (error) {
+        console.error("Error fetching profile data:", error);
+        toast.error("Error al obtener los datos del perfil.");
       }
     };
 
@@ -70,9 +61,21 @@ const ProfilePage = () => {
 
   const submitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
-    await handleImageChange();
     setLoading(true);
 
+    // Primero, sube la nueva imagen si está presente
+    let imageUrl = imagen; // Mantén la URL de la imagen actual por defecto
+    if (newImage) {
+      const uploadedImageUrl = await handleImageChange();
+      if (uploadedImageUrl) {
+        imageUrl = uploadedImageUrl;
+      } else {
+        setLoading(false);
+        return;
+      }
+    }
+
+    // Validación del formulario
     const phoneRegexp = /^\d{8}$/;
     if (!phoneRegexp.test(telefono)) {
       toast.error("El número de teléfono no es válido. Debe tener 8 dígitos.");
@@ -81,16 +84,12 @@ const ProfilePage = () => {
     }
 
     const nameRegexp = /^[a-zA-ZÀ-ÿ\s]+$/;
-    if (!nameRegexp.test(nombre1)) {
-      toast.error("El primer nombre no debe contener números ni caracteres especiales.");
+    if (!nameRegexp.test(nombre1) || !nameRegexp.test(apellido1)) {
+      toast.error("El primer nombre y apellido no deben contener números ni caracteres especiales.");
       setLoading(false);
       return;
     }
-    if (!nameRegexp.test(apellido1)) {
-      toast.error("El primer apellido no debe contener números ni caracteres especiales.");
-      setLoading(false);
-      return;
-    }
+
     if (nombre2 && !nameRegexp.test(nombre2)) {
       toast.error("El segundo nombre no debe contener números ni caracteres especiales.");
       setLoading(false);
@@ -103,34 +102,16 @@ const ProfilePage = () => {
     }
 
     try {
-      if (!userId) throw new Error("No se encontró ningún ID de usuario. Inicie sesión.");
-
-      if (newImage) {
-        const formData = new FormData();
-        formData.append('file', newImage);
-        
-        const { data: dataClo, error } = await imagenCloudinary(formData);
-        if (error) {
-          toast.error("Error al subir la imagen");
-          console.error("Error al subir la imagen:", error);
-          setLoading(false);
-          return;
-        }
-
-        const imageUrl = dataClo.secure_url;
-        await updateUserProfileImage(userId, imageUrl);
-        setImagen(imageUrl);
-        setNewImage(null);
-        toast.success("¡Imagen de perfil actualizada con éxito!");
-      }
-
-      await updateUserProfile(userId, {
+      await updateUserProfile({
         nombre1,
         nombre2,
         apellido1,
         apellido2,
         telefono
       });
+
+      // Actualizar la imagen de perfil en la base de datos
+      await updateUserProfileImage(imageUrl);
 
       toast.success("¡Perfil actualizado con éxito!");
       router.push('/menu/perfil');
@@ -164,29 +145,22 @@ const ProfilePage = () => {
     maxSize: 10000000
   });
 
-  // Función para subir la nueva imagen a Cloudinary y actualizar la base de datos
-  const handleImageChange = async () => {
-    console.log(newImage)
-    if (!newImage || !userId) return;
+  // Función para manejar la subida de la imagen a Cloudinary y devolver la URL
+  const handleImageChange = async (): Promise<string | null> => {
+    if (!newImage) return null;
 
     const formData = new FormData();
     formData.append('file', newImage);
 
-    const { data: dataClo, error } = await imagenCloudinary(formData);
+    const { data, error } = await imagenCloudinary(formData);
     if (error) {
       toast.error("Error al subir la imagen");
       console.error("Error al subir la imagen:", error);
-      return;
+      return null;
     }
 
-    const imageUrl = dataClo.secure_url;
-    try {
-      await updateUserProfileImage(userId, imageUrl);
-      setNewImage(null);
-    } catch (error) {
-      console.error("Error actualizando la imagen de perfil:", error);
-      toast.error("Error al actualizar la imagen de perfil.");
-    }
+    setNewImage(null); // Limpiar la imagen una vez que se sube correctamente
+    return data; // Devolver la URL de la imagen subida
   };
 
   return (
@@ -204,7 +178,7 @@ const ProfilePage = () => {
           <div className="relative group">
             <Image
               src={imagen}
-              alt="Imagen de la mascota"
+              alt="Imagen de perfil"
               width={120}
               height={120}
               className="h-30 w-30 mt-2 mx-auto rounded-full aspect-square object-cover border-4 border-[#FFA07A]/50"
@@ -220,28 +194,16 @@ const ProfilePage = () => {
 
       <form className="space-y-4 mx-auto items-center w-[60%] grid grid-cols-1" onSubmit={submitHandler}>
         <div className="grid gap-4 grid-cols-2">
-          <div className="w-1/2">
-            <InputField id="nombre1" name="nombre1" type="text" placeholder="Primer Nombre" value={nombre1} onChange={(e) => setNombre1(e.target.value)} />
-          </div>
-          <div className="w-1/2">
-            <InputField id="nombre2" name="nombre2" type="text" placeholder="Segundo Nombre (opcional)" value={nombre2} onChange={(e) => setNombre2(e.target.value)} />
-          </div>
+          <InputField id="nombre1" name="nombre1" type="text" placeholder="Primer Nombre" value={nombre1} onChange={(e) => setNombre1(e.target.value)} />
+          <InputField id="nombre2" name="nombre2" type="text" placeholder="Segundo Nombre (opcional)" value={nombre2} onChange={(e) => setNombre2(e.target.value)} />
         </div>
         <div className="grid gap-4 grid-cols-2">
-          <div className="w-1/2">
-            <InputField id="apellido1" name="apellido1" type="text" placeholder="Primer Apellido" value={apellido1} onChange={(e) => setApellido1(e.target.value)} />
-          </div>
-          <div className="w-1/2">
-            <InputField id="apellido2" name="apellido2" type="text" placeholder="Segundo Apellido (opcional)" value={apellido2} onChange={(e) => setApellido2(e.target.value)} />
-          </div>
+          <InputField id="apellido1" name="apellido1" type="text" placeholder="Primer Apellido" value={apellido1} onChange={(e) => setApellido1(e.target.value)} />
+          <InputField id="apellido2" name="apellido2" type="text" placeholder="Segundo Apellido (opcional)" value={apellido2} onChange={(e) => setApellido2(e.target.value)} />
         </div>
         <div className="grid gap-4 grid-cols-2">
-          <div className="w-1/2">
-            <InputField id="correo" name="correo" type="text" placeholder="Correo" value={correo} readOnly />
-          </div>
-          <div className="w-1/2">
-            <InputField id="telefono" name="telefono" type="text" placeholder="Teléfono" value={telefono} onChange={(e) => setTelefono(e.target.value)} />
-          </div>
+          <InputField id="correo" name="correo" type="text" placeholder="Correo" value={correo} readOnly />
+          <InputField id="telefono" name="telefono" type="text" placeholder="Teléfono" value={telefono} onChange={(e) => setTelefono(e.target.value)} />
         </div>
         <div className="flex flex-col items-center w-full mt-4 mb-6">
           <div

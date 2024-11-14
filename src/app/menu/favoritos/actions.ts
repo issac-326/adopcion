@@ -1,10 +1,18 @@
-'use server'
+'use server';
+
 import { createClient } from '@/utils/supabase/server';
+import { getAuthenticatedUserIdOrThrow } from '@/utils/auth/auth';
 
 const supabase = createClient();
 
-// Verifica si la mascota ya está en favoritos para un usuario
-export const verificacionFavoritos = async (id_publicacion: number, id_usuario: string) => {
+/**
+ * Verifica si una publicación ya está en favoritos para el usuario autenticado.
+ * @param id_publicacion - ID de la publicación a verificar.
+ * @returns `true` si está en favoritos, `false` si no está.
+ */
+export const verificacionFavoritos = async (id_publicacion: number): Promise<boolean> => {
+  const id_usuario = getAuthenticatedUserIdOrThrow();
+
   const { data, error } = await supabase
     .from('favoritos')
     .select('*')
@@ -12,12 +20,18 @@ export const verificacionFavoritos = async (id_publicacion: number, id_usuario: 
     .eq('id_usuario', id_usuario)
     .single();
 
-  if (error) return false; // No está en favoritos
-  return data ? true : false; // Está en favoritos
+  return !error && Boolean(data); // Retorna true si la publicación está en favoritos
 };
 
-// Añadir o eliminar un favorito
-export const favorito = async (id_publicacion: number, id_usuario: string, isLiked: boolean) => {
+/**
+ * Añade o elimina una publicación de los favoritos del usuario autenticado.
+ * @param id_publicacion - ID de la publicación.
+ * @param isLiked - `true` para eliminar de favoritos, `false` para añadir a favoritos.
+ * @throws Error si hay algún problema al añadir o eliminar el favorito.
+ */
+export const favorito = async (id_publicacion: number, isLiked: boolean): Promise<void> => {
+  const id_usuario = getAuthenticatedUserIdOrThrow();
+
   if (isLiked) {
     // Eliminar de favoritos
     const { error } = await supabase
@@ -37,28 +51,34 @@ export const favorito = async (id_publicacion: number, id_usuario: string, isLik
   }
 };
 
+/**
+ * Obtiene las publicaciones que están en favoritos para el usuario autenticado.
+ * @returns Lista de publicaciones en favoritos con detalles de cada publicación.
+ * @throws Error si hay problemas al obtener los favoritos o las publicaciones.
+ */
+export const getFavoritos = async (): Promise<any[]> => {
+  const id_usuario = getAuthenticatedUserIdOrThrow();
 
-export const getFavoritos = async (idUsuario: number) => {
   try {
-    // Primero obtenemos los id_publicacion que están en favoritos para este usuario
+    // Obtener los IDs de publicaciones que están en favoritos
     const { data: favoritosData, error: favoritosError } = await supabase
       .from('favoritos')
       .select('id_publicacion')
-      .eq('id_usuario', idUsuario);
+      .eq('id_usuario', id_usuario);
 
     if (favoritosError) {
       console.error('Error al obtener favoritos:', favoritosError);
       throw new Error(favoritosError.message);
     }
 
-    // Extraemos solo los id_publicacion de los resultados
     const idsPublicacionesFavoritas = favoritosData.map(favorito => favorito.id_publicacion);
 
-    // Ahora obtenemos las publicaciones que coinciden con estos ids y que tienen estado_adopcion = true
+    // Obtener detalles de las publicaciones favoritas
     const { data: publicacionesData, error: publicacionesError } = await supabase
       .from('publicaciones')
       .select('id_publicacion, nombre, estado_adopcion, anios, meses, ciudad, imagen, departamentos (descripcion)')
       .in('id_publicacion', idsPublicacionesFavoritas)
+      .eq('estado_adopcion', true);
 
     if (publicacionesError) {
       console.error('Error al obtener publicaciones favoritas:', publicacionesError);

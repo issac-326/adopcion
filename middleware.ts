@@ -1,28 +1,27 @@
-import { type NextRequest } from 'next/server'
 import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import jwt from 'jsonwebtoken';
 
-import { updateSession } from '@/utils/supabase/middelware'
+export function middleware(request: NextRequest) {
+  // Obtén el token desde la cookie 'authToken'
+  const token = request.cookies.get('authToken')?.value;
 
-export async function middleware(request: NextRequest) {
-  const token = localStorage.getItem('token'); // Esto NO funcionará en el middleware del lado del servidor
-
-  // Redirigir a login si el token no existe y el usuario intenta acceder a una página protegida
-  if (!token && request.nextUrl.pathname.startsWith('/menu')) {
-      return NextResponse.redirect(new URL('/login', request.url));
+  // Si no hay token, redirige al login
+  if (!token) {
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  return NextResponse.next();
+  try {
+    // Verifica el token JWT usando la clave secreta del entorno
+    jwt.verify(token, process.env.JWT_SECRET!);
+    return NextResponse.next(); // Deja que la solicitud continúe si el token es válido
+  } catch (error) {
+    // Si el token es inválido o ha expirado, redirige al login
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * Feel free to modify this pattern to include more paths.
-     */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
-  ],
-}
+  matcher: ['/menu/:path*'], // Define las rutas que deseas proteger
+};
+

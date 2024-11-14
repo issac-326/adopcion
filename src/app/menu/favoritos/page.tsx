@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useEffect, useState } from 'react';
 import PetList from '@/components/ui/PetList';
 import Pet from "@/types/Pet";
@@ -6,20 +7,18 @@ import { getFavoritos } from './actions';
 import PetCardSkeleton from '@/components/ui/petCardSkeleton';
 
 export default function Home() {
-  localStorage.setItem('selectedIndex', '1'); 
+  localStorage.setItem('selectedIndex', '1'); // Establece la pestaña seleccionada en "Favoritos"
+
   const [favoritos, setFavoritos] = useState<Pet[]>([]);
   const [loadingFavorites, setLoadingFavorites] = useState(false);
 
+  /**
+   * Obtiene las publicaciones favoritas del usuario autenticado.
+   */
   const obtenerFavoritosUsuario = async () => {
-    const userId = localStorage.getItem('userId'); // Obtener el userId de localStorage
-    if (!userId) {
-      console.error("No se encontró el userId en localStorage.");
-      return;
-    }
-
     try {
       setLoadingFavorites(true);
-      const data = await getFavoritos(parseInt(userId)); // Convertir a número si es necesario
+      const data = await getFavoritos(); // Llama directamente a la función de favoritos
       setFavoritos(data ?? []);
     } catch (error) {
       console.error("Error al obtener favoritos:", error);
@@ -28,6 +27,7 @@ export default function Home() {
     }
   };
 
+  // Efecto para cargar los favoritos del usuario autenticado al montar el componente
   useEffect(() => {
     obtenerFavoritosUsuario();
   }, []);
@@ -40,8 +40,14 @@ export default function Home() {
 
       {/* Contenedor de la lista de mascotas con scroll oculto */}
       <div className="overflow-y-auto flex-grow scrollbar-hide">
-        {loadingFavorites ? <><PetCardSkeleton /><PetCardSkeleton /></> : <PetList pets={favoritos} onDislike={obtenerFavoritosUsuario} isLikedP={true} />
-        }
+        {loadingFavorites ? (
+          <>
+            <PetCardSkeleton />
+            <PetCardSkeleton />
+          </>
+        ) : (
+          <PetList pets={favoritos} onDislike={obtenerFavoritosUsuario} isLikedP={true} />
+        )}
       </div>
     </>
   );

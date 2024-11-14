@@ -16,10 +16,17 @@ export default function Login() {
     password: '',
   });
 
-  // Modificacion de el handleLogin para almacenar el ID en LocalStorage
+  /**
+   * Maneja el proceso de autenticación al enviar el formulario.
+   * Valida los datos ingresados, intenta autenticar al usuario y redirige en caso de éxito.
+   * Muestra un mensaje de error si ocurre algún problema.
+   * @param formData - Objeto `FormData` con los datos del formulario de login.
+   */
   async function handleLogin(formData: FormData) {
     setIsSending(true);
-    const loginValidated = loginValidator(formData); // Valida los datos del formulario
+
+    // Valida los datos del formulario antes de proceder
+    const loginValidated = loginValidator(formData);
     if (!loginValidated.isValid) {
       setearError(loginValidated.errors.message);
       setIsSending(false);
@@ -27,16 +34,11 @@ export default function Login() {
     }
 
     try {
-      const data = await loginUser(formData); // Obtener los datos del usuario tras el login exitoso
-
-      // Almacenar el ID del usuario en LocalStorage
-      if (data.id_usuario) {
-        localStorage.setItem('userId', data.id_usuario); // Almacenar el ID del usuario
-      }
-
-      console.log('User added successfully:', data);
+      // Llama a la función de autenticación y redirige en caso de éxito
+      await loginUser(formData);
       router.push('/menu/inicio');
     } catch (error) {
+      // Maneja errores de autenticación y muestra mensajes apropiados
       if (error instanceof Error) {
         setearError(error.message);
       } else {
@@ -47,6 +49,10 @@ export default function Login() {
     }
   }
 
+  /**
+   * Actualiza el estado del formulario cuando el usuario cambia algún valor en los campos.
+   * @param e - Evento de cambio en el campo de entrada.
+   */
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
     setFormData({
@@ -55,61 +61,91 @@ export default function Login() {
     });
   }
 
+  /**
+   * Establece y muestra un mensaje de error temporalmente.
+   * Borra el mensaje después de un período determinado.
+   * @param message - Mensaje de error a mostrar.
+   */
   function setearError(message?: string) {
-    setErrorMessage(message ? message : '');
+    setErrorMessage(message || '');
 
     setTimeout(() => {
       setErrorMessage('');
     }, 2500);
-
   }
 
   return (
     <div className="relative min-h-screen flex items-center justify-center">
+      {/* Formulario de inicio de sesión */}
       <form>
         <div className="flex items-center flex-col">
           <p className="text-[24px] font-bold text-black">¡Bienvenido de vuelta!</p>
           <p className="text-[12px] text-black">Entra a tu cuenta</p>
         </div>
+
         <div className="flex flex-col items-center flex-wrap mt-10">
-          <div>
-            <InputField id="email" name="email" type="text" placeholder="Correo" value={formData.email} onChange={handleInputChange} />
-          </div>
-          <div>
-            <InputField id="password" name="password" type="password" placeholder="Contraseña" value={formData.password} onChange={handleInputChange} />
-            <div className="text-right"><Link href="/reset-password" className="text-xs pl-2 text-[#fe8a5b]">Olvidé mi contraseña</Link></div>
+          {/* Campo de correo electrónico */}
+          <InputField
+            id="email"
+            name="email"
+            type="text"
+            placeholder="Correo"
+            value={formData.email}
+            onChange={handleInputChange}
+          />
+
+          {/* Campo de contraseña */}
+          <InputField
+            id="password"
+            name="password"
+            type="password"
+            placeholder="Contraseña"
+            value={formData.password}
+            onChange={handleInputChange}
+          />
+          <div className="text-right">
+            <Link href="/reset-password" className="text-xs pl-2 text-[#fe8a5b]">
+              Olvidé mi contraseña
+            </Link>
           </div>
 
+          {/* Muestra el mensaje de error si existe */}
           <div className="mt-5">
             {errorMessage && <div className="text-red-500 text-xs animate-shake mt-2 text-left">{errorMessage}</div>}
           </div>
 
-          <button formAction={handleLogin} className="mt-8 w-[270px] h-[40px] hover:scale-105 bg-[#FE8A5B] rounded-[20px] text-sm text-white hover:bg-[#ff9060]">
+          {/* Botón de inicio de sesión */}
+          <button
+            formAction={handleLogin}
+            className="mt-8 w-[270px] h-[40px] hover:scale-105 bg-[#FE8A5B] rounded-[20px] text-sm text-white hover:bg-[#ff9060]"
+          >
             {isSending ? 'Cargando...' : 'Iniciar sesión'}
           </button>
         </div>
+
+        {/* Enlace de registro */}
         <div className="flex mt-8 justify-center">
           <p className="text-xs text-black">No tienes una cuenta</p>
-          <Link href="/register" className="text-xs text-[#fe8a5b] pl-2 ">¡Registrate aquí!</Link>
+          <Link href="/register" className="text-xs text-[#fe8a5b] pl-2">
+            ¡Registrate aquí!
+          </Link>
         </div>
-
       </form>
+
+      {/* Logo en el fondo */}
       <div className="absolute bottom-0 right-0 flex items-center justify-center">
         <img
           src="/Logo.svg"
           alt="Descripción del logo"
           style={{
             color: "#ffa07a",
-            width: '20rem',  // Cambia a un ancho adecuado
-            height: '20rem', // Cambia a un alto adecuado
-            objectFit: 'contain', // Asegura que la imagen se ajuste sin distorsión
+            width: '20rem',// Cambia a un ancho adecuado
+            height: '20rem',// Cambia a un alto adecuado
+            objectFit: 'contain',// Asegura que la imagen se ajuste sin distorsión
             opacity: 0.4,
           }}
         />
       </div>
-
     </div>
   );
 }
-
-
