@@ -12,6 +12,7 @@ import { getCategorias, getCategoriaEspecifica, getDepartamentos } from "@/app/m
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import PetCardSkeleton from '@/components/ui/petCardSkeleton';
 import { loginCometChatUser } from '@/lib/cometChat';
+import { getUserProfile } from '@/app/menu/configuraciones/action';
 
 
 interface Categoria {
@@ -55,20 +56,14 @@ export default function Home() {
   const observerRef = useRef(null); // Referencia al sentinela
   const [isInitialRender, setIsInitialRender] = useState(true);
   const [hasMorePets, setHasMorePets] = useState(true);
-  const userId = localStorage.getItem('userId') || '';
 
   useEffect(() => {
-    if (!userId) {
-      console.error("No se ha proporcionado un ID de usuario");
-      return;
-    }
-  
     const loginCometChat = async () => {
       try {
-        const user = await getUserProfile(userId);
+        const user = await getUserProfile();
         
         // Iniciar sesión en CometChat
-        const response = await loginCometChatUser(userId, user.nombre1 + ' ' + user.apellido1);
+        const response = await loginCometChatUser(user.id_usuario, user.nombre1 + ' ' + user.apellido1);
         
         if (response && response.authToken) {
           // Almacenar el authToken en localStorage
@@ -80,7 +75,7 @@ export default function Home() {
     };
   
     loginCometChat();
-  }, [userId]);
+  }, []);
 
   useLayoutEffect(() => {
     const observer = new IntersectionObserver((entries) => {
@@ -148,7 +143,7 @@ export default function Home() {
       const limit = 10; // Número de mascotas a cargar por página
       const offset = page * limit;
 
-      const data: CategoriaEspecificaResponse = await getCategoriaEspecifica(id, id_departamento ?? 0, limit, offset, userId);
+      const data: CategoriaEspecificaResponse = await getCategoriaEspecifica(id, id_departamento ?? 0, limit, offset);
 
       // Si la cantidad de datos retornados es menor que el límite, ya no hay más mascotas para cargar
       if (data.length < limit) {

@@ -152,6 +152,8 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }:
           ) : (
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {messages.map((msg, idx) => {
+                console.log(msg)
+                console.log(userEmisor)
                 const isSender = msg.sender.uid == userEmisor.id_usuario;
                 const previousMessage = messages[idx - 1];
                 const showAvatar = !previousMessage || previousMessage.sender.uid !== msg.sender.uid;

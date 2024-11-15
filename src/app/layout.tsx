@@ -38,48 +38,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-    
-    const initCometChat = async () => {
-      try {
-        const { CometChat } = await import('@cometchat-pro/chat');
-        
-        // Inicializar CometChat
-        const appID = COMETCHAT_CONSTANTS.APP_ID;
-        const region = COMETCHAT_CONSTANTS.REGION;
-
-        const appSetting = new CometChat.AppSettingsBuilder()
-          .subscribePresenceForAllUsers()
-          .setRegion(region)
-          .build();
-
-        await CometChat.init(appID, appSetting);
-        console.log("CometChat inicializado exitosamente");
-      } catch (error) {
-        console.error("Error al inicializar CometChat:", error);
-      }
-    };
-
-    if (typeof window !== 'undefined') {
-      initCometChat();
-    }
-
-    // Limpieza al desmontar el componente
-    return () => {
-      if (typeof window !== 'undefined') {
-        import('@cometchat-pro/chat').then(({ CometChat }) => {
-          CometChat.logout();
-        });
-      }
-    };
-  }, []);
-
-  if (!isMounted) {
-    return null; // o un componente de carga
-  }
 
   return (
     <html lang="en">
