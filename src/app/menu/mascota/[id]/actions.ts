@@ -39,7 +39,7 @@ export const getMascotaEspecifica = async (id: number) => {
     sexo,
     descripcion,
     departamentos(descripcion),
-    usuarios (nombre1, imagen),
+    usuarios (nombre1, apellido1, imagen, id_usuario),
     categorias (tipo_mascotas),
     estado_adopcion,
     visible

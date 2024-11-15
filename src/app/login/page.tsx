@@ -104,7 +104,7 @@ export default function Login() {
             onChange={handleInputChange}
           />
           <div className="text-right">
-            <Link href="/reset-password" className="text-xs pl-2 text-[#fe8a5b]">
+            <Link href="/reset-password" className="text-right text-xs pl-2 text-[#fe8a5b]">
               Olvidé mi contraseña
             </Link>
           </div>

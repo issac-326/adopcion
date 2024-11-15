@@ -11,6 +11,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getCategorias, getCategoriaEspecifica, getDepartamentos } from "@/app/menu/inicio/actions"; // Corrige según la ruta correcta de tus acciones
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import PetCardSkeleton from '@/components/ui/petCardSkeleton';
+import { loginCometChatUser } from '@/lib/cometChat';
+
 
 interface Categoria {
   id_categoria: number;
@@ -54,6 +56,31 @@ export default function Home() {
   const [isInitialRender, setIsInitialRender] = useState(true);
   const [hasMorePets, setHasMorePets] = useState(true);
   const userId = localStorage.getItem('userId') || '';
+
+  useEffect(() => {
+    if (!userId) {
+      console.error("No se ha proporcionado un ID de usuario");
+      return;
+    }
+  
+    const loginCometChat = async () => {
+      try {
+        const user = await getUserProfile(userId);
+        
+        // Iniciar sesión en CometChat
+        const response = await loginCometChatUser(userId, user.nombre1 + ' ' + user.apellido1);
+        
+        if (response && response.authToken) {
+          // Almacenar el authToken en localStorage
+          localStorage.setItem('authToken', response.authToken);
+        }
+      } catch (error) {
+        console.error("Error al obtener el perfil del usuario:", error);
+      }
+    };
+  
+    loginCometChat();
+  }, [userId]);
 
   useLayoutEffect(() => {
     const observer = new IntersectionObserver((entries) => {

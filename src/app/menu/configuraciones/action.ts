@@ -12,9 +12,7 @@ const supabase = createClient();
  * @returns Los datos del perfil del usuario autenticado.
  * @throws Error si ocurre algún problema al obtener los datos.
  */
-export const getUserProfile = async () => {
-    const userId = getAuthenticatedUserIdOrThrow();
-
+export const getUserProfile = async (userId = getAuthenticatedUserIdOrThrow() ) => {
     try {
         const { data, error } = await supabase
             .from('usuarios') // Nombre de la tabla de usuarios
@@ -33,6 +31,7 @@ export const getUserProfile = async () => {
         throw error;
     }
 };
+
 
 /**
  * Envía un reporte de soporte utilizando los datos del formulario.
