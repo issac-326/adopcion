@@ -160,7 +160,7 @@ export default function PetInformation({ id, id_usuario, isMyPet = false, isInic
   return (
     isChatOpen ? 
     <>
-      <Chat receiverUID={String(mascota.usuarios.id_usuario)} mascota={mascota.nombre} onRetroceder={setIsChatOpen}/>
+      <Chat receiverUIDParam={String(mascota.usuarios.id_usuario)} mascota={mascota.nombre} onRetroceder={() => setIsChatOpen(false)}/>
     </> :
       <div className="bg-white min-h-screen flex flex-col lg:flex-row-reverse p-5">
         {/* Imagen de la mascota */}

@@ -4,50 +4,18 @@ import { getUserProfile } from "@/app/menu/configuraciones/action";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 
-const Chat = ({ receiverUIDParam, mascota, onRetroceder }: { receiverUIDParam: string, mascota: string, onRetroceder: () => void }) => {
+const Chat = ({ receiverUIDParam, mascota, onRetroceder }: 
+  { receiverUIDParam: string, mascota: string, onRetroceder: () => void }) => {
   const [messages, setMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState(`¡Estoy emocionado por adoptar a ${mascota}! 🐾`);
-  const [conversations, setConversations] = useState<any[]>([]);
   const [userEmisor, setUserEmisor] = useState<any>(null);
   const [userReceptor, setUserReceptor] = useState<any>(null);
   const messagesEndRef = useRef(null);
   const [loadingMessages, setLoadingMessages] = useState(true);
-  const [activeConversationId, setActiveConversationId] = useState(null);
-  const [receiverUID, setReceiverUID] = useState(receiverUIDParam);
 
-  console.log("receiverUID", receiverUID);
+  console.log(receiverUIDParam)
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const user = await getUserProfile();
-        console.log("user", user);
-        const userReceptor = await getUserProfile(receiverUID);
-        setUserEmisor(user);
-        setUserReceptor(userReceptor);
-      } catch (error) {
-        console.error("Error al obtener el usuario:", error);
-      }
-    };
-
-    fetchUser();
-  }, [receiverUID]);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const userReceptor = await getUserProfile(receiverUID);
-        setUserEmisor(user);
-        setUserReceptor(userReceptor);
-      } catch (error) {
-        console.error("Error al obtener el usuario:", error);
-      }
-    };
-
-    fetchUser();
-    fetchMessages();
-  }, [receiverUID]);    
-
+  //Inicializacion de cometchat, luego traemos usuarios y mensajes
   useEffect(() => {
     const initCometChat = async () => {
       const appID = process.env.NEXT_PUBLIC_COMETCHAT_APP_ID;
@@ -59,6 +27,7 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }: { receiverUIDParam: s
         if (initialized) {
           console.log("CometChat inicializado correctamente.");
           loginToCometChat();
+          fetchUsers().then(() => fetchMessages()).catch((error) => console.error("Error al obtener usuarios:", error));
         } else {
           console.error("Fallo al inicializar CometChat.");
         }
@@ -77,8 +46,6 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }: { receiverUIDParam: s
       CometChat.login(authToken).then(
         (user) => {
           console.log("Login exitoso", user);
-          fetchMessages();
-          fetchConversations();
         },
         (error) => {
           console.error("Error al iniciar sesión en CometChat:", error);
@@ -86,21 +53,37 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }: { receiverUIDParam: s
       );
     };
 
+    const fetchUsers = async () => {
+      try {
+        const user = await getUserProfile();
+        console.log("user", user);
+        const userReceptor = await getUserProfile(String(receiverUIDParam));
+        setUserEmisor(user);
+        setUserReceptor(userReceptor);
+      } catch (error) {
+        console.error("Error al obtener el usuario:", error);
+      }
+    };
+
     initCometChat();
   }, []);
 
   const fetchMessages = () => {
     setLoadingMessages(true);
+
     const limit = 30;
     const messagesRequest = new CometChat.MessagesRequestBuilder()
-      .setUID(receiverUID)
+      .setUID(String(receiverUIDParam))
       .setLimit(limit)
       .build();
+
+      console.log(receiverUIDParam)
 
     messagesRequest.fetchPrevious().then(
       (messages) => {
         setMessages(messages);
         setLoadingMessages(false);
+        console.log("Message fetching completed successfully:", messages);
         scrollToBottom();
       },
       (error) => {
@@ -109,41 +92,8 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }: { receiverUIDParam: s
     );
   };
 
-  const fetchConversations = () => {
-    const conversationsRequest = new CometChat.ConversationsRequestBuilder()
-      .setLimit(30)
-      .build();
-
-    conversationsRequest.fetchNext().then(
-      (conversations) => {
-        // Mapear las conversaciones para obtener los datos completos
-        const conversationData = conversations.map((conversation) => {
-          const sender = conversation.sender;
-          const receiver = conversation.receiver;
-
-          return {
-            id: conversation.conversationId,
-            sender: sender ? sender.uid : null,
-            receiver: conversation.getConversationWith().getUid(),
-            receiverNombre: receiver ? receiver.name : '',
-            receptorImagen: receiver ? receiver.avatar : '/default-avatar.png',
-            lastMessage: conversation.lastMessage ? conversation.lastMessage.data.text : 'No message',
-            sentAt: conversation.lastMessage ? conversation.lastMessage.sentAt : 0,
-            name: conversation.getConversationWith().getName(),
-          };
-        });
-        setConversations(conversationData);
-        console.log("Conversations fetched:", conversations);
-      },
-      (error) => {
-        console.log("Error fetching conversations:", error);
-      }
-    );
-  };
-
-
   const sendMessage = () => {
-    const textMessage = new CometChat.TextMessage(receiverUID, newMessage, CometChat.RECEIVER_TYPE.USER);
+    const textMessage = new CometChat.TextMessage(String(receiverUIDParam), newMessage, CometChat.RECEIVER_TYPE.USER);
 
     CometChat.sendMessage(textMessage).then(
       (message) => {
@@ -166,47 +116,6 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }: { receiverUIDParam: s
   return (
     userEmisor && userReceptor && (
       <div className="flex h-screen w-full mt-5">
-
-        {/* Panel lateral de conversaciones */}
-        <div className="w-1/4 bg-gray-100 p-4 space-y-4 overflow-y-auto border-r">
-          <h2 className="text-xl font-semibold mb-4">Chats</h2>
-          {conversations.map((conversation, idx) => {
-            const receiver = conversation.conversationWith;
-            const lastMessage = conversation.lastMessage;
-            const sentAt = conversation.sentAt;
-            const receiverImage = '/default-avatar.png'; // Imagen predeterminada si no existe avatar
-            const receiverName = conversation.name;
-
-            // Función para formatear la hora de envío
-            const formatTime = (timestamp: number) => {
-              const date = new Date(timestamp * 1000); // Convertir el timestamp a milisegundos
-              return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            };
-
-            return (
-              <div
-                key={idx}
-                className={`p-3 rounded-lg cursor-pointer hover:bg-gray-200 ${conversation.conversationId === activeConversationId ? 'bg-blue-100' : ''
-                  }`}
-                onClick={() => {setActiveConversationId(conversation.conversationId); setReceiverUID(conversation.receiver)}}
-              >
-                <div className="flex items-center space-x-2">
-                  <img
-                    src={receiverImage}
-                    alt="Avatar"
-                    className="w-10 h-10 rounded-full"
-                  />
-                  <div>
-                    <p className="font-semibold">{receiverName}</p>
-                    <p className="text-xs text-gray-500">{lastMessage}</p>
-                    <p className="text-xs text-gray-400">{formatTime(sentAt)}</p> {/* Mostrar la hora */}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
         {/* Panel de mensajes */}
         <div className="flex flex-col flex-1 h-full">
           {/* Título */}
@@ -226,7 +135,7 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }: { receiverUIDParam: s
           </div>
 
           {/* Mensajes */}
-          {messages.length === 0 ? (
+          {loadingMessages ? (
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {[...Array(5)].map((_, idx) => (
                 <div key={idx} className="flex justify-start items-start space-x-2 animate-pulse">
