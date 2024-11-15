@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getCategorias, getCategoriaEspecifica, getDepartamentos } from "@/app/menu/inicio/actions"; // Corrige según la ruta correcta de tus acciones
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import PetCardSkeleton from '@/components/ui/petCardSkeleton';
+import { getAuthenticatedUserIdOrThrow } from '@/utils/auth/auth';
 
 interface Categoria {
   id_categoria: number;
@@ -53,7 +54,7 @@ export default function Home() {
   const observerRef = useRef(null); // Referencia al sentinela
   const [isInitialRender, setIsInitialRender] = useState(true);
   const [hasMorePets, setHasMorePets] = useState(true);
-  const userId = localStorage.getItem('userId') || '';
+  //const userId = localStorage.getItem('userId') || '';
 
   useLayoutEffect(() => {
     const observer = new IntersectionObserver((entries) => {
@@ -121,7 +122,7 @@ export default function Home() {
       const limit = 10; // Número de mascotas a cargar por página
       const offset = page * limit;
 
-      const data: CategoriaEspecificaResponse = await getCategoriaEspecifica(id, id_departamento ?? 0, limit, offset, userId);
+      const data: CategoriaEspecificaResponse = await getCategoriaEspecifica(id, id_departamento ?? 0, limit, offset);
 
       // Si la cantidad de datos retornados es menor que el límite, ya no hay más mascotas para cargar
       if (data.length < limit) {
