@@ -15,7 +15,7 @@ export default function Register() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [userExists, setUserExists] = useState(false);
-  const [imagen, setImagen] = useState("/usuario-default.jpg"); 
+  const [imagen, setImagen] = useState("https://res.cloudinary.com/dvqtkgszm/image/upload/v1731795791/avatar_o9cpas.avif"); 
   const [newImage, setNewImage] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [formData, setFormData] = useState({

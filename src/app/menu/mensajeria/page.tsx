@@ -190,7 +190,7 @@ const Chat = () => {
             sender: sender ? sender.uid : null,
             receiver: conversation.getConversationWith().getUid(),
             receiverNombre: receiver ? receiver.name : '',
-            receptorImagen: receiver ? receiver.avatar : 'https://res.cloudinary.com/dvqtkgszm/image/upload/v1731791454/profile_thzsy4.png',
+            receptorImagen: receiver ? receiver.avatar : 'https://res.cloudinary.com/dvqtkgszm/image/upload/v1731795791/avatar_o9cpas.avif',
             lastMessage: conversation.lastMessage ? conversation.lastMessage.data.text : 'No message',
             sentAt: conversation.lastMessage ? conversation.lastMessage.sentAt : 0,
             name: conversation.getConversationWith().getName(),
@@ -344,7 +344,7 @@ const Chat = () => {
                         {/* Avatar del receptor */}
                         {!isSender && showAvatar && (
                           <img
-                            src={userReceptor ? userReceptor.avatar : 'https://res.cloudinary.com/dvqtkgszm/image/upload/v1731791454/profile_thzsy4.png'}
+                            src={userReceptor ? userReceptor.avatar : 'https://res.cloudinary.com/dvqtkgszm/image/upload/v1731795791/avatar_o9cpas.avif'}
                             alt="Avatar"
                             className="w-10 h-10 rounded-full"
                           />
@@ -385,7 +385,7 @@ const Chat = () => {
                         {/* Avatar del emisor */}
                         {isSender && showAvatar && (
                           <img
-                            src={userEmisor ? userEmisor.imagen : 'https://res.cloudinary.com/dvqtkgszm/image/upload/v1731791454/profile_thzsy4.png'}
+                            src={userEmisor ? userEmisor.imagen : 'https://res.cloudinary.com/dvqtkgszm/image/upload/v1731795791/avatar_o9cpas.avif'}
                             alt="Avatar"
                             className="w-10 h-10 rounded-full"
                           />
