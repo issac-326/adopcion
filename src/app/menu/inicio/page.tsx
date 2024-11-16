@@ -62,8 +62,11 @@ export default function Home() {
       try {
         const user = await getUserProfile();
         
+        // Convertir id_usuario a string
+        const userIdAsString = user.id_usuario.toString();
+
         // Iniciar sesión en CometChat
-        const response = await loginCometChatUser(user.id_usuario, user.nombre1 + ' ' + user.apellido1);
+        const response = await loginCometChatUser(userIdAsString, user.nombre1 + ' ' + user.apellido1, user.imagen);
         
         if (response && response.authToken) {
           // Almacenar el authToken en localStorage

@@ -190,7 +190,7 @@ const Chat = () => {
             sender: sender ? sender.uid : null,
             receiver: conversation.getConversationWith().getUid(),
             receiverNombre: receiver ? receiver.name : '',
-            receptorImagen: receiver ? receiver.avatar : '/default-avatar.png',
+            receptorImagen: receiver ? receiver.avatar : 'https://res.cloudinary.com/dvqtkgszm/image/upload/v1731791454/profile_thzsy4.png',
             lastMessage: conversation.lastMessage ? conversation.lastMessage.data.text : 'No message',
             sentAt: conversation.lastMessage ? conversation.lastMessage.sentAt : 0,
             name: conversation.getConversationWith().getName(),
@@ -238,7 +238,7 @@ const Chat = () => {
             const receiver = conversation.conversationWith;
             const lastMessage = conversation.lastMessage;
             const sentAt = conversation.sentAt;
-            const receiverImage = '/default-avatar.png';
+            const receiverImage = conversation.avatar;
             const receiverName = conversation.name;
 
             // Función para formatear la hora de envío
@@ -290,7 +290,7 @@ const Chat = () => {
 
               {/* Título */}
               <div className="relative max-h-full flex gap-2 items-center bg-[#40979d] w-full text-white text-center px-4 py-2">
-                <img src="/usuario-default.png" alt="avatar" className="rounded-full w-9" />
+                <img src={userReceptor.avatar} alt="avatar" className="rounded-full w-9" />
                 <div className="flex flex-col items-start">
                   <p>{userReceptor.name}</p>
                   <p className="text-xs">{userReceptor.status !== 'offline' ? 'en linea' : `última vez a las ${new Date(userReceptor.lastActiveAt * 1000).toLocaleTimeString([], {
@@ -344,7 +344,7 @@ const Chat = () => {
                         {/* Avatar del receptor */}
                         {!isSender && showAvatar && (
                           <img
-                            src={userReceptor ? userReceptor.imagen : '/default-avatar.png'}
+                            src={userReceptor ? userReceptor.avatar : 'https://res.cloudinary.com/dvqtkgszm/image/upload/v1731791454/profile_thzsy4.png'}
                             alt="Avatar"
                             className="w-10 h-10 rounded-full"
                           />
@@ -385,7 +385,7 @@ const Chat = () => {
                         {/* Avatar del emisor */}
                         {isSender && showAvatar && (
                           <img
-                            src={userEmisor ? userEmisor.imagen : '/default-avatar.png'}
+                            src={userEmisor ? userEmisor.imagen : 'https://res.cloudinary.com/dvqtkgszm/image/upload/v1731791454/profile_thzsy4.png'}
                             alt="Avatar"
                             className="w-10 h-10 rounded-full"
                           />
