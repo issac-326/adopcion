@@ -1,8 +1,15 @@
 'use client'
 
 import { useState, useEffect, useRef, use } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { faPaperPlane, faPaperclip } from "@fortawesome/free-solid-svg-icons";
 import { CometChat } from "@cometchat-pro/chat";
 import { getUserProfile } from "@/app/menu/configuraciones/action";
 
@@ -12,10 +19,14 @@ const Chat = () => {
   const [conversations, setConversations] = useState<any[]>([]);
   const [userEmisor, setUserEmisor] = useState<any>(null);
   const [userReceptor, setUserReceptor] = useState<any>(null);
-  const messagesEndRef = useRef(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const [loadingMessages, setLoadingMessages] = useState(true);
   const [activeConversationId, setActiveConversationId] = useState(null);
   const [receiverUID, setReceiverUID] = useState(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [openImageModal, setOpenImageModal] = useState(false);
+  const [modalImage, setModalImage] = useState<File | string>('');
+  const [isSendImage, setIsSendImage] = useState(false);
 
   //trae el usuario emisor y conversaciones
   useEffect(() => {
@@ -97,6 +108,7 @@ const Chat = () => {
       });
     };
 
+
     obtenerUsuarioPorUID(receiverUID)
       .then((user) => {
         setUserReceptor(user);
@@ -111,6 +123,33 @@ const Chat = () => {
       });
 
   }, [receiverUID]);
+
+  const sendFile = () => {
+    console.log("Send File Called")
+    if (!receiverUID) {
+      console.error("receiverUID is null or undefined.");
+      return;
+    }
+
+    var mediaMessage = new CometChat.MediaMessage(
+      receiverUID,
+      file,
+      CometChat.MESSAGE_TYPE.FILE,
+      CometChat.RECEIVER_TYPE.USER
+    );
+    CometChat.sendMediaMessage(mediaMessage).then(
+      message => {
+        console.log("file sent", message)
+        setMessages([...messages, message]);
+        setFile(null);
+        setOpenImageModal(false);
+        scrollToBottom();
+      },
+      error => {
+        return error
+      }
+    )
+  }
 
 
   const fetchMessages = () => {
@@ -266,7 +305,7 @@ const Chat = () => {
                 //renderiza skeleton
                 <div className="flex-1 overflow-y-auto p-4 space-y-4">
                   {[...Array(4)].map((_, idx) => {
-                    const isSender = idx % (2+1) === 0;
+                    const isSender = idx % (2 + 1) === 0;
                     return (
                       <div key={idx} className={`flex ${isSender ? 'justify-end' : 'justify-start'} items-start space-x-2 animate-pulse`}>
                         {/* Avatar */}
@@ -290,7 +329,7 @@ const Chat = () => {
                 </div>
               ) : (
                 //renderiza Mensajes
-                <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-gray-500 scrollbar-track-gray-200">
+                <div className="flex-1 overflow-y-auto p-4 space-y-1 scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-gray-500 scrollbar-track-gray-200">
                   {messages.map((msg, idx) => {
                     const isSender = msg.sender.uid == userEmisor.id_usuario;
                     const previousMessage = messages[idx - 1];
@@ -299,8 +338,6 @@ const Chat = () => {
                     // Condición para verificar si el mensaje anterior es del mismo usuario
                     const additionalPadding = previousMessage && previousMessage.sender.uid === msg.sender.uid ? 'py-2' : 'py-3';
 
-                    // Verifica si es el primer mensaje que no es consecutivo
-                    const showTail = previousMessage && previousMessage.sender.uid !== msg.sender.uid;
 
                     return (
                       <div key={idx} className={`flex ${isSender ? 'justify-end' : 'justify-start'} items-start space-x-2`}>
@@ -314,24 +351,36 @@ const Chat = () => {
                         )}
 
                         {/* Contenedor del mensaje */}
-                        <div
+                        {msg.type === 'text' ? (<div
                           className={`relative rounded-lg ml-${showAvatar ? '0' : '12'} text-white max-w-[60%] ${isSender
                             ? 'bg-[#7E634E]'
                             : 'bg-[#C7B69F]'
                             } ${additionalPadding} p-3`}
                         >
-                          {/* Colita del mensaje */}
-                          {showTail && (
-                            <div className="absolute w-0 h-0 border-t-8 border-t-transparent border-l-8 border-l-[#C7B69F] border-b-8 border-b-transparent -left-3 top-1/2 transform -translate-y-1/2"></div>
-                          )}
 
                           {/* Nombre del emisor solo si es necesario */}
                           {!isSender && showAvatar && <span className="block mb-1 text-sm font-semibold">{msg.sender.name}</span>}
-                          <span>{msg.text}</span>
+                          <p>{msg.text}</p>
                           <div className="text-xs text-gray-200 mt-2 text-right">
                             {new Date(msg.sentAt * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                           </div>
-                        </div>
+                        </div>) : (
+                          <div className="relative w-[50%] cursor-pointer">
+                            {/* Imagen que cubre todo el div */}
+                            <img
+                              src={msg.data.url}
+                              alt="imagen"
+                              className="object-cover rounded-lg"
+                              onClick={() => { setIsSendImage(false); setOpenImageModal(true); setModalImage(msg.data.url) }}
+                            />
+
+                            {/* Hora en la esquina inferior derecha */}
+                            <div className="absolute bottom-2 right-2 text-white text-xs bg-[#00000042] px-2 rounded-full">
+                              {new Date(msg.sentAt * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </div>
+                          </div>
+                        )}
+
 
                         {/* Avatar del emisor */}
                         {isSender && showAvatar && (
@@ -351,23 +400,90 @@ const Chat = () => {
               )}
 
               {/* Input y botón para enviar mensaje */}
-              <div className="pt-2 border-t gap-1 px-3 py-2 flex w-full justify-center items-center">
-                <input
-                  className="border border-gray-300 p-2 focus:outline-none focus:border-blue-500 rounded-full w-[90%]"
-                  type="text"
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  placeholder="Escribe tu mensaje..."
-                />
-                <button
-                  className="h-full aspect-square bg-[#FE8A5B] text-sm text-white flex items-center justify-center rounded-full"
-                  onClick={sendMessage}
-                >
-                  <FontAwesomeIcon icon={faPaperPlane} className="text-white" />
-                </button>
-              </div>
+              <div className="pt-2 border-t px-3 py-2 flex w-full justify-center items-center space-x-1">
+                <div className="relative w-full w-full">
+                  <input
+                    className="border border-gray-300 p-2 focus:outline-none focus:border-blue-500 rounded-full w-full pr-12"
+                    type="text"
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    placeholder="Escribe tu mensaje..."
+                  />
 
-            </div>)}
+                  {/* Botón para seleccionar archivo dentro del input */}
+                  <label className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer flex items-center justify-center">
+                    <FontAwesomeIcon icon={faPaperclip} className="text-lg text-[#FE8A5B] h-full" />
+                    <input
+                      type="file"
+                      id="img_file"
+                      name="img_file"
+                      accept="image/x-png,image/gif,image/jpeg"
+                      className="hidden"
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          setFile(e.target.files[0]);
+                          setIsSendImage(true);
+                          setOpenImageModal(true);
+                        }
+                      }}
+                    />
+                  </label>
+
+                </div>
+
+                {/* Botón de enviar mensaje, solo aparece si hay texto en el input */}
+                {newMessage && (
+                  <button
+                    className="h-full aspect-square bg-[#FE8A5B] text-white flex items-center justify-center rounded-full"
+                    onClick={sendMessage}
+                  >
+                    <FontAwesomeIcon icon={faPaperPlane} />
+                  </button>
+                )}
+
+
+              </div>
+            </div>
+          )}
+
+
+        {/* Modal de imagen */}
+        {openImageModal && (<div
+          className={`fixed inset-0 bg-gray-900 bg-opacity-50 z-50 ${openImageModal ? 'block' : 'hidden'}`}
+          onClick={() => setOpenImageModal(false)} // Cierra el modal cuando se hace clic fuera
+        >
+          <div
+            className="flex justify-center items-center min-h-screen relative"
+            onClick={(e) => e.stopPropagation()} // Evita que el click en el contenido cierre el modal
+          >
+            <div className="relative bg-white rounded-lg w-[50%] mx-4 overflow-hidden">
+              <button
+                onClick={() => setOpenImageModal(false)}
+                className="absolute top-2 right-2 text-white bg-gray-700 rounded-full p-3 w-8 h-8 flex items-center justify-center"
+              >
+                <span className="text-xl font-bold">X</span>
+              </button>
+              <div className="flex justify-center w-full h-full">
+                <img
+                  src={isSendImage ? (file ? URL.createObjectURL(file) : '') : (typeof modalImage === 'string' ? modalImage : '')}
+                  alt="Imagen seleccionada"
+                  className="w-full h-auto object-contain"
+                />
+              </div>
+              {isSendImage && (<div className="flex justify-end gap-2 mt-4 absolute bottom-1 right-1">
+                <button
+                  onClick={sendFile}
+                  className="bg-[#FE8A5B] text-white py-2 px-4 rounded-full"
+                >
+                  Enviar
+                </button>
+              </div>)}
+
+            </div>
+          </div>
+        </div>)}
+
+
       </div>
     )
   );
