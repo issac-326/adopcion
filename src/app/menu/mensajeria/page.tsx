@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useEffect, useRef, use } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { CometChat } from "@cometchat-pro/chat";
 import { getUserProfile } from "@/app/menu/configuraciones/action";
 
@@ -20,7 +22,6 @@ const Chat = () => {
     const fetchUser = async () => {
       try {
         const user = await getUserProfile();
-        console.log("user", user);
         setUserEmisor(user);
       } catch (error) {
         console.error("Error al obtener el usuario:", error);
@@ -74,14 +75,21 @@ const Chat = () => {
 
   //trae los mensajes del usuario receptor
   useEffect(() => {
+    if (!receiverUID) {
+      console.warn("receiverUID es null, undefined o vacío.");
+      return; // Evita ejecutar la lógica si receiverUID no es válido
+    }
+
+    setLoadingMessages(true);
+
     const obtenerUsuarioPorUID = (uid) => {
       return new Promise((resolve, reject) => {
         CometChat.getUser(uid).then(
-          user => {
+          (user) => {
             console.log("Usuario encontrado:", user);
             resolve(user);
           },
-          error => {
+          (error) => {
             console.log("Error al obtener el usuario:", error);
             reject(error);
           }
@@ -89,15 +97,21 @@ const Chat = () => {
       });
     };
 
-    obtenerUsuarioPorUID(receiverUID).then(user => {
-      setUserReceptor(user);
-      fetchMessages();
-      console.log("userReceptor", user);
-    }).catch(error => {
-      console.error("Error al obtener el usuario:", error);
-    });
+    obtenerUsuarioPorUID(receiverUID)
+      .then((user) => {
+        setUserReceptor(user);
+        fetchMessages();
+        scrollToBottom();
+        console.log("userReceptor", user);
+      })
+      .catch((error) => {
+        console.error("Error al obtener el usuario:", error);
+      }).finally(() => {
+        setLoadingMessages(false);
+      });
 
   }, [receiverUID]);
+
 
   const fetchMessages = () => {
     setLoadingMessages(true);
@@ -112,6 +126,7 @@ const Chat = () => {
         setMessages(messages);
         setLoadingMessages(false);
         scrollToBottom();
+        console.log("Messages fetched:", messages);
       },
       (error) => {
         console.log("Message fetching failed with error:", error);
@@ -175,16 +190,16 @@ const Chat = () => {
 
   return (
     userEmisor && (
-      <div className="flex min-h-screen w-full bg-[#cceef0] rounded-xl">
+      <div className="flex min-h-screen w-full bg-[#ebfbfb] rounded-xl overflow-hidden">
 
         {/* Panel lateral de conversaciones */}
-        <div className="w-2/5 bg-[#2f797d] py-4 px-2 space-y-0 overflow-y-auto border-r rounded-tl-xl rounded-bl-xl text-[#fdd5d5]">
+        <div className="w-2/5 bg-[#226569] py-4 px-2 space-y-0 overflow-y-auto rounded-tl-xl rounded-bl-xl text-[#fdd5d5]">
           <h2 className="text-xl font-semibold mb-4 text-white">Chats</h2>
           {conversations.map((conversation, idx) => {
             const receiver = conversation.conversationWith;
             const lastMessage = conversation.lastMessage;
             const sentAt = conversation.sentAt;
-            const receiverImage = '/default-avatar.png'; // Imagen predeterminada si no existe avatar
+            const receiverImage = '/default-avatar.png';
             const receiverName = conversation.name;
 
             // Función para formatear la hora de envío
@@ -193,11 +208,17 @@ const Chat = () => {
               return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             };
 
+            // Comprobación si esta conversación está activa
+            const isActive = conversation.conversationId === activeConversationId;
+
             return (
               <div
-                key={idx}
-                className={`p-3 rounded-lg cursor-pointer hover:bg-[#dbeafe3b] ${conversation.conversationId === activeConversationId ? 'bg-blue-100' : ''}`}
-                onClick={() => { setActiveConversationId(conversation.conversationId); setReceiverUID(conversation.receiver); }}
+                key={conversation.conversationId}
+                className={`p-3 rounded-lg cursor-pointer hover:bg-[#dbeafe3b] ${isActive ? 'bg-blue-100' : ''}`}
+                onClick={() => {
+                  setActiveConversationId(conversation.conversationId);
+                  setReceiverUID(conversation.receiver);
+                }}
               >
                 <div className="flex items-center space-x-2">
                   <img
@@ -212,7 +233,6 @@ const Chat = () => {
                   </div>
                 </div>
               </div>
-
             );
           })}
         </div>
@@ -227,14 +247,14 @@ const Chat = () => {
               </p>
             </div>) :
           (
-            <div className="flex flex-col flex-1 h-screen w-full">
+            <div className="flex flex-col flex-1 h-screen w-3/5">
 
               {/* Título */}
-              <div className="relative max-h-full flex gap-2 items-center bg-blue-500 w-full text-white text-center px-4 py-2">
+              <div className="relative max-h-full flex gap-2 items-center bg-[#40979d] w-full text-white text-center px-4 py-2">
                 <img src="/usuario-default.png" alt="avatar" className="rounded-full w-9" />
                 <div className="flex flex-col items-start">
                   <p>{userReceptor.name}</p>
-                  <p className="text-xs">{userReceptor.status !== 'offline' ? 'en linea' : `ultima vez a las ${new Date(userReceptor.lastActiveAt * 1000).toLocaleTimeString([], {
+                  <p className="text-xs">{userReceptor.status !== 'offline' ? 'en linea' : `última vez a las ${new Date(userReceptor.lastActiveAt * 1000).toLocaleTimeString([], {
                     hour: '2-digit',
                     minute: '2-digit',
                   })}`}</p>
@@ -242,29 +262,49 @@ const Chat = () => {
               </div>
 
               {/* Mensajes */}
-              {messages.length === 0 ? (
+              {loadingMessages ? (
+                //renderiza skeleton
                 <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                  {[...Array(5)].map((_, idx) => (
-                    <div key={idx} className="flex justify-start items-start space-x-2 animate-pulse">
-                      <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
-                      <div className="ml-0 p-3 rounded-lg bg-gray-300 max-w-[60%]">
-                        <div className="block mb-1 text-sm bg-gray-400 w-24 h-4 rounded-md"></div>
-                        <div className="w-36 h-4 bg-gray-400 rounded-md"></div>
-                        <div className="mt-2 w-16 h-3 bg-gray-400 rounded-md text-right"></div>
+                  {[...Array(4)].map((_, idx) => {
+                    const isSender = idx % (2+1) === 0;
+                    return (
+                      <div key={idx} className={`flex ${isSender ? 'justify-end' : 'justify-start'} items-start space-x-2 animate-pulse`}>
+                        {/* Avatar */}
+                        <div className={`w-10 h-10 bg-gray-300 rounded-full ${isSender ? 'order-last' : ''}`}></div>
+
+                        {/* Contenedor del mensaje */}
+                        <div className={`ml-${isSender ? '0' : '12'} p-3 rounded-lg bg-gray-300 max-w-[60%]`}>
+                          {/* Nombre del emisor */}
+                          <div className="block mb-1 text-sm bg-gray-400 w-24 h-4 rounded-md"></div>
+
+                          {/* Contenido del mensaje */}
+                          <div className="w-36 h-4 bg-gray-400 rounded-md"></div>
+
+                          {/* Hora del mensaje */}
+                          <div className="mt-2 w-16 h-3 bg-gray-400 rounded-md text-right"></div>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                   <div ref={messagesEndRef} />
                 </div>
               ) : (
-                <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                //renderiza Mensajes
+                <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-gray-500 scrollbar-track-gray-200">
                   {messages.map((msg, idx) => {
                     const isSender = msg.sender.uid == userEmisor.id_usuario;
                     const previousMessage = messages[idx - 1];
                     const showAvatar = !previousMessage || previousMessage.sender.uid !== msg.sender.uid;
 
+                    // Condición para verificar si el mensaje anterior es del mismo usuario
+                    const additionalPadding = previousMessage && previousMessage.sender.uid === msg.sender.uid ? 'py-2' : 'py-3';
+
+                    // Verifica si es el primer mensaje que no es consecutivo
+                    const showTail = previousMessage && previousMessage.sender.uid !== msg.sender.uid;
+
                     return (
                       <div key={idx} className={`flex ${isSender ? 'justify-end' : 'justify-start'} items-start space-x-2`}>
+                        {/* Avatar del receptor */}
                         {!isSender && showAvatar && (
                           <img
                             src={userReceptor ? userReceptor.imagen : '/default-avatar.png'}
@@ -272,21 +312,28 @@ const Chat = () => {
                             className="w-10 h-10 rounded-full"
                           />
                         )}
+
+                        {/* Contenedor del mensaje */}
                         <div
-                          className={`p-3 rounded-lg ml-${showAvatar ? '0' : '12'} text-white max-w-[60%] ${isSender
+                          className={`relative rounded-lg ml-${showAvatar ? '0' : '12'} text-white max-w-[60%] ${isSender
                             ? 'bg-[#7E634E]'
                             : 'bg-[#C7B69F]'
-                            }`}
+                            } ${additionalPadding} p-3`}
                         >
+                          {/* Colita del mensaje */}
+                          {showTail && (
+                            <div className="absolute w-0 h-0 border-t-8 border-t-transparent border-l-8 border-l-[#C7B69F] border-b-8 border-b-transparent -left-3 top-1/2 transform -translate-y-1/2"></div>
+                          )}
+
+                          {/* Nombre del emisor solo si es necesario */}
                           {!isSender && showAvatar && <span className="block mb-1 text-sm font-semibold">{msg.sender.name}</span>}
                           <span>{msg.text}</span>
                           <div className="text-xs text-gray-200 mt-2 text-right">
-                            {new Date(msg.sentAt * 1000).toLocaleTimeString([], {
-                              hour: '2-digit',
-                              minute: '2-digit',
-                            })}
+                            {new Date(msg.sentAt * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                           </div>
                         </div>
+
+                        {/* Avatar del emisor */}
                         {isSender && showAvatar && (
                           <img
                             src={userEmisor ? userEmisor.imagen : '/default-avatar.png'}
@@ -299,26 +346,31 @@ const Chat = () => {
                   })}
                   <div ref={messagesEndRef} />
                 </div>
+
+
               )}
 
               {/* Input y botón para enviar mensaje */}
-              <div className="grid grid-cols-6 pt-2 bg-white border-t gap-1">
+              <div className="pt-2 border-t gap-1 px-3 py-2 flex w-full justify-center items-center">
                 <input
-                  className="flex-1 border border-gray-300 p-2 rounded-lg focus:outline-none focus:border-blue-500 col-span-5"
+                  className="border border-gray-300 p-2 focus:outline-none focus:border-blue-500 rounded-full w-[90%]"
                   type="text"
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   placeholder="Escribe tu mensaje..."
                 />
-                <button className="w-[2] h-[40px] bg-[#FE8A5B] grid-cols-1 rounded-sm text-sm text-white hover:bg-[#ff9060]" onClick={sendMessage}>
-                  Enviar
+                <button
+                  className="h-full aspect-square bg-[#FE8A5B] text-sm text-white flex items-center justify-center rounded-full"
+                  onClick={sendMessage}
+                >
+                  <FontAwesomeIcon icon={faPaperPlane} className="text-white" />
                 </button>
               </div>
+
             </div>)}
       </div>
     )
   );
-
 };
 
 export default Chat;

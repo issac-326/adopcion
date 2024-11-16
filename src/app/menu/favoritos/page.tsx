@@ -33,7 +33,7 @@ export default function Home() {
   }, []);
 
   return (
-    <>
+    <div className='mx-4 my-4' >
       <div className="mt-5 flex justify-between items-center">
         <h1 className="font-semibold">Favoritos</h1>
       </div>
@@ -49,6 +49,6 @@ export default function Home() {
           <PetList pets={favoritos} onDislike={obtenerFavoritosUsuario} isLikedP={true} />
         )}
       </div>
-    </>
+    </div>
   );
 }

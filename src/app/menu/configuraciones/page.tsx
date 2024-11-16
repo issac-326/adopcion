@@ -136,8 +136,8 @@ const Configuracion = () => {
     };
 
     return (
-        <>
-            <div className="w-full mb-10 text-center rounded-xl p-5">
+        <div className='mx-4 my-6' >
+            <div className="w-full text-center rounded-xl">
                 <FontAwesomeIcon icon={faPaw} className="text-[#ffa07a] text-5xl mx-auto" />
                 <h2 className="text-4xl font-bold mt-2">Configuración</h2>
             </div>
@@ -154,11 +154,11 @@ const Configuracion = () => {
             {/* Opciones de configuración */}
             <div className="flex justify-center mt-2">
                 <div className="bg-white rounded-lg w-full p-6 space-y-4">
-                    <button onClick={() => { setIsPasswordModalOpen(true); setError(''); setErrorOldPassword(''); }} className="w-full text-lg font-medium text-gray-800 hover:text-[#ffa07a] py-3 pl-4 flex items-center">
+                    <button onClick={() => { setIsPasswordModalOpen(true); setError(''); setErrorOldPassword(''); }} className="w-full text-lg font-medium text-gray-800 hover:text-[#ffa07a] py-3 flex items-center">
                         <FontAwesomeIcon icon={faKey} className="mr-3" />
                         Cambiar contraseña
                     </button>
-                    <button onClick={openReportModal} className="flex items-center w-full text-lg font-medium text-gray-800 hover:text-[#ffa07a] py-3 pl-4">
+                    <button onClick={openReportModal} className="flex items-center w-full text-lg font-medium text-gray-800 hover:text-[#ffa07a] py-3">
                         <FontAwesomeIcon icon={faExclamationCircle} className="mr-3" />
                         <span>Reportar problema</span>
                     </button>
@@ -192,7 +192,7 @@ const Configuracion = () => {
                     />
                 </Modal>
             )}
-        </>
+        </div>
     );
 };
 

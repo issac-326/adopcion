@@ -234,8 +234,8 @@ export default function Home() {
   };
 
   return (
-    < >
-      <div id="encabezado" className="mt-8 mb-2 flex justify-between text-[#03063a]">
+    <div className='mx-4 my-4' >
+      <div id="encabezado" className="mb-2 flex justify-between text-[#03063a]">
         {/* esta renderiza toda la parte de arriba del home */}
         <Menu as="div" className="relative inline-block text-left">
           <div>
@@ -493,7 +493,7 @@ export default function Home() {
       )}
 
 
-    </>
+    </div>
   );
 };
 

@@ -148,8 +148,8 @@ export default function AnimalForm() {
   };
 
   return (
-    <>
-      <p className="text-[24px] font-bold text-black flex justify-center mt-6">¡Haz tu publicación!</p>
+    <div className='mx-4 my-6' >
+      <p className="text-[24px] font-bold text-black flex justify-center">¡Haz tu publicación!</p>
       <form className="space-y-4 mx-auto mt-10 items-center w-[60%] grid grid-cols-1">
         <div>
           <InputFieldFull
@@ -307,6 +307,6 @@ export default function AnimalForm() {
           </DialogContent>
         </Dialog>
       </form>
-    </>
+    </div>
   );
 }
