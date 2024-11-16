@@ -4,7 +4,7 @@ import Link from "next/link";
 import { signupValidator } from "@/validations/signup";
 import React, { useState } from 'react';
 import InputField from "@/components/ui/InputField";
-import { addUser, imagenCloudinary, registerUserCometchat } from "./actions";
+import { addUser, imagenCloudinary } from "./actions";
 import SuccessNotification from "@/components/ui/SuccesNotification";
 import { useRouter } from "next/navigation";
 import { useDropzone } from "react-dropzone";
@@ -73,7 +73,6 @@ const handleImageChange = async () => {
       try {
         const data = await addUser(formData,imageUrl);
         console.log('User added successfully:', data);
-        /* const dataCometchat = await registerUserCometchat(data.id_usuario, data.nombre1); */
         router.push('/login');
         setIsSuccess(true);
       } catch (error) {
