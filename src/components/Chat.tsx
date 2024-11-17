@@ -191,39 +191,40 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }:
         {/* Panel de mensajes */}
         <div className="flex flex-col flex-1 h-full justify-center items-center">
           {/* Título */}
-{/*           <div className="relative bg-blue-500 text-white text-center p-4 rounded-t-lg">
+           <div className="relative max-h-full flex gap-2 items-center bg-[#40979d] w-full text-white text-center px-4 py-2 rounded-t-xl shadow-md">
             <div
               className="absolute top-0 left-0 rounded-full w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center cursor-pointer hover:scale-110"
-              onClick={() => onRetroceder(false)}
-            >
+/*               onClick={() => onRetroceder(false)}
+ */            >
               <button className="ml-[20px] lg:ml-[30px]">
                 <FontAwesomeIcon icon={faAngleLeft} className="text-red-500 text-[24px] lg:text-[32px]" />
               </button>
             </div>
             <h1 className="text-xl font-semibold">
-              Conversando con {userReceptor.nombre1 + ' ' + userReceptor.apellido1}
+              Conversando con {userReceptor.name}
+              <img src="/usuario-default.png" alt="avatar" className="rounded-full w-9" />
             </h1>
             <p>Estás hablando sobre la adopción de {mascota}. ¡Esperamos que encuentres un buen amigo!</p>
-          </div> */}
+          </div> 
 
-          <div className="flex flex-col flex-1 h-screen">
+          <div className="flex flex-col flex-1 h-screen w-full">
 
             {/* Título */}
-            <div className="relative max-h-full flex gap-2 items-center bg-[#40979d] w-full text-white text-center px-4 py-2">
+{/*             <div className="relative max-h-full flex gap-2 items-center bg-[#40979d] w-full text-white text-center px-4 py-2 rounded-t-xl shadow-md">
               <img src="/usuario-default.png" alt="avatar" className="rounded-full w-9" />
               <div className="flex flex-col items-start">
                 <p>{userReceptor.name}</p>
-                <p className="text-xs">{userReceptor.status !== 'offline' ? 'en linea' : `última vez a las ${new Date(userReceptor.lastActiveAt * 1000).toLocaleTimeString([], {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}`}</p>
+                <p className="text-xs">{userReceptor.status !== 'offline' ? 'en linea' : userReceptor.lastActiveAt ? `última vez a las ${new Date(userReceptor.lastActiveAt * 1000).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}` : ''}</p>
               </div>
-            </div>
+            </div> */}
 
             {/* Mensajes */}
             {loadingMessages ? (
               //renderiza skeleton
-              <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              <div className="flex-1 overflow-y-auto p-4 space-y-4 w-[60%] mx-auto">
                 {[...Array(4)].map((_, idx) => {
                   const isSender = idx % (2 + 1) === 0;
                   return (
@@ -261,19 +262,10 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }:
 
 
                     return (
-                      <div key={idx} className={`flex ${isSender ? 'justify-end' : 'justify-start'} items-start space-y-2`}>
-                        {/* Avatar del receptor */}
-                        {!isSender && showAvatar && (
-                          <img
-                            src={userReceptor ? userReceptor.imagen : '/default-avatar.png'}
-                            alt="Avatar"
-                            className="w-10 h-10 rounded-full"
-                          />
-                        )}
-
+                      <div key={idx} className={`flex ${isSender ? 'justify-end' : 'justify-start'} items-start space-x-2`}>
                         {/* Contenedor del mensaje */}
                         {msg.type === 'text' ? (<div
-                          className={`relative rounded-lg ml-${showAvatar ? '0' : '12'} space-y-2 text-white max-w-[60%] ${isSender
+                          className={`relative rounded-lg ml-${showAvatar ? '0' : '12'} text-white max-w-[60%] ${isSender
                             ? 'bg-[#7E634E]'
                             : 'bg-[#C7B69F]'
                             } ${additionalPadding} p-3`}
@@ -301,16 +293,7 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }:
                             </div>
                           </div>
                         )}
-
-
-                        {/* Avatar del emisor */}
-                        {isSender && showAvatar && (
-                          <img
-                            src={userEmisor ? userEmisor.imagen : '/default-avatar.png'}
-                            alt="Avatar"
-                            className="w-10 h-10 rounded-full"
-                          />
-                        )}
+                        
                       </div>
                     );
                   })}

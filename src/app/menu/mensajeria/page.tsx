@@ -5,6 +5,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane, faPaperclip } from "@fortawesome/free-solid-svg-icons";
 import { CometChat } from "@cometchat-pro/chat";
 import { getUserProfile } from "@/app/menu/configuraciones/action";
+import { faSmile } from '@fortawesome/free-regular-svg-icons';
+import EmojiPicker from 'emoji-picker-react';
+
 
 const Chat = () => {
   const [messages, setMessages] = useState<any[]>([]);
@@ -20,6 +23,7 @@ const Chat = () => {
   const [openImageModal, setOpenImageModal] = useState(false);
   const [modalImage, setModalImage] = useState<File | string>('');
   const [isSendImage, setIsSendImage] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   //trae el usuario emisor y conversaciones
   useEffect(() => {
@@ -206,6 +210,7 @@ const Chat = () => {
         setNewMessage("");
         fetchConversations();
         scrollToBottom();
+        setShowEmojiPicker(false);
       },
       (error) => {
         console.log("Message sending failed with error:", error);
@@ -227,7 +232,7 @@ const Chat = () => {
           <h2 className="text-xl font-semibold mb-4 text-white px-3">Chats</h2>
           <div className="flex-1 overflow-y-auto">
             {conversations.map((conversation) => {
-              const receiverImage = conversation.avatar;
+              const receiverImage = conversation.receptorImagen;
               const receiverName = conversation.name;
               const lastMessage = conversation.lastMessage;
               const sentAt = conversation.sentAt;
@@ -287,14 +292,14 @@ const Chat = () => {
             <div className="flex flex-col flex-1 h-screen w-3/5">
 
               {/* Título */}
-              <div className="relative max-h-full flex gap-2 items-center bg-[#40979d] w-full text-white text-center px-4 py-2">
+              <div className="relative max-h-full flex gap-2 items-center bg-[#40979d] w-full text-white text-center px-4 py-2 shadow-md">
                 <img src={userReceptor.avatar} alt="avatar" className="rounded-full w-9" />
                 <div className="flex flex-col items-start">
                   <p>{userReceptor.name}</p>
-                  <p className="text-xs">{userReceptor.status !== 'offline' ? 'en linea' : `última vez a las ${new Date(userReceptor.lastActiveAt * 1000).toLocaleTimeString([], {
+                  <p className="text-xs">{userReceptor.status !== 'offline' ? 'en linea' : userReceptor.lastActiveAt ? `última vez a las ${new Date(userReceptor.lastActiveAt * 1000).toLocaleTimeString([], {
                     hour: '2-digit',
                     minute: '2-digit',
-                  })}`}</p>
+                  })}` : ''}</p>
                 </div>
               </div>
 
@@ -379,50 +384,65 @@ const Chat = () => {
 
               )}
 
-              {/* Input y botón para enviar mensaje */}
-              <div className="pt-2 border-t px-3 py-2 flex w-full justify-center items-center space-x-1">
-                <div className="relative w-full w-full">
+            {/* Input y botón para enviar mensaje */}
+            <div className="pt-2 border-t px-3 py-2 flex w-full mx-auto justify-center items-center space-x-1">
+              <div className="relative w-full">
+                <input
+                  className="border border-gray-300 p-2 focus:outline-none focus:border-blue-500 rounded-full w-full pr-12"
+                  type="text"
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  placeholder="Escribe tu mensaje..."
+                />
+
+                {/* Botón para seleccionar archivo dentro del input */}
+                <label className="absolute right-10 top-1/2 -translate-y-1/2 cursor-pointer flex items-center justify-center">
+                  <FontAwesomeIcon icon={faPaperclip} className="text-lg text-[#FE8A5B]" />
                   <input
-                    className="border border-gray-300 p-2 focus:outline-none focus:border-blue-500 rounded-full w-full pr-12"
-                    type="text"
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    placeholder="Escribe tu mensaje..."
+                    type="file"
+                    id="img_file"
+                    name="img_file"
+                    accept="image/x-png,image/gif,image/jpeg"
+                    className="hidden"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setFile(e.target.files[0]);
+                        setIsSendImage(true);
+                        setOpenImageModal(true);
+                      }
+                    }}
                   />
+                </label>
 
-                  {/* Botón para seleccionar archivo dentro del input */}
-                  <label className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer flex items-center justify-center">
-                    <FontAwesomeIcon icon={faPaperclip} className="text-lg text-[#FE8A5B] h-full" />
-                    <input
-                      type="file"
-                      id="img_file"
-                      name="img_file"
-                      accept="image/x-png,image/gif,image/jpeg"
-                      className="hidden"
-                      onChange={(e) => {
-                        if (e.target.files && e.target.files[0]) {
-                          setFile(e.target.files[0]);
-                          setIsSendImage(true);
-                          setOpenImageModal(true);
-                        }
-                      }}
-                    />
-                  </label>
+                {/* Botón para mostrar el selector de emojis */}
+                <button
+                  className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer flex items-center justify-center"
+                  onClick={() => setShowEmojiPicker((prev) => !prev)}
+                >
+                  <FontAwesomeIcon icon={faSmile} className="text-lg text-[#FE8A5B]" />
+                </button>
 
-                </div>
-
-                {/* Botón de enviar mensaje, solo aparece si hay texto en el input */}
-                {newMessage && (
-                  <button
-                    className="h-full aspect-square bg-[#FE8A5B] text-white flex items-center justify-center rounded-full"
-                    onClick={sendMessage}
-                  >
-                    <FontAwesomeIcon icon={faPaperPlane} />
-                  </button>
+                {/* Selector de emojis */}
+                {showEmojiPicker && (
+                  <div className="absolute bottom-12 right-5 z-50">
+                    <EmojiPicker onEmojiClick={(emoji) => setNewMessage((prev) => prev + emoji.emoji)} />
+                  </div>
                 )}
-
-
               </div>
+
+              {/* Botón de enviar mensaje */}
+              {newMessage && (
+                <button
+                  className="h-full aspect-square bg-[#FE8A5B] text-white flex items-center justify-center rounded-full"
+                  onClick={() => {
+                    sendMessage();
+                    setNewMessage('');
+                  }}
+                >
+                  <FontAwesomeIcon icon={faPaperPlane} />
+                </button>
+              )}
+            </div>
             </div>
           )}
 
@@ -436,7 +456,7 @@ const Chat = () => {
             className="flex justify-center items-center min-h-screen relative"
             onClick={(e) => e.stopPropagation()} // Evita que el click en el contenido cierre el modal
           >
-            <div className="relative bg-white rounded-lg w-[50%] mx-4 overflow-hidden">
+            <div className="relative bg-white rounded-lg w-[50%] max-h-screen mx-4 overflow-hidden">
               <button
                 onClick={() => setOpenImageModal(false)}
                 className="absolute top-2 right-2 text-white bg-gray-700 rounded-full p-3 w-8 h-8 flex items-center justify-center"
