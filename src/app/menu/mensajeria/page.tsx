@@ -10,6 +10,7 @@ import EmojiPicker from 'emoji-picker-react';
 
 
 const Chat = () => {
+  localStorage.setItem('selectedIndex', '2'); 
   const [messages, setMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [conversations, setConversations] = useState<any[]>([]);
@@ -226,9 +227,9 @@ const Chat = () => {
 
   return (
     userEmisor && (
-      <div className="flex h-screen max-h-screen w-full bg-[#ebfbfb] rounded-xl overflow-hidden">
+      <div className="flex h-screen max-h-screen w-full bg-gradient-to-br from-[#ebfbfb] via-[#d9f6f6] to-[#c7f1f1] rounded-xl overflow-hidden">
         {/* Panel lateral de conversaciones - Ancho fijo */}
-        <div className="w-96 min-w-[384px] max-w-[384px] bg-[#226569] py-4 px-2 flex flex-col rounded-tl-xl rounded-bl-xl text-[#fdd5d5]">
+        <div className="w-96 min-w-[358px] max-w-[358px] bg-gradient-to-br from-[#226569] to-[#123a3c] py-4 px-2 flex flex-col rounded-tl-xl rounded-bl-xl text-[#fdd5d5]">
           <h2 className="text-xl font-semibold mb-4 text-white px-3">Chats</h2>
           <div className="flex-1 overflow-y-auto">
             {conversations.map((conversation) => {
@@ -248,8 +249,8 @@ const Chat = () => {
                 <div
                   key={conversation.conversationId}
                   className={`p-3 rounded-lg cursor-pointer transition-colors duration-200 
-                    ${isActive 
-                      ? 'bg-[#ffffff26]' 
+                    ${isActive
+                      ? 'bg-[#ffffff26]'
                       : 'hover:bg-[#ffffff1a]'
                     }`}
                   onClick={() => {
@@ -332,117 +333,124 @@ const Chat = () => {
                 </div>
               ) : (
                 //renderiza Mensajes
-                <div className="flex-1 overflow-y-auto p-4 space-y-1 scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-gray-500 scrollbar-track-gray-200">
-                  {messages.map((msg, idx) => {
-                    const isSender = msg.sender.uid == userEmisor.id_usuario;
-                    const previousMessage = messages[idx - 1];
-                    const showAvatar = !previousMessage || previousMessage.sender.uid !== msg.sender.uid;
+<div className="flex-1 overflow-y-auto p-4 scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-gray-500 scrollbar-track-gray-200">
+  {messages.map((msg, idx) => {
+    const isSender = msg.sender.uid === userEmisor.id_usuario;
+    const previousMessage = messages[idx - 1];
+    const showAvatar = !previousMessage || previousMessage.sender.uid !== msg.sender.uid;
 
-                    // Condición para verificar si el mensaje anterior es del mismo usuario
-                    const additionalPadding = previousMessage && previousMessage.sender.uid === msg.sender.uid ? 'py-2' : 'py-3';
+    // Si el mensaje anterior es del mismo usuario, se añade menos separación
+    const additionalPadding = previousMessage && previousMessage.sender.uid === msg.sender.uid ? 'py-2' : 'py-4';
+    const marginTop = previousMessage && previousMessage.sender.uid === msg.sender.uid ? 'mt-1' : 'mt-4'; // Mayor separación entre usuarios distintos
 
+    return (
+      <div
+        key={idx}
+        className={`flex ${isSender ? 'justify-end' : 'justify-start'} items-start w-full ${marginTop}`}
+      >
+        {/* Contenedor del mensaje */}
+        {msg.type === 'text' ? (
+          <div
+            className={`relative rounded-lg text-white max-w-[60%] ${isSender
+              ? 'bg-[#7E634E]' // Color para el emisor
+              : 'bg-[#C7B69F]' // Color para el receptor
+              } ${additionalPadding} p-3`}
+          >
+            {/* Nombre del emisor solo si es necesario */}
+            {!isSender && showAvatar && (
+              <span className="block mb-1 text-sm font-semibold">{msg.sender.name}</span>
+            )}
+            <p>{msg.text}</p>
+            <div className="text-xs text-gray-200 mt-2 text-right">
+              {new Date(msg.sentAt * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </div>
+          </div>
+        ) : (
+          <div className="relative w-[50%] cursor-pointer">
+            {/* Imagen que cubre todo el div */}
+            <img
+              src={msg.data.url}
+              alt="imagen"
+              className="object-cover rounded-lg"
+              onClick={() => {
+                setIsSendImage(false);
+                setOpenImageModal(true);
+                setModalImage(msg.data.url);
+              }}
+            />
+            {/* Hora en la esquina inferior derecha */}
+            <div className="absolute bottom-2 right-2 text-white text-xs bg-[#00000042] px-2 rounded-full">
+              {new Date(msg.sentAt * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  })}
+  <div ref={messagesEndRef} />
+</div>
 
-                    return (
-                      <div key={idx} className={`flex ${isSender ? 'justify-end' : 'justify-start'} items-start space-x-2`}>
-                        {/* Contenedor del mensaje */}
-                        {msg.type === 'text' ? (<div
-                          className={`relative rounded-lg ml-${showAvatar ? '0' : '12'} text-white max-w-[60%] ${isSender
-                            ? 'bg-[#7E634E]'
-                            : 'bg-[#C7B69F]'
-                            } ${additionalPadding} p-3`}
-                        >
+              )}
 
-                          {/* Nombre del emisor solo si es necesario */}
-                          {!isSender && showAvatar && <span className="block mb-1 text-sm font-semibold">{msg.sender.name}</span>}
-                          <p>{msg.text}</p>
-                          <div className="text-xs text-gray-200 mt-2 text-right">
-                            {new Date(msg.sentAt * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                          </div>
-                        </div>) : (
-                          <div className="relative w-[50%] cursor-pointer">
-                            {/* Imagen que cubre todo el div */}
-                            <img
-                              src={msg.data.url}
-                              alt="imagen"
-                              className="object-cover rounded-lg"
-                              onClick={() => { setIsSendImage(false); setOpenImageModal(true); setModalImage(msg.data.url) }}
-                            />
+              {/* Input y botón para enviar mensaje */}
+              <div className="pt-2 border-t border-gray-300 px-3 py-2 flex w-full mx-auto justify-center items-center space-x-1">
+                <div className="relative w-full">
+                  <input
+                    className="border border-gray-300 p-2 focus:outline-none focus:border-blue-500 rounded-full w-full pr-12"
+                    type="text"
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    placeholder="Escribe tu mensaje..."
+                  />
 
-                            {/* Hora en la esquina inferior derecha */}
-                            <div className="absolute bottom-2 right-2 text-white text-xs bg-[#00000042] px-2 rounded-full">
-                              {new Date(msg.sentAt * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                            </div>
-                          </div>
-                        )}
-                        
-                      </div>
-                    );
-                  })}
-                  <div ref={messagesEndRef} />
+                  {/* Botón para seleccionar archivo dentro del input */}
+                  <label className="absolute right-10 top-1/2 -translate-y-1/2 cursor-pointer flex items-center justify-center">
+                    <FontAwesomeIcon icon={faPaperclip} className="text-lg text-[#FE8A5B]" />
+                    <input
+                      type="file"
+                      id="img_file"
+                      name="img_file"
+                      accept="image/x-png,image/gif,image/jpeg"
+                      className="hidden"
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          setFile(e.target.files[0]);
+                          setIsSendImage(true);
+                          setOpenImageModal(true);
+                        }
+                      }}
+                    />
+                  </label>
+
+                  {/* Botón para mostrar el selector de emojis */}
+                  <button
+                    className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer flex items-center justify-center"
+                    onClick={() => setShowEmojiPicker((prev) => !prev)}
+                  >
+                    <FontAwesomeIcon icon={faSmile} className="text-lg text-[#FE8A5B]" />
+                  </button>
+
+                  {/* Selector de emojis */}
+                  {showEmojiPicker && (
+                    <div className="absolute bottom-12 right-5 z-50">
+                      <EmojiPicker onEmojiClick={(emoji) => setNewMessage((prev) => prev + emoji.emoji)} />
+                    </div>
+                  )}
                 </div>
 
-
-              )}
-
-            {/* Input y botón para enviar mensaje */}
-            <div className="pt-2 border-t px-3 py-2 flex w-full mx-auto justify-center items-center space-x-1">
-              <div className="relative w-full">
-                <input
-                  className="border border-gray-300 p-2 focus:outline-none focus:border-blue-500 rounded-full w-full pr-12"
-                  type="text"
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  placeholder="Escribe tu mensaje..."
-                />
-
-                {/* Botón para seleccionar archivo dentro del input */}
-                <label className="absolute right-10 top-1/2 -translate-y-1/2 cursor-pointer flex items-center justify-center">
-                  <FontAwesomeIcon icon={faPaperclip} className="text-lg text-[#FE8A5B]" />
-                  <input
-                    type="file"
-                    id="img_file"
-                    name="img_file"
-                    accept="image/x-png,image/gif,image/jpeg"
-                    className="hidden"
-                    onChange={(e) => {
-                      if (e.target.files && e.target.files[0]) {
-                        setFile(e.target.files[0]);
-                        setIsSendImage(true);
-                        setOpenImageModal(true);
-                      }
+                {/* Botón de enviar mensaje */}
+                {newMessage && (
+                  <button
+                    className="h-full aspect-square bg-[#FE8A5B] text-white flex items-center justify-center rounded-full"
+                    onClick={() => {
+                      sendMessage();
+                      setNewMessage('');
                     }}
-                  />
-                </label>
-
-                {/* Botón para mostrar el selector de emojis */}
-                <button
-                  className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer flex items-center justify-center"
-                  onClick={() => setShowEmojiPicker((prev) => !prev)}
-                >
-                  <FontAwesomeIcon icon={faSmile} className="text-lg text-[#FE8A5B]" />
-                </button>
-
-                {/* Selector de emojis */}
-                {showEmojiPicker && (
-                  <div className="absolute bottom-12 right-5 z-50">
-                    <EmojiPicker onEmojiClick={(emoji) => setNewMessage((prev) => prev + emoji.emoji)} />
-                  </div>
+                  >
+                    <FontAwesomeIcon icon={faPaperPlane} />
+                  </button>
                 )}
               </div>
-
-              {/* Botón de enviar mensaje */}
-              {newMessage && (
-                <button
-                  className="h-full aspect-square bg-[#FE8A5B] text-white flex items-center justify-center rounded-full"
-                  onClick={() => {
-                    sendMessage();
-                    setNewMessage('');
-                  }}
-                >
-                  <FontAwesomeIcon icon={faPaperPlane} />
-                </button>
-              )}
-            </div>
             </div>
           )}
 
