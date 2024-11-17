@@ -151,7 +151,6 @@ const Chat = () => {
     )
   }
 
-
   const fetchMessages = () => {
     setLoadingMessages(true);
     const limit = 30;
