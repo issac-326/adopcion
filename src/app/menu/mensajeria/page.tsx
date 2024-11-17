@@ -1,13 +1,6 @@
 'use client'
 
 import { useState, useEffect, useRef, use } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane, faPaperclip } from "@fortawesome/free-solid-svg-icons";
 import { CometChat } from "@cometchat-pro/chat";
@@ -341,15 +334,6 @@ const Chat = () => {
 
                     return (
                       <div key={idx} className={`flex ${isSender ? 'justify-end' : 'justify-start'} items-start space-x-2`}>
-                        {/* Avatar del receptor */}
-                        {!isSender && showAvatar && (
-                          <img
-                            src={userReceptor ? userReceptor.avatar : 'https://res.cloudinary.com/dvqtkgszm/image/upload/v1731795791/avatar_o9cpas.avif'}
-                            alt="Avatar"
-                            className="w-10 h-10 rounded-full"
-                          />
-                        )}
-
                         {/* Contenedor del mensaje */}
                         {msg.type === 'text' ? (<div
                           className={`relative rounded-lg ml-${showAvatar ? '0' : '12'} text-white max-w-[60%] ${isSender
@@ -380,16 +364,7 @@ const Chat = () => {
                             </div>
                           </div>
                         )}
-
-
-                        {/* Avatar del emisor */}
-                        {isSender && showAvatar && (
-                          <img
-                            src={userEmisor ? userEmisor.imagen : 'https://res.cloudinary.com/dvqtkgszm/image/upload/v1731795791/avatar_o9cpas.avif'}
-                            alt="Avatar"
-                            className="w-10 h-10 rounded-full"
-                          />
-                        )}
+                        
                       </div>
                     );
                   })}
