@@ -222,51 +222,57 @@ const Chat = () => {
 
   return (
     userEmisor && (
-      <div className="flex min-h-screen w-full bg-[#ebfbfb] rounded-xl overflow-hidden">
+      <div className="flex h-screen max-h-screen w-full bg-[#ebfbfb] rounded-xl overflow-hidden">
+        {/* Panel lateral de conversaciones - Ancho fijo */}
+        <div className="w-96 min-w-[384px] max-w-[384px] bg-[#226569] py-4 px-2 flex flex-col rounded-tl-xl rounded-bl-xl text-[#fdd5d5]">
+          <h2 className="text-xl font-semibold mb-4 text-white px-3">Chats</h2>
+          <div className="flex-1 overflow-y-auto">
+            {conversations.map((conversation) => {
+              const receiverImage = conversation.avatar;
+              const receiverName = conversation.name;
+              const lastMessage = conversation.lastMessage;
+              const sentAt = conversation.sentAt;
+              // Función para formatear la hora de envío
+              const formatTime = (timestamp: number) => {
+                const date = new Date(timestamp * 1000); // Convertir el timestamp a milisegundos
+                return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+              };
+              // Asegúrate de que la comparación sea consistente
+              const isActive = conversation.receiver === receiverUID;
 
-        {/* Panel lateral de conversaciones */}
-        <div className="w-2/5 bg-[#226569] py-4 px-2 space-y-0 overflow-y-auto rounded-tl-xl rounded-bl-xl text-[#fdd5d5]">
-          <h2 className="text-xl font-semibold mb-4 text-white">Chats</h2>
-          {conversations.map((conversation, idx) => {
-            const receiver = conversation.conversationWith;
-            const lastMessage = conversation.lastMessage;
-            const sentAt = conversation.sentAt;
-            const receiverImage = conversation.avatar;
-            const receiverName = conversation.name;
-
-            // Función para formatear la hora de envío
-            const formatTime = (timestamp: number) => {
-              const date = new Date(timestamp * 1000); // Convertir el timestamp a milisegundos
-              return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            };
-
-            // Comprobación si esta conversación está activa
-            const isActive = conversation.conversationId === activeConversationId;
-
-            return (
-              <div
-                key={conversation.conversationId}
-                className={`p-3 rounded-lg cursor-pointer hover:bg-[#dbeafe3b] ${isActive ? 'bg-blue-100' : ''}`}
-                onClick={() => {
-                  setActiveConversationId(conversation.conversationId);
-                  setReceiverUID(conversation.receiver);
-                }}
-              >
-                <div className="flex items-center space-x-2">
-                  <img
-                    src={receiverImage}
-                    alt="Avatar"
-                    className="w-10 h-10 rounded-full"
-                  />
-                  <div>
-                    <p className="font-semibold">{receiverName}</p>
-                    <p className="text-xs text-[#aed3df]">{lastMessage}</p>
-                    <p className="text-xs text-gray-400">{formatTime(sentAt)}</p>
+              return (
+                <div
+                  key={conversation.conversationId}
+                  className={`p-3 rounded-lg cursor-pointer transition-colors duration-200 
+                    ${isActive 
+                      ? 'bg-[#ffffff26]' 
+                      : 'hover:bg-[#ffffff1a]'
+                    }`}
+                  onClick={() => {
+                    setActiveConversationId(conversation.conversationId);
+                    setReceiverUID(conversation.receiver);
+                  }}
+                >
+                  <div className="flex items-center space-x-2">
+                    <img
+                      src={receiverImage}
+                      alt="Avatar"
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold truncate">{receiverName}</p>
+                      <p className="text-xs text-[#aed3df] truncate">
+                        {lastMessage}
+                      </p>
+                      <p className="text-xs text-gray-400">
+                        {formatTime(sentAt)}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
 
         {/* Panel de mensajes */}
