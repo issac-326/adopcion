@@ -225,6 +225,36 @@ const Chat = () => {
     }
   };
 
+  //listener
+  useEffect(() => {
+    if (!receiverUID) return;
+  
+    const listenerID = `Listener_${Date.now()}`;
+  
+    // Añadir listener para recibir mensajes en tiempo real
+    CometChat.addMessageListener(
+      listenerID,
+      new CometChat.MessageListener({
+        onTextMessageReceived: (message) => {
+          console.log("Nuevo mensaje recibido:", message);
+          setMessages((prevMessages) => [...prevMessages, message]);
+          scrollToBottom();
+        },
+        onMediaMessageReceived: (message) => {
+          console.log("Nuevo mensaje de media recibido:", message);
+          setMessages((prevMessages) => [...prevMessages, message]);
+          scrollToBottom();
+        },
+      })
+    );
+  
+    // Eliminar listener al desmontar el componente
+    return () => {
+      CometChat.removeMessageListener(listenerID);
+      console.log("Listener de mensajes eliminado.");
+    };
+  }, [receiverUID]);
+
   return (
     userEmisor && (
       <div className="flex h-screen max-h-screen w-full bg-gradient-to-br from-[#ebfbfb] via-[#d9f6f6] to-[#c7f1f1] rounded-xl overflow-hidden">

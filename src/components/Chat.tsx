@@ -35,6 +35,36 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }:
     fetchUser();
   }, []);
 
+  //listener
+  /*   useEffect(() => {
+      if (!receiverUIDParam) return;
+    
+      const listenerID = `Listener_${Date.now()}`;
+    
+      // Añadir listener para recibir mensajes en tiempo real
+      CometChat.addMessageListener(
+        listenerID,
+        new CometChat.MessageListener({
+          onTextMessageReceived: (message) => {
+            console.log("Nuevo mensaje recibido:", message);
+            setMessages((prevMessages) => [...prevMessages, message]);
+            scrollToBottom();
+          },
+          onMediaMessageReceived: (message) => {
+            console.log("Nuevo mensaje de media recibido:", message);
+            setMessages((prevMessages) => [...prevMessages, message]);
+            scrollToBottom();
+          },
+        })
+      );
+    
+      // Eliminar listener al desmontar el componente
+      return () => {
+        CometChat.removeMessageListener(listenerID);
+        console.log("Listener de mensajes eliminado.");
+      };
+    }, [receiverUIDParam]); */
+
   //conexion con cometChat
   useEffect(() => {
     const initCometChat = async () => {
@@ -55,22 +85,21 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }:
       }
     };
 
-    const loginToCometChat = () => {
+    const loginToCometChat = async () => {
       const authToken = localStorage.getItem('authToken');
       if (!authToken) {
         console.error("No se encontró el authToken.");
         return;
       }
 
-      CometChat.login(authToken).then(
-        (user) => {
-          console.log("Login exitoso", user);
-        },
-        (error) => {
-          console.error("Error al iniciar sesión en CometChat:", error);
-        }
-      );
+      try {
+        const user = await CometChat.login(authToken);
+        console.log("Inicio de sesión exitoso en CometChat:", user);
+      } catch (error) {
+        console.error("Error al iniciar sesión en CometChat:", error);
+      }
     };
+
 
     initCometChat();
   }, []);
@@ -82,38 +111,32 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }:
       return; // Evita ejecutar la lógica si receiverUID no es válido
     }
 
-    setLoadingMessages(true);
+    const obtenerUsuarioAutenticado = async () => {
+      try {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+          console.error("El authToken no está disponible.");
+          return;
+        }
 
-    const obtenerUsuarioPorUID = (uid) => {
-      return new Promise((resolve, reject) => {
-        CometChat.getUser(uid).then(
-          (user) => {
-            console.log("Usuario encontrado:", user);
-            resolve(user);
-          },
-          (error) => {
-            console.log("Error al obtener el usuario:", error);
-            reject(error);
-          }
-        );
-      });
-    };
-
-
-    obtenerUsuarioPorUID(receiverUIDParam)
-      .then((user) => {
+        await CometChat.login(authToken); // Asegura la autenticación
+        const user = await CometChat.getUser(receiverUIDParam);
+        console.log("Usuario receptor encontrado:", user);
         setUserReceptor(user);
+
         fetchMessages();
         scrollToBottom();
-        console.log("userReceptor", user);
-      })
-      .catch((error) => {
-        console.error("Error al obtener el usuario:", error);
-      }).finally(() => {
+      } catch (error) {
+        console.error("Error al autenticar o obtener el usuario receptor:", error);
+      } finally {
         setLoadingMessages(false);
-      });
+      }
+    };
 
+    setLoadingMessages(true);
+    obtenerUsuarioAutenticado();
   }, [receiverUIDParam]);
+
 
   const sendFile = () => {
     console.log("Send File Called")
@@ -184,14 +207,16 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }:
     }
   };
 
-
   return (
     userEmisor && userReceptor && (
       <div className="flex h-screen overflow-hidden w-full z-auto">
         {/* Panel de mensajes */}
         <div className="flex flex-col flex-1 h-full justify-center items-center">
+
           {/* Título */}
-          <div className="relative max-h-full flex flex-col items-center bg-[#40979d] w-full text-white text-center px-4 py-2 rounded-t-xl shadow-md">
+          <div className="relative max-h-full flex flex-col items-center bg-gradient-to-br from-[#4db8b3] via-[#31767b] to-[#2a4f51] w-full text-white text-center px-4 py-2 rounded-t-xl shadow-lg">
+
+
             <div className="absolute top-0 left-0 right-o left-0 m-auto h-full rounded-full w-10 lg:w-12 flex items-center justify-center cursor-pointer hover:scale-110" onClick={() => onRetroceder(true)}>
               <button className="ml-[20px] lg:ml-[30px]">
                 <FontAwesomeIcon icon={faAngleLeft} className="text-gray-300 text-[24px] lg:text-[32px]" />
@@ -204,8 +229,7 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }:
             <p className="font-light">Estás hablando sobre la adopción de {mascota}. ¡Esperamos que encuentres un buen amigo!</p>
           </div>
 
-          <div className="flex flex-col flex-1 h-screen w-full">
-
+          <div className="flex flex-col flex-1 max-h-full w-full overflow-y-auto">
             {/* Mensajes */}
             {loadingMessages ? (
               //renderiza skeleton
@@ -236,9 +260,10 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }:
             ) : (
               //renderiza Mensajes
               <div className="flex-1 overflow-y-auto p-4 space-y-1 scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-gray-500 scrollbar-track-gray-200">
-                <div className="md:w-[60%] sm:w-full mx-auto">
+                <div className="md:w-[60%] sm:w-full mx-auto flex">
                   {messages.map((msg, idx) => {
                     const isSender = msg.sender.uid == userEmisor.id_usuario;
+                    console.log("isSender", isSender);
                     const previousMessage = messages[idx - 1];
                     const showAvatar = !previousMessage || previousMessage.sender.uid !== msg.sender.uid;
 
@@ -252,8 +277,9 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }:
                         {msg.type === 'text' ? (<div
                           className={`relative rounded-lg ml-${showAvatar ? '0' : '12'} text-white ${isSender
                             ? 'bg-[#3b3a3acf]'
-                            : 'bg-[#C7B69F]'
+                            : 'bg-[#6D9C8E]'
                             } ${additionalPadding} p-3`}
+
                         >
 
                           {/* Nombre del emisor solo si es necesario */}
@@ -291,7 +317,7 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }:
             <div className="pt-2 border-t px-3 py-2 flex w-[70%] mx-auto justify-center items-center space-x-1">
               <div className="relative w-full">
                 <input
-                  className="border border-gray-300 p-2 focus:outline-none focus:border-blue-500 rounded-full w-full pr-12"
+                  className="border border-gray-300 p-2 text-gray-800 focus:outline-none focus:border-blue-500 rounded-full w-full pr-12"
                   type="text"
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
