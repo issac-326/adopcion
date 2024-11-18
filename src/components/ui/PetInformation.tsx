@@ -15,6 +15,7 @@ import { deleteMascota, markAsAdopted } from '@/app/menu/perfil/mascotas/[id]/ac
 import confetti from 'canvas-confetti';
 import { toast } from 'react-toastify';
 import Chat from '@/components/Chat';
+import PetInfoModal from './PetInfoModal';
 
 import {
   Dialog,
@@ -27,6 +28,7 @@ import {
 export default function PetInformation({ id, id_usuario, isMyPet = false, isInicio = true }: { id: string, id_usuario: string, isMyPet?: boolean, isInicio?: boolean }) {
   const [isLiked, setIsLiked] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  localStorage.setItem('selectedIndex', 'null');
 
   interface Mascota {
     nombre: string;
@@ -160,9 +162,11 @@ export default function PetInformation({ id, id_usuario, isMyPet = false, isInic
   return (
     isChatOpen ? 
     <>
+      <PetInfoModal mascota={mascota} />
       <Chat receiverUIDParam={String(mascota.usuarios.id_usuario)} mascota={mascota.nombre} onRetroceder={() => setIsChatOpen(false)}/>
     </> :
-      <div className="bg-white min-h-screen flex flex-col lg:flex-row-reverse p-5">
+    <>
+      <div className="bg-white min-h-screen flex flex-col lg:flex-row-reverse p-5 rounded-lg">
         {/* Imagen de la mascota */}
         <div className="flex-1 flex justify-center items-center rounded-br-[50px] mt-8 lg:mt-0">
           <Image
@@ -330,5 +334,7 @@ export default function PetInformation({ id, id_usuario, isMyPet = false, isInic
 
 
       </div>
+    </>
+      
   );
 }
