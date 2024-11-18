@@ -260,7 +260,7 @@ const Chat = () => {
       <div className="flex h-screen max-h-screen w-full bg-gradient-to-br from-[#ebfbfb] via-[#d9f6f6] to-[#c7f1f1] rounded-xl overflow-hidden">
         {/* Panel lateral de conversaciones - Ancho fijo */}
         <div className="w-96 min-w-[358px] max-w-[358px] bg-gradient-to-br from-[#226569] to-[#123a3c] py-4 px-2 flex flex-col rounded-tl-xl rounded-bl-xl text-[#fdd5d5]">
-          <h2 className="text-xl font-semibold mb-4 text-white px-3">Chats</h2>
+          <h2 className="text-xl font-semibold mb-2 text-white mx-3 pb-1 border-b border-gray-500">Chats</h2>
           <div className="flex-1 overflow-y-auto">
             {conversations.map((conversation) => {
               const receiverImage = conversation.receptorImagen;
