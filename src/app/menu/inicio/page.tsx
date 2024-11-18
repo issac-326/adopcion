@@ -570,7 +570,6 @@ export default function Home() {
                 className="flex-1 p-2 rounded-lg relative border-box flex items-center justify-center font-light bg-gray-300 animate-pulse" // Añadido animate-pulse para el efecto de carga
                 style={{ backgroundColor: 'lightgray' }} // Color de fondo del skeleton
               >
-                <div className="h-5 w-24 bg-gray-400 rounded mb-2"></div> {/* Simulando el texto */}
               </div>
             ))
           ) : (

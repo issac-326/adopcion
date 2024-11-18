@@ -260,7 +260,7 @@ const Chat = () => {
       <div className="flex h-screen max-h-screen w-full bg-gradient-to-br from-[#ebfbfb] via-[#d9f6f6] to-[#c7f1f1] rounded-xl overflow-hidden">
         {/* Panel lateral de conversaciones - Ancho fijo */}
         <div className="w-96 min-w-[358px] max-w-[358px] bg-gradient-to-br from-[#226569] to-[#123a3c] py-4 px-2 flex flex-col rounded-tl-xl rounded-bl-xl text-[#fdd5d5]">
-          <h2 className="text-xl font-semibold mb-4 text-white px-3">Chats</h2>
+          <h2 className="text-xl font-semibold mb-2 text-white mx-3 pb-1 border-b border-gray-500">Chats</h2>
           <div className="flex-1 overflow-y-auto">
             {conversations.map((conversation) => {
               const receiverImage = conversation.receptorImagen;
@@ -363,62 +363,55 @@ const Chat = () => {
                 </div>
               ) : (
                 //renderiza Mensajes
-<div className="flex-1 overflow-y-auto p-4 scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-gray-500 scrollbar-track-gray-200">
-  {messages.map((msg, idx) => {
-    const isSender = msg.sender.uid === userEmisor.id_usuario;
-    const previousMessage = messages[idx - 1];
-    const showAvatar = !previousMessage || previousMessage.sender.uid !== msg.sender.uid;
+                <div className="flex-1 overflow-y-auto p-4 space-y-1 scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-gray-500 scrollbar-track-gray-200">
+                {messages.map((msg, idx) => {
+                  const isSender = msg.sender.uid == userEmisor.id_usuario;
+                  const previousMessage = messages[idx - 1];
+                  const showAvatar = !previousMessage || previousMessage.sender.uid !== msg.sender.uid;
 
-    // Si el mensaje anterior es del mismo usuario, se añade menos separación
-    const additionalPadding = previousMessage && previousMessage.sender.uid === msg.sender.uid ? 'py-2' : 'py-4';
-    const marginTop = previousMessage && previousMessage.sender.uid === msg.sender.uid ? 'mt-1' : 'mt-4'; // Mayor separación entre usuarios distintos
+                  // Condición para verificar si el mensaje anterior es del mismo usuario
+                  const additionalPadding = previousMessage && previousMessage.sender.uid === msg.sender.uid ? 'py-2' : 'py-3';
 
-    return (
-      <div
-        key={idx}
-        className={`flex ${isSender ? 'justify-end' : 'justify-start'} items-start w-full ${marginTop}`}
-      >
-        {/* Contenedor del mensaje */}
-        {msg.type === 'text' ? (
-          <div
-            className={`relative rounded-lg text-white max-w-[60%] ${isSender
-              ? 'bg-[#7E634E]' // Color para el emisor
-              : 'bg-[#C7B69F]' // Color para el receptor
-              } ${additionalPadding} p-3`}
-          >
-            {/* Nombre del emisor solo si es necesario */}
-            {!isSender && showAvatar && (
-              <span className="block mb-1 text-sm font-semibold">{msg.sender.name}</span>
-            )}
-            <p>{msg.text}</p>
-            <div className="text-xs text-gray-200 mt-2 text-right">
-              {new Date(msg.sentAt * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-            </div>
-          </div>
-        ) : (
-          <div className="relative w-[50%] cursor-pointer">
-            {/* Imagen que cubre todo el div */}
-            <img
-              src={msg.data.url}
-              alt="imagen"
-              className="object-cover rounded-lg"
-              onClick={() => {
-                setIsSendImage(false);
-                setOpenImageModal(true);
-                setModalImage(msg.data.url);
-              }}
-            />
-            {/* Hora en la esquina inferior derecha */}
-            <div className="absolute bottom-2 right-2 text-white text-xs bg-[#00000042] px-2 rounded-full">
-              {new Date(msg.sentAt * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  })}
-  <div ref={messagesEndRef} />
-</div>
+
+                  return (
+                    <div key={idx} className={`flex ${isSender ? 'justify-end' : 'justify-start'} items-start space-x-2`}>
+                      {/* Contenedor del mensaje */}
+                      {msg.type === 'text' ? (<div
+                        className={`relative rounded-lg ml-${showAvatar ? '0' : '12'} text-white max-w-[60%] ${isSender
+                          ? 'bg-[#7E634E]'
+                          : 'bg-[#C7B69F]'
+                          } ${additionalPadding} p-3`}
+                      >
+
+                        {/* Nombre del emisor solo si es necesario */}
+                        {!isSender && showAvatar && <span className="block mb-1 text-sm font-semibold">{msg.sender.name}</span>}
+                        <p>{msg.text}</p>
+                        <div className="text-xs text-gray-200 mt-2 text-right">
+                          {new Date(msg.sentAt * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </div>
+                      </div>) : (
+                        <div className="relative w-[50%] cursor-pointer">
+                          {/* Imagen que cubre todo el div */}
+                          <img
+                            src={msg.data.url}
+                            alt="imagen"
+                            className="object-cover rounded-lg"
+                            onClick={() => { setIsSendImage(false); setOpenImageModal(true); setModalImage(msg.data.url) }}
+                          />
+
+                          {/* Hora en la esquina inferior derecha */}
+                          <div className="absolute bottom-2 right-2 text-white text-xs bg-[#00000042] px-2 rounded-full">
+                            {new Date(msg.sentAt * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </div>
+                        </div>
+                      )}
+                      
+                    </div>
+                  );
+                })}
+                <div ref={messagesEndRef} />
+              </div>
+
 
               )}
 
