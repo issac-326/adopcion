@@ -21,7 +21,23 @@ interface Categoria {
   color: string;
 }
 
+const opcionesSexo = [
+  { id: 0, descripcion: "Todos" },
+  { id: 1, descripcion: "Hembras" },
+  { id: 2, descripcion: "Machos" },
+];
+
+const opcionesEdad = [
+  { id: 0, descripcion: "Todos" },
+  { id: 1, descripcion: "0 a 6 meses" },
+  { id: 2, descripcion: "6 meses a 1 año" },
+  { id: 3, descripcion: "2 años" },
+  { id: 4, descripcion: "3 años" },
+  { id: 5, descripcion: "Mayor a 3 años" },
+];
+
 const bannerImages = [
+
   '/adopta.png',
   '/carrusel/2.png',
   '/carrusel/1.avif',
@@ -35,11 +51,13 @@ const colors = ["#f39893", "#7d86a5", "#f5a473", "#acd094"];
 const colorsPaws = ["#9e4f4a", "#4a6079", "#a95b3c", "#6f8e65"];
 
 export default function Home() {
-  localStorage.setItem('selectedIndex', '0'); 
-  const depa= localStorage.getItem('depaSelectedIndex') ? localStorage.getItem('depaSelectedIndex') : localStorage.setItem('depaSelectedIndex', '0');
+  localStorage.setItem('selectedIndex', '0');
+  const depa = localStorage.getItem('depaSelectedIndex') ? localStorage.getItem('depaSelectedIndex') : localStorage.setItem('depaSelectedIndex', '0');
   const [selectedMascotas, setSelectedMascotas] = useState<Pet[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number>(0);
   const [categories, setCategories] = useState<Categoria[]>([]);
+  const [sexoSeleccionado, setSexoSeleccionado] = useState<number>(0);  
+  const [edadSeleccionada, setEdadSeleccionada] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [loadingPets, setLoadingPets] = useState<boolean>(true);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -50,20 +68,45 @@ export default function Home() {
     id: number;
     descripcion: string;
   }
-  
+
   const [departamentos, setDepartamentos] = useState<Departamento[]>([]);
   const [page, setPage] = useState(0); // Controla la página actual para la paginación
   const observerRef = useRef(null); // Referencia al sentinela
   const [isInitialRender, setIsInitialRender] = useState(true);
   const [hasMorePets, setHasMorePets] = useState(true);
 
+  const [greeting, setGreeting] = useState(''); // Estado para almacenar el saludo
+
+  useEffect(() => {
+    const fetchGreeting = async () => {
+      const user = await getUserProfile().catch(() => ({ nombre1: 'Usuario' }));
+      const currentHour = new Date().getHours();
+      let greetingMessage = '';
+
+      if (currentHour < 12) {
+        greetingMessage = `¡Hola, buenos días ${user.nombre1}!`;
+      } else if (currentHour < 18) {
+        greetingMessage = `¡Hola, buenas tardes ${user.nombre1}!`;
+      } else {
+        greetingMessage = `¡Hola, buenas noches ${user.nombre1}!`;
+      }
+
+      setGreeting(greetingMessage); // Guarda el saludo en el estado
+    };
+
+    fetchGreeting();
+  }, []);
+
   useEffect(() => {
     const loginCometChat = async () => {
       try {
         const user = await getUserProfile();
-        
+
+        // Convertir id_usuario a string
+        const userIdAsString = user.id_usuario.toString();
+
         // Iniciar sesión en CometChat
-        const response = await loginCometChatUser(user.id_usuario, user.nombre1 + ' ' + user.apellido1);
+        const response = await loginCometChatUser(userIdAsString, user.nombre1 + ' ' + user.apellido1, user.imagen);
         
         if (response && response.authToken) {
           // Almacenar el authToken en localStorage
@@ -73,7 +116,7 @@ export default function Home() {
         console.error("Error al obtener el perfil del usuario:", error);
       }
     };
-  
+
     loginCometChat();
   }, []);
 
@@ -117,7 +160,7 @@ export default function Home() {
     };
 
     obtenerCategorias();
-    seleccionarMascotasPorIdCatIdDepa(selectedCategory, depaSeleccionado, 0);
+    seleccionarMascotasPorIdCatIdDepa(selectedCategory, sexoSeleccionado, depaSeleccionado, edadSeleccionada, 0);
   }, []);
 
   interface MascotaData {
@@ -131,19 +174,19 @@ export default function Home() {
     data: MascotaData[];
   }
 
-  const seleccionarMascotasPorIdCatIdDepa = async (id: number = 0, id_departamento: number | null, page: number = 0): Promise<void> => { 
+  const seleccionarMascotasPorIdCatIdDepa = async (id: number = 0, id_sexo: number | null, id_departamento: number | null, id_edad: number| null, page: number = 0): Promise<void> => {
     if (!hasMorePets) {
       console.log("No hay más mascotas para cargar.");
       return; // Si no hay más mascotas, detenemos la ejecución
     }
 
     try {
-      console.log("Seleccionando mascotas por categoría y departamento:", id, id_departamento, page);
+      console.log("Seleccionando mascotas por categoría, sexo y departamento:", id, id_sexo, id_departamento, page);
       setLoadingPets(true);
       const limit = 10; // Número de mascotas a cargar por página
       const offset = page * limit;
 
-      const data: CategoriaEspecificaResponse = await getCategoriaEspecifica(id, id_departamento ?? 0, limit, offset);
+      const data: CategoriaEspecificaResponse = await getCategoriaEspecifica(id, id_departamento ?? 0, id_sexo ?? 0, id_edad ?? 0, limit, offset);
 
       // Si la cantidad de datos retornados es menor que el límite, ya no hay más mascotas para cargar
       if (data.length < limit) {
@@ -158,50 +201,85 @@ export default function Home() {
       setLoadingPets(false);
     }
   };
-  
+
   /* Se ejecuta cuando cambia el departamento */
   useEffect(() => {
     if (isInitialRender) {
       setIsInitialRender(false);
       return;
     }
-    
+
     localStorage.setItem('depaSelectedIndex', (depaSeleccionado ?? 0).toString());
     // Reiniciamos la lista de mascotas, el flag de más mascotas y la paginación
     setHasMorePets(true);
     setSelectedMascotas([]);
     setPage(0); // Reiniciamos la página
-  
+
     // Realizamos la búsqueda directamente con categoría 0 (todas las categorías)
-    seleccionarMascotasPorIdCatIdDepa(0, depaSeleccionado, 0);
+    seleccionarMascotasPorIdCatIdDepa(selectedCategory, sexoSeleccionado, depaSeleccionado, edadSeleccionada, 0);
   }, [depaSeleccionado]);
-  
+
   /* Se ejecuta cuando cambia la categoría */
   useEffect(() => {
     if (isInitialRender) {
       return;
     }
-    
+
     // Reiniciamos la lista de mascotas y el flag de más mascotas
     setSelectedMascotas([]);
     setHasMorePets(true);
     setPage(0); // Reiniciamos la página
-  
+
     // Realizamos la búsqueda cuando cambia la categoría
-    seleccionarMascotasPorIdCatIdDepa(selectedCategory, depaSeleccionado, 0);
+    seleccionarMascotasPorIdCatIdDepa(selectedCategory, sexoSeleccionado, depaSeleccionado, edadSeleccionada, 0);
   }, [selectedCategory]);
-  
+
+  // Lógica para el cambio de sexo
+  useEffect(() => {
+    if (isInitialRender) {
+      setIsInitialRender(false);
+      return;
+    }
+
+    localStorage.setItem('sexoSelectedIndex', (sexoSeleccionado ?? 0).toString());
+    // Reiniciamos la lista de mascotas, el flag de más mascotas y la paginación
+    setHasMorePets(true);
+    setSelectedMascotas([]);
+    setPage(0); // Reiniciamos la página
+
+    // Realizamos la búsqueda directamente con categoría 0 (todas las categorías)
+    seleccionarMascotasPorIdCatIdDepa(selectedCategory, sexoSeleccionado, depaSeleccionado, edadSeleccionada, 0);
+  }, [sexoSeleccionado]);
+
+
+  // Lógica para el cambio de edad
+  useEffect(() => {
+    if (isInitialRender) {
+      setIsInitialRender(false);
+      return;
+    }
+
+    localStorage.setItem('edadSelectedIndex', (edadSeleccionada ?? 0).toString());
+    // Reiniciamos la lista de mascotas, el flag de más mascotas y la paginación
+    setHasMorePets(true);
+    setSelectedMascotas([]);
+    setPage(0); // Reiniciamos la página
+
+    // Realizamos la búsqueda directamente con categoría 0 (todas las categorías)
+    seleccionarMascotasPorIdCatIdDepa(selectedCategory, sexoSeleccionado, depaSeleccionado, edadSeleccionada, 0);
+  }, [edadSeleccionada]);
+
   /* Se ejecuta cuando cambia la página */
   useEffect(() => {
     if (isInitialRender) {
       setIsInitialRender(false);
       return;
     }
-  
+
     // Realizamos la búsqueda cuando cambia la página
-    seleccionarMascotasPorIdCatIdDepa(selectedCategory, depaSeleccionado, page);
+    seleccionarMascotasPorIdCatIdDepa(selectedCategory, sexoSeleccionado, depaSeleccionado, edadSeleccionada, page);
   }, [page]);
-  
+
 
   /* Traer los departamentos al cargar la pagina */
   useEffect(() => {
@@ -234,51 +312,12 @@ export default function Home() {
   };
 
   return (
-    < >
-      <div id="encabezado" className="mt-8 mb-2 flex justify-between text-[#03063a]">
+    <div className='mx-4 my-4' >
+      <div id="encabezado" className="mb-2 flex justify-between text-[#03063a]">
         {/* esta renderiza toda la parte de arriba del home */}
-        <Menu as="div" className="relative inline-block text-left">
-          <div>
-            <MenuButton>
-              <div>
-                <div className="flex gap-2 text-sm text-gray-400 items-center">Ubicación <FontAwesomeIcon icon={faChevronDown} className="w-3" /></div>
-                <span className="font-extrabold">{depaSeleccionado === 0 ? 'Todos' : departamentos.find(dep => dep.id === depaSeleccionado)?.descripcion},</span> HN
-
-              </div>
-            </MenuButton>
-          </div>
-
-          <MenuItems
-            transition
-            className="absolute left-0 z-40 mt-2 w-max origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none justify-start data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in grid grid-cols-3 gap-x-4"
-          >
-            <MenuItem key={0} onClick={() => setDepaSeleccionado(0)} as="div" className="flex justify-start justify-center">
-              <a
-                className="block text-left w-max-8 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:text-gray-900 text-center"
-              >
-                Todos
-              </a>
-            </MenuItem>
-            {departamentos && departamentos.length > 0 ? (
-              departamentos.map((departamento, index) => (
-                <MenuItem key={departamento.id} onClick={() => {
-                  setDepaSeleccionado(departamento.id)
-                }} as="div" className="flex justify-start justify-center">
-                  <a
-                    className="block text-left w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:text-gray-900 text-center"
-                  >
-                    {departamento.descripcion}
-                  </a>
-                </MenuItem>
-              ))
-            ) : (
-              <MenuItem as="div">
-                <span className="block px-4 py-2 text-sm text-gray-700">No hay departamentos disponibles</span>
-              </MenuItem>
-            )}
-          </MenuItems>
-
-        </Menu>
+        <h1 className="text-2xl font-normal text-center text-gray-700">
+          {greeting || 'Cargando saludo...'} {/* Muestra un texto mientras carga */}
+        </h1>
 
         <div className="flex gap-2">
           <span className="h-12 w-12 rounded-xl flex items-center justify-center bg-[#f7f7f8] hover:cursor-pointer" aria-haspopup="dialog"
@@ -403,12 +442,125 @@ export default function Home() {
         </div>
       </div>
 
+      <div className={`py-2 w-full sticky z-20 top-0 bg-white transition-shadow duration-300}`} >
+      <div className="mb-2 flex justify-between text-[#03063a]">
       {/* Categorías */}
       <h2 className="text-texto mt-5 font-montserrat text-xl font-medium">Categorias</h2>
+      
+      <Menu as="div" className="relative inline-block text-left">
+          <div>
+            <MenuButton>
+              <div className="flex items-center gap-2 mt-5">
+                <div className="flex gap-2 text-sm text-gray-400 items-center">Ubicación <FontAwesomeIcon icon={faChevronDown} className="w-3" /></div>
+                <span className="font-extrabold">{depaSeleccionado === 0 ? 'Todos' : departamentos.find(dep => dep.id === depaSeleccionado)?.descripcion},</span> HN
+              </div>
+            </MenuButton>
+          </div>
+
+          <MenuItems
+            transition
+            className="absolute left-0 z-40 mt-2 w-max origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none justify-start data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in grid grid-cols-3 gap-x-4"
+          >
+            <MenuItem key={0} onClick={() => setDepaSeleccionado(0)} as="div" className="flex justify-start justify-center">
+              <a
+                className="block text-left w-max-8 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:text-gray-900 text-center"
+              >
+                Todos
+              </a>
+            </MenuItem>
+            {departamentos && departamentos.length > 0 ? (
+              departamentos.map((departamento, index) => (
+                <MenuItem key={departamento.id} onClick={() => {
+                  setDepaSeleccionado(departamento.id)
+                }} as="div" className="flex justify-start justify-center">
+                  <a
+                    className="block text-left w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:text-gray-900 text-center"
+                  >
+                    {departamento.descripcion}
+                  </a>
+                </MenuItem>
+              ))
+            ) : (
+              <MenuItem as="div">
+                <span className="block px-4 py-2 text-sm text-gray-700">No hay departamentos disponibles</span>
+              </MenuItem>
+            )}
+          </MenuItems>
+
+        </Menu>
+        {/* Menú de Sexo */}
+        <Menu as="div" className="relative inline-block text-left">
+          <div>
+            <MenuButton>
+              <div className="flex items-center gap-2 mt-5">
+                <div className="flex gap-2 text-sm text-gray-400 items-center">
+                  Sexo <FontAwesomeIcon icon={faChevronDown} className="w-3" />
+                </div>
+                <span className="font-extrabold">
+                  {opcionesSexo.find((opcion) => opcion.id === sexoSeleccionado)?.descripcion || "Todos"}
+                </span>
+              </div>
+            </MenuButton>
+          </div>
+
+          <MenuItems
+            className="absolute left-0 z-40 mt-2 w-max origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none justify-start grid grid-cols-1 gap-x-4"
+          >
+            {/* Opciones de sexo */}
+            {opcionesSexo.map((opcion) => (
+              <MenuItem
+                key={opcion.id}
+                onClick={() => setSexoSeleccionado(opcion.id)}
+                as="div"
+                className="flex justify-center"
+              >
+                <a className="block text-left w-max px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:text-gray-900 text-center">
+                  {opcion.descripcion}
+                </a>
+              </MenuItem>
+            ))}
+          </MenuItems>
+        </Menu>
+
+        {/* Menú de edad */}
+        <Menu as="div" className="relative inline-block text-left">
+          <div>
+            <MenuButton>
+              <div className="flex items-center gap-2 mt-5">
+                <div className="flex gap-2 text-sm text-gray-400 items-center">
+                  Edad <FontAwesomeIcon icon={faChevronDown} className="w-3" />
+                </div>
+                <span className="font-extrabold">
+                  {opcionesEdad.find((opcion) => opcion.id === edadSeleccionada)?.descripcion || "Todos"}
+                </span>
+              </div>
+            </MenuButton>
+          </div>
+
+          <MenuItems
+            className="absolute left-0 z-40 mt-2 w-max origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none justify-start grid grid-cols-1 gap-x-4"
+          >
+            {/* Opciones de sexo */}
+            {opcionesEdad.map((opcion) => (
+              <MenuItem
+                key={opcion.id}
+                onClick={() => setEdadSeleccionada(opcion.id)}
+                as="div"
+                className="flex justify-center"
+              >
+                <a className="block text-left w-max px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:text-gray-900 text-center">
+                  {opcion.descripcion}
+                </a>
+              </MenuItem>
+            ))}
+          </MenuItems>
+        </Menu>
+      </div>
+
       <div
         id="categorias"
         ref={categoriesRef}
-        className={`py-2 w-full sticky z-20 top-0 bg-white transition-shadow duration-300}`}
+        className={`py-2 w-full bg-white transition-shadow duration-300}`}
       >
         <section className="flex justify-between h-[40px] gap-4">
           {loading ? (
@@ -465,7 +617,7 @@ export default function Home() {
 
         </section>
       </div>
-
+      </div>
       {/* Mascotas */}
       <section className="mt-5 flex justify-between items-center">
         <h2 className="font-montserrat text-xl font-medium">Esperando por ti...</h2>
@@ -493,7 +645,7 @@ export default function Home() {
       )}
 
 
-    </>
+    </div>
   );
 };
 

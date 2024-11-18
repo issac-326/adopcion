@@ -13,11 +13,15 @@ const config: Config = {
 		grayscale: {
 			50: '90%',
 		  },
+		  scrollbar: {
+			DEFAULT: {
+			  track: 'bg-gray-200',
+			  thumb: 'bg-gray-500 rounded-full',
+			  hover: 'bg-gray-600',
+			},
+		  },
 		fontFamily: {
 			montserrat: ['var(--font-montserrat)', 'sans-serif'], // Añade Montserrat usando la variable de CSS
-		  },
-		  boxShadow: {
-			'custom-blue': '0 4px 6px -1px rgba(59, 130, 246, 0.5), 0 2px 4px -1px rgba(59, 130, 246, 0.25)',
 		  },
   		colors: {
 			texto: '#03063A',
@@ -70,6 +74,8 @@ const config: Config = {
   	}
   },
   darkMode: ["class", "class"],
-  plugins: [nextui(), require("tailwindcss-animate")],
+  plugins: [nextui(), require("tailwindcss-animate"),
+		require('tailwind-scrollbar'),
+  ],
 };
 export default config;

@@ -106,9 +106,9 @@ const ProfilePage = () => {
     }, [isMyPetSelected]);
 
     return (
-        <>
+        <div className='mx-4 my-4' >
             {/* Sección de encabezado del perfil */}
-            <div className="relative w-full h-min-300 flex rounded-t-xl justify-between items-center mt-6 gap-10 moving-gradient">
+            <div className="relative w-full h-min-300 flex rounded-t-xl justify-between items-center gap-10 moving-gradient">
                 {loadingUser ? (
                     <div className="flex items-center px-6 my-8">
                         <div className="rounded-full w-36 h-36 overflow-hidden bg-gray-300 animate-pulse"></div>
@@ -192,7 +192,7 @@ const ProfilePage = () => {
                     )}
                 </div>
             )}
-        </>
+        </div>
     );
 };
 

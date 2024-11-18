@@ -4,7 +4,7 @@ import Link from "next/link";
 import { signupValidator } from "@/validations/signup";
 import React, { useState } from 'react';
 import InputField from "@/components/ui/InputField";
-import { addUser, imagenCloudinary, registerUserCometchat } from "./actions";
+import { addUser, imagenCloudinary } from "./actions";
 import SuccessNotification from "@/components/ui/SuccesNotification";
 import { useRouter } from "next/navigation";
 import { useDropzone } from "react-dropzone";
@@ -15,7 +15,7 @@ export default function Register() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [userExists, setUserExists] = useState(false);
-  const [imagen, setImagen] = useState("/usuario-default.jpg"); 
+  const [imagen, setImagen] = useState("https://res.cloudinary.com/dvqtkgszm/image/upload/v1731795791/avatar_o9cpas.avif"); 
   const [newImage, setNewImage] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -73,7 +73,6 @@ const handleImageChange = async () => {
       try {
         const data = await addUser(formData,imageUrl);
         console.log('User added successfully:', data);
-        /* const dataCometchat = await registerUserCometchat(data.id_usuario, data.nombre1); */
         router.push('/login');
         setIsSuccess(true);
       } catch (error) {
