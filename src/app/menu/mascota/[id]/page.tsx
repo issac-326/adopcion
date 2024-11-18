@@ -3,11 +3,13 @@
 import PetInformation from '@/components/ui/PetInformation'; // Importamos el componente cliente
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { getAuthenticatedUserIdForPage } from './actions';
 
 export default function MascotaPage({ params }) {
   const router = useRouter();
   const { id } = params; // Obtenemos el ID de la mascota desde la URL
-  const userId = typeof window !== 'undefined' ? localStorage.getItem('userId') : null; // Verificar si estamos en cliente antes de acceder a localStorage
+   // Obtiene el ID del usuario autenticado desde el servidor
+   const userId = getAuthenticatedUserIdForPage();
   const [isInicio, setIsInicio] = useState(false);
 console.log(userId);
   useEffect(() => {

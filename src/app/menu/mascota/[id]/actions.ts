@@ -1,6 +1,17 @@
 'use server'
 import { createClient } from '@/utils/supabase/server';
 
+import { getAuthenticatedUserIdOrThrow } from '@/utils/auth/auth';
+
+/**
+ * Obtiene el ID del usuario autenticado.
+ * 
+ * @returns {string} El ID del usuario autenticado.
+ */
+export const getAuthenticatedUserIdForPage = (): string => {
+  return getAuthenticatedUserIdOrThrow();
+}
+
 interface Publicacion {
   nombre: string;
   anios: number;
