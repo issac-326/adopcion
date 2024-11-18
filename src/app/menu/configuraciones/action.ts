@@ -7,6 +7,10 @@ import bcrypt from 'bcryptjs';
 
 const supabase = createClient();
 
+
+
+
+
 /**
  * Obtiene el perfil del usuario autenticado desde la base de datos.
  * @returns Los datos del perfil del usuario autenticado.
