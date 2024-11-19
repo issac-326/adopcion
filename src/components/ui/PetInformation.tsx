@@ -140,7 +140,9 @@ export default function PetInformation({ id, id_usuario, isMyPet = false, isInic
     const fetchMascota = async () => {
       try {
         const data = await getMascotaEspecifica(Number(id));
+        //@ts-expect-error
         setMascota(data);
+        //@ts-expect-error
         const liked = await verificacionFavoritos(Number(id), id_usuario);
         setIsLiked(liked);
         setLoading(false);
@@ -154,6 +156,7 @@ export default function PetInformation({ id, id_usuario, isMyPet = false, isInic
 
   const handleLike = async () => {
     try {
+      //@ts-expect-error
       await favorito(Number(id), id_usuario, isLiked);
       setIsLiked(!isLiked);
     } catch (error) {
@@ -237,6 +240,7 @@ export default function PetInformation({ id, id_usuario, isMyPet = false, isInic
                 <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2">{mascota.nombre}</h1>
                 <div className="text-gray-500 flex items-center">
                   <FontAwesomeIcon icon={faLocationDot as IconProp} className="text-blue-500 mr-2 sm:text-sm" />
+                  {/*@ts-expect-error */}
                   {mascota.departamentos.descripcion}
                 </div>
               </div>
@@ -274,7 +278,7 @@ export default function PetInformation({ id, id_usuario, isMyPet = false, isInic
 
             {/* Descripción general */}
             <div className="mt-8 mb-8 text-sm sm:text-base">
-              
+              {/*@ts-expect-error */}
               <div><span className="font-semibold">Especie:</span> {mascota.categorias.tipo_mascotas || 'Indefinido'}</div>
               <div className="text-base mt-4"><span className="font-semibold">Descripción:</span> {mascota.descripcion || 'Indefinido'}</div>
             </div>

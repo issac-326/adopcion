@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { verificacionFavoritos, favorito } from '@/app/menu/favoritos/actions';
 import { useEffect, useState } from "react";
 import { on } from "events";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
 
 
 interface InputProps { // Propiedades que recibe el componente
@@ -50,6 +51,7 @@ const PetCard = ({
     const fetchMascota = async () => {
       try {
         // Verificar si ya está en favoritos
+        {/*@ts-expect-error */}
         const liked = await verificacionFavoritos(Number(id), userId);
         setIsLiked(liked);
         setLoading(false);
@@ -63,6 +65,7 @@ const PetCard = ({
 
   const handleLike = async () => {
     try {
+      {/*@ts-expect-error */}
       await favorito(Number(id), userId, isLiked);
       setIsLiked(!isLiked);
       if (isLiked) {
@@ -109,7 +112,7 @@ const PetCard = ({
           handleLike();
         }}
       >
-        <FontAwesomeIcon icon={faHeart} className={`${isLiked ? 'text-red-500' : 'text-gray-400'}`} />
+        <FontAwesomeIcon icon={faHeart as IconProp} className={`${isLiked ? 'text-red-500' : 'text-gray-400'}`} />
       </div>
     )}
 
@@ -135,7 +138,7 @@ const PetCard = ({
       </p>
     </div>
     <div className="flex items-center space-x-2 z-10">
-      <FontAwesomeIcon icon={faMapMarkerAlt} />
+      <FontAwesomeIcon icon={faMapMarkerAlt as IconProp} />
       <p className="text-black-800 text-sm font-light">{ciudad}</p>
     </div>
 

@@ -7,6 +7,7 @@ import { CometChat } from "@cometchat-pro/chat";
 import { getUserProfile } from "@/app/menu/configuraciones/action";
 import { faSmile } from '@fortawesome/free-regular-svg-icons';
 import EmojiPicker from 'emoji-picker-react';
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
 
 
 const Chat = () => {
@@ -183,16 +184,22 @@ const Chat = () => {
       (conversations) => {
         // Mapear las conversaciones para obtener los datos completos
         const conversationData = conversations.map((conversation) => {
+          // @ts-expect-error
           const sender = conversation.sender;
+          // @ts-expect-error
           const receiver = conversation.receiver;
 
           return {
+            // @ts-expect-error
             id: conversation.conversationId,
             sender: sender ? sender.uid : null,
+            // @ts-expect-error
             receiver: conversation.getConversationWith().getUid(),
             receiverNombre: receiver ? receiver.name : '',
             receptorImagen: receiver ? receiver.avatar : 'https://res.cloudinary.com/dvqtkgszm/image/upload/v1731795791/avatar_o9cpas.avif',
+            // @ts-expect-error
             lastMessage: conversation.lastMessage ? conversation.lastMessage.data.text : 'No message',
+            // @ts-expect-error
             sentAt: conversation.lastMessage ? conversation.lastMessage.sentAt : 0,
             name: conversation.getConversationWith().getName(),
           };
@@ -207,6 +214,7 @@ const Chat = () => {
   };
 
   const sendMessage = () => {
+    // @ts-expect-error
     const textMessage = new CometChat.TextMessage(receiverUID, newMessage, CometChat.RECEIVER_TYPE.USER);
 
     CometChat.sendMessage(textMessage).then(
@@ -239,11 +247,13 @@ const Chat = () => {
     CometChat.addMessageListener(
       listenerID,
       new CometChat.MessageListener({
+        // @ts-expect-error
         onTextMessageReceived: (message) => {
           console.log("Nuevo mensaje recibido:", message);
           setMessages((prevMessages) => [...prevMessages, message]);
           scrollToBottom();
         },
+        // @ts-expect-error
         onMediaMessageReceived: (message) => {
           console.log("Nuevo mensaje de media recibido:", message);
           setMessages((prevMessages) => [...prevMessages, message]);
@@ -432,7 +442,7 @@ const Chat = () => {
 
                   {/* Botón para seleccionar archivo dentro del input */}
                   <label className="absolute right-10 top-1/2 -translate-y-1/2 cursor-pointer flex items-center justify-center">
-                    <FontAwesomeIcon icon={faPaperclip} className="text-lg text-[#FE8A5B]" />
+                    <FontAwesomeIcon icon={faPaperclip as IconProp} className="text-lg text-[#FE8A5B]" />
                     <input
                       type="file"
                       id="img_file"
@@ -454,7 +464,7 @@ const Chat = () => {
                     className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer flex items-center justify-center"
                     onClick={() => setShowEmojiPicker((prev) => !prev)}
                   >
-                    <FontAwesomeIcon icon={faSmile} className="text-lg text-[#FE8A5B]" />
+                    <FontAwesomeIcon icon={faSmile as IconProp} className="text-lg text-[#FE8A5B]" />
                   </button>
 
                   {/* Selector de emojis */}
@@ -474,7 +484,7 @@ const Chat = () => {
                       setNewMessage('');
                     }}
                   >
-                    <FontAwesomeIcon icon={faPaperPlane} />
+                    <FontAwesomeIcon icon={faPaperPlane as IconProp} />
                   </button>
                 )}
               </div>

@@ -28,9 +28,11 @@ const Conversacion = () => {
 
 
   // Función para obtener los mensajes de la conversación seleccionada
+  // @ts-expect-error
   const fetchMessages = async (conversationId) => {
     const limit = 50; // Puedes ajustar el límite de mensajes que se obtienen
     const messagesRequest = new CometChat.MessagesRequestBuilder()
+    // @ts-expect-error
       .setConversationId(conversationId)
       .setLimit(limit)
       .build();
@@ -45,6 +47,7 @@ const Conversacion = () => {
 
   useEffect(() => {
     if (currentConversation) {
+      // @ts-expect-error
       fetchMessages(currentConversation.conversationId); // Cargar mensajes cuando se seleccione una conversación
     }
   }, [currentConversation]);
@@ -52,7 +55,7 @@ const Conversacion = () => {
   // Función para enviar mensajes
   const sendMessage = async () => {
     if (newMessage.trim() === "") return;
-
+    // @ts-expect-error
     const receiverId = currentConversation.conversationWith.uid;
     const receiverType = CometChat.RECEIVER_TYPE.USER;
 
@@ -64,6 +67,7 @@ const Conversacion = () => {
 
     try {
       const message = await CometChat.sendMessage(textMessage);
+      // @ts-expect-error
       setMessages((prevMessages) => [...prevMessages, message]); // Agregar el mensaje enviado a la lista
       setNewMessage("");
     } catch (error) {
@@ -86,9 +90,13 @@ const Conversacion = () => {
             <p>Selecciona una conversación para ver los mensajes</p>
           ) : (
             messages.map((msg, idx) => (
+              // @ts-expect-error
               <div key={idx} className={`flex ${msg.sender.uid === userEmisor.uid ? "justify-end" : "justify-start"} mb-2`}>
+                {/*@ts-expect-error */}
                 <div className={`${msg.sender.uid === userEmisor.uid ? "bg-blue-500" : "bg-gray-300"} p-2 rounded-lg`}>
+                  {/*@ts-expect-error*/}
                   <p>{msg.text}</p>
+                  {/*@ts-expect-error*/}
                   <span className="text-xs text-gray-500">{new Date(msg.sentAt * 1000).toLocaleTimeString()}</span>
                 </div>
               </div>

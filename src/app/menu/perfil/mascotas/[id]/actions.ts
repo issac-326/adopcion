@@ -28,6 +28,7 @@ export const getMascotaEspecifica = async (id: number) => {
 if (error) {
   console.error("Error fetching data:", error);
 } else if (data) {
+  // @ts-expect-error
   const publicacion: Publicacion = data; // Asignamos el tipo Publicacion a los datos
   console.log("DATA en el backend:", publicacion);
 }

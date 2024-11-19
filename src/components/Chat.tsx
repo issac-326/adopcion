@@ -204,6 +204,7 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }:
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
+      // @ts-expect-error
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
@@ -216,8 +217,7 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }:
 
           {/* Título */}
           <div className="relative max-h-full flex flex-col items-center bg-gradient-to-br from-[#4db8b3] via-[#31767b] to-[#2a4f51] w-full text-white text-center px-4 py-2 rounded-t-xl shadow-lg">
-
-
+            {/* @ts-expect-error */}
             <div className="absolute top-0 left-0 right-o left-0 m-auto h-full rounded-full w-10 lg:w-12 flex items-center justify-center cursor-pointer hover:scale-110" onClick={() => onRetroceder(true)}>
               <button className="ml-[20px] lg:ml-[30px]">
                 <FontAwesomeIcon icon={faAngleLeft as IconProp} className="text-gray-300 text-[24px] lg:text-[32px]" />

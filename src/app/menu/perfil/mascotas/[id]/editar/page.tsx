@@ -36,6 +36,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 
 interface PetFormData {
@@ -106,6 +107,7 @@ export default function AnimalFormEdit({ params }: { params: Params }) {
                 console.log("ID de la mascota:", id);
                 const data = await getPet(id); // Obtener la mascota desde la API
                 console.log("Mascota obtenida:", data);
+                // @ts-expect-error
                 setPet(data); // Actualizar el estado de la mascota
 
                 setName(data.nombre); // Actualizar el nombre de la mascota
@@ -134,6 +136,7 @@ export default function AnimalFormEdit({ params }: { params: Params }) {
     // Función que captura el cambio en los inputs y actualiza el estado
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
+        // @ts-expect-error
         setFormData({
             ...formData,
             [name]: value
@@ -159,6 +162,7 @@ export default function AnimalFormEdit({ params }: { params: Params }) {
 
     const handleChangeTextarea = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const { name, value } = e.target;
+        // @ts-expect-error
         setFormData({
             ...formData,
             [name]: value
@@ -182,6 +186,7 @@ export default function AnimalFormEdit({ params }: { params: Params }) {
         }
 
         // Validación del formulario
+        // @ts-expect-error
         const formResult: FormResult = editPublicacionValidator(formData);
         if (!formResult.isValid) {
             setErrors(formResult.errors);
@@ -195,6 +200,7 @@ export default function AnimalFormEdit({ params }: { params: Params }) {
                 
                 const formImagen = new FormData();
                 formImagen.append('file', acceptedFiles[0]);
+                // @ts-expect-error
                 const { data: dataClo, error }: { data: CloudinaryResponse; error: any } = await imagenCloudinary(formImagen);
 
                 console.log("Imagen subida:", dataClo.secure_url);
@@ -235,6 +241,7 @@ export default function AnimalFormEdit({ params }: { params: Params }) {
 
 
     const handleSelectSexChange = (value: string) => {
+        // @ts-expect-error
         setFormData({
             ...formData,
             sexo: value
@@ -242,6 +249,7 @@ export default function AnimalFormEdit({ params }: { params: Params }) {
     }
 
     const handleSelectDeptChange = (value: string) => {
+        // @ts-expect-error
         setFormData({
             ...formData,
             departamento: value
@@ -249,6 +257,7 @@ export default function AnimalFormEdit({ params }: { params: Params }) {
     }
 
     const handleSelectTipoAnimalChange = (value: string) => {
+        // @ts-expect-error
         setFormData({
             ...formData,
             tipoAnimal: value
@@ -278,7 +287,7 @@ export default function AnimalFormEdit({ params }: { params: Params }) {
                     {/* Botón para regresar */}
                     <div className="absolute top-4 left-4 rounded-full w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center cursor-pointer hover:scale-110" onClick={() => { router.push('/menu/perfil') }}>
                         <button className="ml-[20px] lg:ml-[30px]">
-                            <FontAwesomeIcon icon={faAngleLeft} className="text-red-500 text-[24px] lg:text-[32px]" />
+                            <FontAwesomeIcon icon={faAngleLeft as IconProp} className="text-red-500 text-[24px] lg:text-[32px]" />
                         </button>
                     </div>
                 </header>

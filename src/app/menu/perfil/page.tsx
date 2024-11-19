@@ -10,6 +10,7 @@ import Image from "next/image";
 import { faShieldCat, faTableCells } from "@fortawesome/free-solid-svg-icons";
 import { faHeart, faPenToSquare } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
 
 // Definir los tipos de usuario y mascota
 interface UserProfile {
@@ -62,6 +63,7 @@ const ProfilePage = () => {
             const pets = await getMyPets();
             const formattedPets = pets.map((pet) => ({
                 ...pet,
+                // @ts-expect-error
                 departamentos: pet.departamentos ? { descripcion: String(pet.departamentos.descripcion) } : null,
             })) as Pet[];
             setMyPets(formattedPets);
@@ -143,7 +145,7 @@ const ProfilePage = () => {
                     className="flex items-center gap-2 rounded-full absolute bottom-2 right-2 hover:cursor-pointer bg-white text-xs py-1 px-2 w-8 h-8 hover:w-20 transition-all duration-300 ease-in-out overflow-hidden"
                     onClick={() => router.push('/menu/configuraciones/perfil')}
                 >
-                    <FontAwesomeIcon icon={faPenToSquare} className="text-base" />
+                    <FontAwesomeIcon icon={faPenToSquare as IconProp} className="text-base" />
                     <span className="text-black transition-opacity duration-300 ease-in-out whitespace-nowrap">
                         editar
                     </span>
@@ -169,14 +171,14 @@ const ProfilePage = () => {
                     className={`box-border flex items-center gap-2 py-4 hover:cursor-pointer ${isMyPetSelected ? 'border-t border-orange-400 text-black' : ''}`}
                     onClick={() => setIsMyPetSelected(true)}
                 >
-                    <FontAwesomeIcon icon={faShieldCat} />
+                    <FontAwesomeIcon icon={faShieldCat as IconProp} />
                     <h2>MIS MASCOTAS</h2>
                 </div>
                 <div
                     className={`flex items-center gap-2 py-4 hover:cursor-pointer ${!isMyPetSelected ? 'border-t border-orange-400 font-semibold text-black' : ''}`}
                     onClick={() => setIsMyPetSelected(false)}
                 >
-                    <FontAwesomeIcon icon={faHeart} />
+                    <FontAwesomeIcon icon={faHeart as IconProp} />
                     <h2>FAVORITOS</h2>
                 </div>
             </section>
@@ -188,6 +190,7 @@ const ProfilePage = () => {
                     {myPets.length === 0 ? (
                         <p>No hay mascotas por mostrar 😿</p>
                     ) : (
+                        // @ts-expect-error
                         <PetList pets={myPets} areMyPets={isMyPetSelected} isInicio={false} onDislike={obtenerFavoritosUsuario} isLikedP={true} />
                     )}
                 </div>

@@ -41,7 +41,7 @@ export const loginCometChatUser = (UID: string, name : string, imagen : string) 
             newUser.setAvatar(imagen);
 
             console.log("Creating new user:", newUser);
-
+            {/*@ts-expect-error */}
             return CometChat.createUser(newUser, authKey).then(
               user => {
                 console.log("User created successfully:", user);

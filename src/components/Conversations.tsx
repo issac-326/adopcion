@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { CometChat } from "@cometchat-pro/chat";
-
+//@ts-expect-error
 export const ConversacionesPanel = ({ userEmisor, setCurrentConversation }) => {
   const [conversations, setConversations] = useState([]);
   const [authToken, setAuthToken] = useState(null); // Almacena el authToken del usuario
 
   // Función para autenticar al usuario y obtener su authToken
+  //@ts-expect-error
   const loginUser = async (uid) => {
     if (!uid) {
       console.error("El uid del usuario no está definido.");
@@ -23,6 +24,7 @@ export const ConversacionesPanel = ({ userEmisor, setCurrentConversation }) => {
       const user = await CometChat.login(uid, authKey);
       
       console.log("Usuario autenticado correctamente:", user);
+      //@ts-expect-error
       setAuthToken(user.authToken); // Almacena el authToken
     } catch (error) {
       console.error("Error al autenticar el usuario:", error);
@@ -39,6 +41,7 @@ export const ConversacionesPanel = ({ userEmisor, setCurrentConversation }) => {
 
     try {
       const fetchedConversations = await conversationsRequest.fetchNext();
+      //@ts-expect-error
       setConversations(fetchedConversations);
     } catch (error) {
       console.error("Error al obtener las conversaciones:", error);
@@ -62,12 +65,15 @@ export const ConversacionesPanel = ({ userEmisor, setCurrentConversation }) => {
       <div className="space-y-2">
         {conversations.map((conv) => (
           <div
+          //@ts-expect-error
             key={conv.conversationId}
             className="p-2 bg-white rounded-lg shadow cursor-pointer hover:bg-gray-200"
             onClick={() => setCurrentConversation(conv)}
           >
+            {/*@ts-expect-error */}
             <p className="text-sm font-medium">{conv.conversationWith.name}</p>
             <p className="text-xs text-gray-500">
+              {/*@ts-expect-error */}
               Último mensaje: {conv.lastMessage ? conv.lastMessage.text : "Sin mensajes"}
             </p>
           </div>

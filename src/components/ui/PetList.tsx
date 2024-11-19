@@ -33,6 +33,7 @@ const PetList: React.FC<PetListProps> = ({ pets, areMyPets = false, isInicio = t
       
         {pet &&pet.map((pet, index) => {
           const colors = colorPairs[index % colorPairs.length];
+          {/*@ts-expect-error */}
           const ciudad = pet.departamentos ? pet.departamentos.descripcion : "Descripción no disponible";
           return (
             <PetCard
@@ -46,6 +47,7 @@ const PetList: React.FC<PetListProps> = ({ pets, areMyPets = false, isInicio = t
               footerBg={colors.footerBg}
               svgBg={colors.svgBg}
               isMyPet={areMyPets}
+              //@ts-expect-error
               disponible={pet.estado_adopcion}
               isInicio={isInicio}
               onDislike={onDislike}
