@@ -4,8 +4,8 @@ import Link from "next/link";
 import { loginValidator } from "@/validations/login";
 import InputField from "@/components/ui/InputField";
 import React, { useState } from 'react';
-import { loginUser } from "./actions";
 import { useRouter } from "next/navigation";
+import { loginUser } from "./actions";
 
 export default function Login() {
   const router = useRouter();
