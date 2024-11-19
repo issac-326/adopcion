@@ -18,9 +18,6 @@ import { toast } from "react-toastify";
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-
-
-
 import {
     Dialog,
     DialogContent,
@@ -197,14 +194,15 @@ export default function AnimalFormEdit({ params }: { params: Params }) {
                 // Cambia esta línea para llamar a la función de subir imagen con formDataUpload
                 const formImagen = new FormData();
                 formImagen.append('file', acceptedFiles[0]);
-                const { data: dataClo, error }: { data: CloudinaryResponse; error:
-                };
+                const { data: dataClo, error }: { data: CloudinaryResponse; error: any } = await imagenCloudinary(formImagen);
 
                 console.log("Imagen subida:", dataClo.secure_url);
+                if (formData) {
+                    formData.imagen = dataClo.secure_url;
+                }
 
                 // Crear la publicación con la imagen actualizada
                 try {
-                    const formResult = await updatePet(updatedFormData, id);
                     setIsModalOpen(true);
                 } catch (err) {
                     console.error("Error al actualizar la mascota:", err);
@@ -213,7 +211,6 @@ export default function AnimalFormEdit({ params }: { params: Params }) {
             } else {
                 // Si no hay imagen para subir, continuar con la actualización
                 try {
-                    const formResult = await updatePet(formData, id);
                     setIsModalOpen(true);
                 } catch (err) {
                     console.error("Error al actualizar la mascota:", err);
@@ -221,6 +218,18 @@ export default function AnimalFormEdit({ params }: { params: Params }) {
             }
         });
     };
+
+    const handleUpdatePet = async (formData: any) => {
+        try {
+            const data = await updatePet(formData, id);
+            console.log('Mascota actualizada exitosamente:', data);
+            toast.success('Los datos de la mascota han sido actualizados exitosamente 🎉');
+            router.push('/menu/perfil');
+        } catch (error) {
+            console.error("Error al actualizar la mascota:", error);
+            toast.error('Error al actualizar la mascota');
+        }
+    }
 
 
 
@@ -462,7 +471,7 @@ export default function AnimalFormEdit({ params }: { params: Params }) {
                                     onClick={() => {
                                         setIsModalOpen(false);
                                         router.push('/menu/perfil');
-                                        toast.success('Los datos de la mascota han sido actualizados exitosamente 🎉');
+                                        handleUpdatePet(formData);
                                     }}
                                     className="w-full text-white bg-[#FFA07A]"
                                 >
