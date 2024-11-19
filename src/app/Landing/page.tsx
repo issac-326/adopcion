@@ -6,6 +6,7 @@ import { faPaw, faHeart, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { faInstagram, faFacebook, faTwitter } from "@fortawesome/free-brands-svg-icons";
 import { useRouter } from 'next/navigation';
 import Image from "next/image";
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 const LandingPage = () => {
 
@@ -123,19 +124,19 @@ const handlePrev = () => {
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {/* Card 1 */}
       <div className="bg-gray-300 rounded-lg shadow-lg p-6 text-center hover:bg-gray-400  hover:shadow-xl transition">
-        <FontAwesomeIcon icon={faSearch} className="text-4xl text-orange-500 mb-4" />
+        <FontAwesomeIcon icon={faSearch  as IconProp} className="text-4xl text-orange-500 mb-4" />
         <h3 className="text-lg font-bold mb-2">Busca Mascotas</h3>
         <p>Filtra por ubicación, raza o edad para encontrar a tu nueva mascota.</p>
       </div>
       {/* Card 2 */}
       <div className="bg-gray-300 rounded-lg shadow-lg p-6 text-center hover:bg-gray-400 hover:shadow-xl transition">
-        <FontAwesomeIcon icon={faHeart} className="text-4xl text-orange-500 mb-4" />
+        <FontAwesomeIcon icon={faHeart  as IconProp} className="text-4xl text-orange-500 mb-4" />
         <h3 className="text-lg font-bold mb-2">Adopta</h3>
         <p>Conoce a nuestras mascotas y da un hogar a quien lo necesita.</p>
       </div>
       {/* Card 3 */}
       <div className="bg-gray-300 rounded-lg shadow-lg p-6 text-center hover:bg-gray-400  hover:shadow-xl transition">
-        <FontAwesomeIcon icon={faPaw} className="text-4xl text-orange-500 mb-4" />
+        <FontAwesomeIcon icon={faPaw as IconProp} className="text-4xl text-orange-500 mb-4" />
         <h3 className="text-lg font-bold mb-2">Registra Mascotas</h3>
         <p>Publica perfiles de mascotas para ayudar a encontrarlas un hogar.</p>
       </div>
@@ -172,7 +173,7 @@ const handlePrev = () => {
       <ul className="space-y-4">
         <li className="flex items-center">
           <FontAwesomeIcon
-            icon={faPaw}
+            icon={faPaw  as IconProp}
             className="text-orange-500 text-2xl mr-3"
           />
           <span className="text-gray-700">
@@ -181,7 +182,7 @@ const handlePrev = () => {
         </li>
         <li className="flex items-center">
           <FontAwesomeIcon
-            icon={faHeart}
+            icon={faHeart  as IconProp}
             className="text-orange-500 text-2xl mr-3"
           />
           <span className="text-gray-700">
@@ -190,7 +191,7 @@ const handlePrev = () => {
         </li>
         <li className="flex items-center">
           <FontAwesomeIcon
-            icon={faSearch}
+            icon={faSearch  as IconProp}
             className="text-orange-500 text-2xl mr-3"
           />
           <span className="text-gray-700">

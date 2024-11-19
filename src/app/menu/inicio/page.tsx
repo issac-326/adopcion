@@ -13,6 +13,7 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import PetCardSkeleton from '@/components/ui/petCardSkeleton';
 import { loginCometChatUser } from '@/lib/cometChat';
 import { getUserProfile } from '@/app/menu/configuraciones/action';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 
 interface Categoria {
@@ -324,7 +325,7 @@ export default function Home() {
             aria-expanded={isOffcanvasOpen}
             aria-controls="hs-offcanvas-right"
             onClick={toggleOffcanvas}
-          ><FontAwesomeIcon icon={faBell} className="w-6" /></span>
+          ><FontAwesomeIcon icon={faBell as IconProp} className="w-6" /></span>
         </div>
       </div>
 
@@ -451,7 +452,7 @@ export default function Home() {
           <div>
             <MenuButton>
               <div className="flex items-center gap-2 mt-5">
-                <div className="flex gap-2 text-sm text-gray-400 items-center">Ubicación <FontAwesomeIcon icon={faChevronDown} className="w-3" /></div>
+                <div className="flex gap-2 text-sm text-gray-400 items-center">Ubicación <FontAwesomeIcon icon={faChevronDown as IconProp} className="w-3" /></div>
                 <span className="font-extrabold">{depaSeleccionado === 0 ? 'Todos' : departamentos.find(dep => dep.id === depaSeleccionado)?.descripcion},</span> HN
               </div>
             </MenuButton>
@@ -494,7 +495,7 @@ export default function Home() {
             <MenuButton>
               <div className="flex items-center gap-2 mt-5">
                 <div className="flex gap-2 text-sm text-gray-400 items-center">
-                  Sexo <FontAwesomeIcon icon={faChevronDown} className="w-3" />
+                  Sexo <FontAwesomeIcon icon={faChevronDown as IconProp} className="w-3" />
                 </div>
                 <span className="font-extrabold">
                   {opcionesSexo.find((opcion) => opcion.id === sexoSeleccionado)?.descripcion || "Todos"}
@@ -528,7 +529,7 @@ export default function Home() {
             <MenuButton>
               <div className="flex items-center gap-2 mt-5">
                 <div className="flex gap-2 text-sm text-gray-400 items-center">
-                  Edad <FontAwesomeIcon icon={faChevronDown} className="w-3" />
+                  Edad <FontAwesomeIcon icon={faChevronDown as IconProp} className="w-3" />
                 </div>
                 <span className="font-extrabold">
                   {opcionesEdad.find((opcion) => opcion.id === edadSeleccionada)?.descripcion || "Todos"}
@@ -583,7 +584,7 @@ export default function Home() {
               >
                 <p className="font-normal text-base text-center">Todos</p>
                 <FontAwesomeIcon
-                  icon={faPaw}
+                  icon={faPaw as IconProp}
                   rotation={180}
                   className="absolute top-2 right-4 text-[#135556] opacity-30 transform -rotate-12 text-3xl"
                 />
@@ -601,7 +602,7 @@ export default function Home() {
                 >
                   <p className="font-normal text-base text-center">{category.tipo_mascotas}</p>
                   <FontAwesomeIcon
-                    icon={faPaw}
+                    icon={faPaw as IconProp}
                     rotation={180}
                     style={{ color: colorsPaws[index] }}
                     className="absolute top-2 right-4 opacity-30 transform -rotate-12 text-3xl"
