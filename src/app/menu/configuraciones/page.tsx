@@ -53,7 +53,7 @@ const Configuracion = () => {
     const [loadingUser, setLoadingUser] = useState(true);
 
     const router = useRouter();
-/*     localStorage.setItem('selectedIndex', '5'); */
+     localStorage.setItem('selectedIndex', '5'); 
 
     // Efecto para obtener el perfil del usuario al cargar el componente
     useEffect(() => {
