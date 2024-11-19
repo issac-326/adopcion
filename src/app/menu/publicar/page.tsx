@@ -1,8 +1,6 @@
 'use client';
 
 import React, { useEffect, useState, startTransition } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPaw } from '@fortawesome/free-solid-svg-icons';
 import { getDepartamentos } from "@/app/menu/inicio/actions";
 import { Button } from "@/components/ui/button";
 import { publicacionValidator } from '@/validations/publicacion';
@@ -33,7 +31,7 @@ import {
 import { useRouter } from 'next/navigation';
 
 export default function AnimalForm() {
-  localStorage.setItem('selectedIndex', '4');
+/*   localStorage.setItem('selectedIndex', '4'); */
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});

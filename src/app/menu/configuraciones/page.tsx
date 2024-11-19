@@ -40,6 +40,7 @@ interface UserProfileInfoProps {
 
 // Componente principal para la configuración de usuario
 const Configuracion = () => {
+    const [isBrowser, setIsBrowser] = useState(false);
     const [descripcion, setDescripcion] = useState('');
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
@@ -52,7 +53,7 @@ const Configuracion = () => {
     const [loadingUser, setLoadingUser] = useState(true);
 
     const router = useRouter();
-    localStorage.setItem('selectedIndex', '5');
+/*     localStorage.setItem('selectedIndex', '5'); */
 
     // Efecto para obtener el perfil del usuario al cargar el componente
     useEffect(() => {
@@ -135,6 +136,9 @@ const Configuracion = () => {
         setIsReportModalOpen(true);
         setReportSuccess('');
     };
+    if (!isBrowser) {
+        return <div>Cargando...</div>;
+      }
 
     return (
         <div className='mx-4 my-6' >

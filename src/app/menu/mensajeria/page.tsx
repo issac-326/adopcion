@@ -11,6 +11,7 @@ import { IconProp } from "@fortawesome/fontawesome-svg-core";
 
 
 const Chat = () => {
+  const [isBrowser, setIsBrowser] = useState(false);
   localStorage.setItem('selectedIndex', '2'); 
   const [messages, setMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState('');
@@ -26,6 +27,10 @@ const Chat = () => {
   const [modalImage, setModalImage] = useState<File | string>('');
   const [isSendImage, setIsSendImage] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
+  useEffect(() => {
+    setIsBrowser(true);
+  }, []);
 
   //trae el usuario emisor y conversaciones
   useEffect(() => {
@@ -269,6 +274,9 @@ const Chat = () => {
     };
   }, [receiverUID]);
 
+  if (!isBrowser) {
+    return <div>Cargando...</div>;
+  }
   return (
     userEmisor && (
       <div className="flex h-screen max-h-screen w-full bg-gradient-to-br from-[#ebfbfb] via-[#d9f6f6] to-[#c7f1f1] rounded-xl overflow-hidden">

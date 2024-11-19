@@ -12,6 +12,7 @@ export default function Home() {
   const [favoritos, setFavoritos] = useState<Pet[]>([]);
   const [loadingFavorites, setLoadingFavorites] = useState(false);
 
+
   /**
    * Obtiene las publicaciones favoritas del usuario autenticado.
    */
@@ -31,6 +32,7 @@ export default function Home() {
   useEffect(() => {
     obtenerFavoritosUsuario();
   }, []);
+
 
   return (
     <div className='mx-4 my-4' >

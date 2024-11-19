@@ -86,7 +86,7 @@ export default function Home() {
     id: number;
     descripcion: string;
   }
-
+  const [isBrowser, setIsBrowser] = useState(false);
   const [departamentos, setDepartamentos] = useState<Departamento[]>([]);
   const [page, setPage] = useState(0); // Controla la página actual para la paginación
   const observerRef = useRef(null); // Referencia al sentinela
@@ -94,6 +94,10 @@ export default function Home() {
   const [hasMorePets, setHasMorePets] = useState(true);
 
   const [greeting, setGreeting] = useState(''); // Estado para almacenar el saludo
+
+  useEffect(() => {
+    setIsBrowser(true);
+  }, []);
 
   useEffect(() => {
     const fetchGreeting = async () => {
@@ -329,7 +333,9 @@ export default function Home() {
   const toggleOffcanvas = () => {
     setIsOffcanvasOpen(!isOffcanvasOpen);
   };
-
+  if (!isBrowser) {
+    return <div>Cargando...</div>; // o null, o tu componente de carga
+  }
   return (
     <div className='mx-4 my-4' >
       <div id="encabezado" className="mb-2 flex justify-between text-[#03063a]">
