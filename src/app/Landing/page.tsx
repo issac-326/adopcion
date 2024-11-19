@@ -110,7 +110,7 @@ const handlePrev = () => {
     <p className="text-lg mb-6">Conectamos mascotas con sus futuros hogares.</p>
     <button
       className="bg-orange-500 text-white px-6 py-2 rounded-full hover:bg-orange-600 transition"
-      onClick={() => router.push('/Login')}
+      onClick={() => router.push('/login')}
     >
       Comienza a adoptar
     </button>
@@ -122,19 +122,19 @@ const handlePrev = () => {
   <div className="w-4/5 mx-auto max-w-screen-lg">
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {/* Card 1 */}
-      <div className="bg-gray-300 rounded-lg shadow-lg p-6 text-center hover:shadow-xl transition">
+      <div className="bg-gray-300 rounded-lg shadow-lg p-6 text-center hover:bg-gray-400  hover:shadow-xl transition">
         <FontAwesomeIcon icon={faSearch} className="text-4xl text-orange-500 mb-4" />
         <h3 className="text-lg font-bold mb-2">Busca Mascotas</h3>
         <p>Filtra por ubicación, raza o edad para encontrar a tu nueva mascota.</p>
       </div>
       {/* Card 2 */}
-      <div className="bg-gray-300 rounded-lg shadow-lg p-6 text-center hover:shadow-xl transition">
+      <div className="bg-gray-300 rounded-lg shadow-lg p-6 text-center hover:bg-gray-400 hover:shadow-xl transition">
         <FontAwesomeIcon icon={faHeart} className="text-4xl text-orange-500 mb-4" />
         <h3 className="text-lg font-bold mb-2">Adopta</h3>
         <p>Conoce a nuestras mascotas y da un hogar a quien lo necesita.</p>
       </div>
       {/* Card 3 */}
-      <div className="bg-gray-300 rounded-lg shadow-lg p-6 text-center hover:shadow-xl transition">
+      <div className="bg-gray-300 rounded-lg shadow-lg p-6 text-center hover:bg-gray-400  hover:shadow-xl transition">
         <FontAwesomeIcon icon={faPaw} className="text-4xl text-orange-500 mb-4" />
         <h3 className="text-lg font-bold mb-2">Registra Mascotas</h3>
         <p>Publica perfiles de mascotas para ayudar a encontrarlas un hogar.</p>
@@ -306,20 +306,20 @@ const handlePrev = () => {
       <img src="/Gatocat.png" alt="Gatocat" className="rounded-lg mx-auto lg:mx-0" />
     </div>
     <div className="w-full lg:w-1/2 flex flex-col space-y-6">
-      <h2 className="text-3xl font-bold text-gray-800 mb-4">Beneficios de Adoptar</h2>
+      <h2 className="text-3xl font-bold text-black mb-4">Beneficios de Adoptar</h2>
       <div className="flex flex-col lg:flex-row lg:space-x-4 space-y-4 lg:space-y-0">
-        <div className="flex-1 bg-gray-300 p-6 rounded-lg shadow-md hover:shadow-lg transition">
-          <h3 className="text-lg font-bold text-orange-500 mb-4">Salvas una Vida</h3>
-          <p className="text-gray-600">Dar un hogar a una mascota significa salvarla de un refugio o situación difícil.</p>
+        <div className="flex-1 bg-gray-300 p-6 rounded-lg shadow-md hover:bg-gray-400  hover:shadow-lg transition">
+          <h3 className="text-lg font-bold text-orange-600 mb-4">Salvas una Vida</h3>
+          <p className="text-black">Dar un hogar a una mascota significa salvarla de un refugio o situación difícil.</p>
         </div>
-        <div className="flex-1 bg-gray-300 p-6 rounded-lg shadow-md hover:shadow-lg transition">
-          <h3 className="text-lg font-bold text-orange-500 mb-4">Mejoras tu Salud</h3>
-          <p className="text-gray-600">Las mascotas ayudan a reducir el estrés y fomentar la actividad física.</p>
+        <div className="flex-1 bg-gray-300 p-6 rounded-lg shadow-md hover:bg-gray-400  hover:shadow-lg transition">
+          <h3 className="text-lg font-bold text-orange-600 mb-4">Mejoras tu Salud</h3>
+          <p className="text-black">Las mascotas ayudan a reducir el estrés y fomentar la actividad física.</p>
         </div>
       </div>
-      <div className="flex bg-gray-300 p-6 rounded-lg shadow-md hover:shadow-lg transition">
-        <h3 className="text-lg font-bold text-orange-500 mb-4">Cuidas el Medio Ambiente</h3>
-        <p className="text-gray-600">Adoptar ayuda a controlar la sobrepoblación de animales.</p>
+      <div className="flex bg-gray-300 p-6 rounded-lg shadow-md hover:bg-gray-400 hover:shadow-lg transition">
+        <h3 className="text-lg font-bold text-orange-600 mb-4">Cuidas el Medio Ambiente</h3>
+        <p className="text-black">Adoptar ayuda a controlar la sobrepoblación de animales.</p>
       </div>
     </div>
   </div>
