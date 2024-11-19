@@ -2,6 +2,7 @@
 
 import { createClient } from '@/utils/supabase/server';
 import Publicaciones from '@/types/Publicaciones';
+import { getAuthenticatedUserIdOrThrow } from '@/utils/auth/auth';
 
 const supabase = createClient();
 
@@ -74,4 +75,31 @@ export async function updatePet(formData: any, id: string) {
         console.error("Error en la actualización:", error);
         throw error;
     }
+
 }
+
+
+    /**
+ * Obtiene el perfil del usuario autenticado desde la base de datos.
+ * @returns Los datos del perfil del usuario autenticado.
+ * @throws Error si ocurre algún problema al obtener los datos.
+ */
+    export const getUserProfile = async (userId = getAuthenticatedUserIdOrThrow() ) => {
+        try {
+            const { data, error } = await supabase
+                .from('usuarios') // Nombre de la tabla de usuarios
+                .select('*')
+                .eq('id_usuario', userId)
+                .single();
+    
+            if (error) {
+                console.error("Error al obtener el perfil del usuario:", error);
+                throw new Error('No se pudo obtener el perfil del usuario');
+            }
+    
+            return data;
+        } catch (error) {
+            console.error("Error al obtener el perfil del usuario:", error);
+            throw error;
+        }
+    };
