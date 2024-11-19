@@ -20,6 +20,32 @@ interface CometChatResponse {
   // otras propiedades que pueda tener la respuesta
 }
 
+// Define la interfaz para una mascota individual
+interface Mascota {
+  id_publicacion: any;
+  nombre: any;
+  estado_adopcion: any;
+  anios: any;
+  meses: any;
+  ciudad: any;
+  imagen: any;
+  departamentos: {
+    descripcion: any;
+  }[];
+}
+interface Pet {
+  id_publicacion: number;
+  nombre: string;
+  estado_adopcion: string;
+  anios: number;
+  meses: number;
+  ciudad: string;
+  imagen: string;
+  departamentos: {
+    descripcion: string;  // Asegúrate de que esto coincida con tu tipo Pet
+  }[];
+}
+
 interface Categoria {
   id_categoria: number;
   tipo_mascotas: string;
@@ -184,18 +210,23 @@ export default function Home() {
     try {
       console.log("Seleccionando mascotas por categoría, sexo y departamento:", id, id_sexo, id_departamento, page);
       setLoadingPets(true);
-      const limit = 10; // Número de mascotas a cargar por página
+      const limit = 10;
       const offset = page * limit;
-
-      const data: CategoriaEspecificaResponse = await getCategoriaEspecifica(id, id_departamento ?? 0, id_sexo ?? 0, id_edad ?? 0, limit, offset);
-
-      // Si la cantidad de datos retornados es menor que el límite, ya no hay más mascotas para cargar
-      if (data.length < limit) {
-        setHasMorePets(false); // Indica que no hay más mascotas
+    
+      const mascotas = await getCategoriaEspecifica(
+        id, 
+        id_departamento ?? 0, 
+        id_sexo ?? 0, 
+        id_edad ?? 0, 
+        limit, 
+        offset
+      ) as Pet[];  // Usar aserción de tipo aquí
+    
+      if (mascotas.length < limit) {
+        setHasMorePets(false);
       }
-
-      // Añade las nuevas mascotas a la lista existente
-      setSelectedMascotas((prevMascotas) => [...prevMascotas, ...(data ?? [])]);
+    
+      setSelectedMascotas((prevMascotas: Pet[]) => [...prevMascotas, ...mascotas]);
     } catch (error) {
       console.error("Error al obtener la categoría específica:", error);
     } finally {
