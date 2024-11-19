@@ -6,6 +6,7 @@ import Image from "next/image";
 import { faPaw, faKey, faExclamationCircle, faTimes, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 // Tipos de datos para definir las propiedades de los componentes y el perfil de usuario
 interface UserProfile {
@@ -138,7 +139,7 @@ const Configuracion = () => {
     return (
         <div className='mx-4 my-6' >
             <div className="w-full text-center rounded-xl">
-                <FontAwesomeIcon icon={faPaw} className="text-[#ffa07a] text-5xl mx-auto" />
+                <FontAwesomeIcon icon={faPaw as IconProp} className="text-[#ffa07a] text-5xl mx-auto" />
                 <h2 className="text-4xl font-bold mt-2">Configuración</h2>
             </div>
 
@@ -155,11 +156,11 @@ const Configuracion = () => {
             <div className="flex justify-center mt-2">
                 <div className="bg-white rounded-lg w-full p-6 space-y-4">
                     <button onClick={() => { setIsPasswordModalOpen(true); setError(''); setErrorOldPassword(''); }} className="w-full text-lg font-medium text-gray-800 hover:text-[#ffa07a] py-3 flex items-center">
-                        <FontAwesomeIcon icon={faKey} className="mr-3" />
+                        <FontAwesomeIcon icon={faKey as IconProp} className="mr-3" />
                         Cambiar contraseña
                     </button>
                     <button onClick={openReportModal} className="flex items-center w-full text-lg font-medium text-gray-800 hover:text-[#ffa07a] py-3">
-                        <FontAwesomeIcon icon={faExclamationCircle} className="mr-3" />
+                        <FontAwesomeIcon icon={faExclamationCircle as IconProp} className="mr-3" />
                         <span>Reportar problema</span>
                     </button>
                 </div>
@@ -219,7 +220,7 @@ const UserProfileInfo = ({ user, onEdit }: UserProfileInfoProps) => (
             <h1 className="text-xl font-semibold text-gray-1000">{user?.nombre1} {user?.apellido1}</h1>
         </div>
         <div className="flex items-center gap-2 rounded-full absolute bottom-1 right-1 hover:cursor-pointer bg-white text-xs py-1 px-2 w-8 h-8 hover:w-20 transition-all duration-300 ease-in-out overflow-hidden" onClick={onEdit}>
-            <FontAwesomeIcon icon={faPenToSquare} className="text-base" />
+            <FontAwesomeIcon icon={faPenToSquare as IconProp} className="text-base" />
             <span className="text-black transition-opacity duration-300 ease-in-out whitespace-nowrap">editar</span>
         </div>
     </div>
@@ -258,7 +259,7 @@ const Modal = ({ closeModal, title, children }: { closeModal: () => void; title:
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
         <div className="relative bg-white w-full max-w-2xl p-6 rounded-lg shadow-lg mx-4">
             <button onClick={closeModal} className="absolute top-4 right-4 text-gray-600 hover:text-gray-800">
-                <FontAwesomeIcon icon={faTimes} className="text-2xl" />
+                <FontAwesomeIcon icon={faTimes as IconProp} className="text-2xl" />
             </button>
             <h2 className="text-xl font-semibold mb-4">{title}</h2>
             {children}
