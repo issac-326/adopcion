@@ -25,6 +25,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog"
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 export default function PetInformation({ id, id_usuario, isMyPet = false, isInicio = true }: { id: string, id_usuario: string, isMyPet?: boolean, isInicio?: boolean }) {
   const [isLiked, setIsLiked] = useState(false);
@@ -225,7 +226,7 @@ export default function PetInformation({ id, id_usuario, isMyPet = false, isInic
           {/* Botón para regresar */}
           <div className="rounded-full w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center cursor-pointer hover:scale-110" onClick={() => { isInicio ? router.push('/menu/inicio') : router.push('/menu/perfil') }}>
             <button className="ml-[20px] lg:ml-[30px]">
-              <FontAwesomeIcon icon={faAngleLeft} className="text-red-500 text-[24px] lg:text-[32px]" />
+              <FontAwesomeIcon icon={faAngleLeft as IconProp} className="text-red-500 text-[24px] lg:text-[32px]" />
             </button>
           </div>
 
@@ -235,13 +236,13 @@ export default function PetInformation({ id, id_usuario, isMyPet = false, isInic
               <div className="p-3">
                 <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2">{mascota.nombre}</h1>
                 <div className="text-gray-500 flex items-center">
-                  <FontAwesomeIcon icon={faLocationDot} className="text-blue-500 mr-2 sm:text-sm" />
+                  <FontAwesomeIcon icon={faLocationDot as IconProp} className="text-blue-500 mr-2 sm:text-sm" />
                   {mascota.departamentos.descripcion}
                 </div>
               </div>
               {!isMyPet && (<button className="w-8 h-8 sm:w-10 sm:h-10 lg:w-14 lg:h-14 rounded-full bg-white shadow-[0_0px_7px_rgba(0,0,0,0.6)]  cursor-pointer" onClick={handleLike}>
                 <FontAwesomeIcon
-                  icon={faHeart}
+                  icon={faHeart as IconProp}
                   className={`text-[16px] sm:text-[20px] lg:text-[25px] ${isLiked ? 'text-red-500' : 'text-gray-400'}`}
                 />
               </button>)}
@@ -253,7 +254,7 @@ export default function PetInformation({ id, id_usuario, isMyPet = false, isInic
               <div className="flex-1 bg-green-200 p-3 rounded-lg relative transition-transform mr-4 mb-4 lg:mb-0">
                 <h2 className="font-bold">{mascota.sexo ? "Macho" : "Hembra"}</h2>
                 <p className="text-xs text-gray-500">Sexo</p>
-                <FontAwesomeIcon icon={faPaw} className="absolute top-5 right-4 text-green-500 opacity-30 rotate-[-30deg] text-[30px] sm:text-[40px]" />
+                <FontAwesomeIcon icon={faPaw as IconProp} className="absolute top-5 right-4 text-green-500 opacity-30 rotate-[-30deg] text-[30px] sm:text-[40px]" />
               </div>
               <div className="flex-1 bg-orange-200 p-3 rounded-lg relative hover:scale-110 transition-transform mr-4 mb-4 lg:mb-0">
                 <h2 className="font-bold">
@@ -262,12 +263,12 @@ export default function PetInformation({ id, id_usuario, isMyPet = false, isInic
                     : `${mascota.anios} ${mascota.anios === 1 ? 'año' : 'años'}`}
                 </h2>
                 <p className="text-xs text-gray-500">Edad</p>
-                <FontAwesomeIcon icon={faPaw} className="absolute top-5 right-4 text-orange-500 opacity-30 rotate-[-30deg] text-[30px] sm:text-[40px]" />
+                <FontAwesomeIcon icon={faPaw as IconProp} className="absolute top-5 right-4 text-orange-500 opacity-30 rotate-[-30deg] text-[30px] sm:text-[40px]" />
               </div>
               <div className="flex-1 bg-blue-200 p-3 rounded-lg relative transition-transform">
                 <h2 className="font-bold">{mascota.peso} kg</h2>
                 <p className="text-xs text-gray-500">Peso</p>
-                <FontAwesomeIcon icon={faPaw} className="absolute top-5 right-4 text-blue-500 opacity-30 rotate-[-30deg] text-[30px] sm:text-[40px]" />
+                <FontAwesomeIcon icon={faPaw as IconProp} className="absolute top-5 right-4 text-blue-500 opacity-30 rotate-[-30deg] text-[30px] sm:text-[40px]" />
               </div>
             </div>
 
@@ -307,7 +308,7 @@ export default function PetInformation({ id, id_usuario, isMyPet = false, isInic
   }}
 >
   <FontAwesomeIcon
-    icon={faExclamationCircle}
+    icon={faExclamationCircle as IconProp}
     className="text-[28px] sm:text-[32px] lg:text-[40px] text-red-500"
     style={{ textShadow: '0 0 5px rgba(255, 0, 0, 0.3)' }}
   />
@@ -381,7 +382,7 @@ export default function PetInformation({ id, id_usuario, isMyPet = false, isInic
                 onClick={() => router.push(`/menu/perfil/mascotas/${id}/editar`)}
               >
                 <div>Editar</div>
-                <FontAwesomeIcon icon={faPenToSquare} />
+                <FontAwesomeIcon icon={faPenToSquare as IconProp} />
               </div>
 
               <div
@@ -389,7 +390,7 @@ export default function PetInformation({ id, id_usuario, isMyPet = false, isInic
                 onClick={() => { setIsModalOpen(true); setIsAdopted(false) }}
               >
                 <div>Quitar</div>
-                <FontAwesomeIcon icon={faTrashCan} />
+                <FontAwesomeIcon icon={faTrashCan as IconProp} />
               </div>
 
               <div
@@ -397,7 +398,7 @@ export default function PetInformation({ id, id_usuario, isMyPet = false, isInic
                 onClick={() => { setIsModalOpen(true); setIsAdopted(true) }}
               >
                 <div>Adoptado</div>
-                <FontAwesomeIcon icon={faCircleCheck} />
+                <FontAwesomeIcon icon={faCircleCheck as IconProp} />
               </div>
             </div>)}
 
@@ -406,7 +407,7 @@ export default function PetInformation({ id, id_usuario, isMyPet = false, isInic
               onClick={() => { setIsModalOpen(true); setIsAdopted(false) }}
             >
               <div>Quitar</div>
-              <FontAwesomeIcon icon={faTrashCan} />
+              <FontAwesomeIcon icon={faTrashCan as IconProp} />
             </div>)}
 
 
