@@ -192,9 +192,10 @@ export default function AnimalFormEdit({ params }: { params: Params }) {
         startTransition(async () => {
             if (acceptedFiles.length > 0) {
                 // Cambia esta línea para llamar a la función de subir imagen con formDataUpload
+                
                 const formImagen = new FormData();
                 formImagen.append('file', acceptedFiles[0]);
-                const { data: dataClo, error }:{ data: CloudinaryResponse; error: any } = await imagenCloudinary(formImagen);
+                const { data: dataClo, error }: { data: CloudinaryResponse; error: any } = await imagenCloudinary(formImagen);
 
                 console.log("Imagen subida:", dataClo.secure_url);
                 if (formData) {
