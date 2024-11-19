@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import Image from 'next/image';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 const MovableModal = ({ mascota, onClose }) => {
   const [position, setPosition] = useState({ x: 100, y: 100 });
@@ -43,7 +44,7 @@ const MovableModal = ({ mascota, onClose }) => {
           onClick={onClose}
           className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 transition z-10"
         >
-          <FontAwesomeIcon icon={faTimes} size="lg" />
+          <FontAwesomeIcon icon={faTimes as IconProp} size="lg" />
         </button>
 
         {/* Imagen */}

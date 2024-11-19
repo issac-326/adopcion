@@ -6,6 +6,7 @@ import { faAngleLeft, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { faPaperclip, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { faSmile } from '@fortawesome/free-regular-svg-icons';
 import EmojiPicker from 'emoji-picker-react';
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
 
 const Chat = ({ receiverUIDParam, mascota, onRetroceder }:
   { receiverUIDParam: string, mascota: string, onRetroceder: () => void }) => {
@@ -219,7 +220,7 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }:
 
             <div className="absolute top-0 left-0 right-o left-0 m-auto h-full rounded-full w-10 lg:w-12 flex items-center justify-center cursor-pointer hover:scale-110" onClick={() => onRetroceder(true)}>
               <button className="ml-[20px] lg:ml-[30px]">
-                <FontAwesomeIcon icon={faAngleLeft} className="text-gray-300 text-[24px] lg:text-[32px]" />
+                <FontAwesomeIcon icon={faAngleLeft as IconProp} className="text-gray-300 text-[24px] lg:text-[32px]" />
               </button>
             </div>
             <h1 className="text-xl font-medium flex gap-2 items-center">
@@ -326,7 +327,7 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }:
 
                 {/* Botón para seleccionar archivo dentro del input */}
                 <label className="absolute right-10 top-1/2 -translate-y-1/2 cursor-pointer flex items-center justify-center">
-                  <FontAwesomeIcon icon={faPaperclip} className="text-lg text-[#FE8A5B]" />
+                  <FontAwesomeIcon icon={faPaperclip as IconProp} className="text-lg text-[#FE8A5B]" />
                   <input
                     type="file"
                     id="img_file"
@@ -348,7 +349,7 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }:
                   className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer flex items-center justify-center"
                   onClick={() => setShowEmojiPicker((prev) => !prev)}
                 >
-                  <FontAwesomeIcon icon={faSmile} className="text-lg text-[#FE8A5B]" />
+                  <FontAwesomeIcon icon={faSmile as IconProp} className="text-lg text-[#FE8A5B]" />
                 </button>
 
                 {/* Selector de emojis */}
@@ -368,7 +369,7 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }:
                     setNewMessage('');
                   }}
                 >
-                  <FontAwesomeIcon icon={faPaperPlane} />
+                  <FontAwesomeIcon icon={faPaperPlane as IconProp} />
                 </button>
               )}
             </div>
@@ -389,7 +390,7 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }:
                   onClick={() => setOpenImageModal(false)}
                   className="absolute top-2 right-2 text-white bg-gray-700 rounded-full p-3 w-8 h-8 flex items-center justify-center"
                 >
-                  <FontAwesomeIcon icon={faXmark} />
+                  <FontAwesomeIcon icon={faXmark as IconProp} />
                 </button>
                 <div className="flex justify-center w-full h-full">
                   <img

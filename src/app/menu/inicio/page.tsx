@@ -15,6 +15,10 @@ import { loginCometChatUser } from '@/lib/cometChat';
 import { getUserProfile } from '@/app/menu/configuraciones/action';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
+interface CometChatResponse {
+  authToken: string;
+  // otras propiedades que pueda tener la respuesta
+}
 
 interface Categoria {
   id_categoria: number;
@@ -102,22 +106,18 @@ export default function Home() {
     const loginCometChat = async () => {
       try {
         const user = await getUserProfile();
-
-        // Convertir id_usuario a string
         const userIdAsString = user.id_usuario.toString();
-
-        // Iniciar sesión en CometChat
+        
         const response = await loginCometChatUser(userIdAsString, user.nombre1 + ' ' + user.apellido1, user.imagen);
         
-        if (response && response.authToken) {
-          // Almacenar el authToken en localStorage
+        if (response && 'authToken' in response) {
           localStorage.setItem('authToken', response.authToken);
         }
       } catch (error) {
         console.error("Error al obtener el perfil del usuario:", error);
       }
     };
-
+  
     loginCometChat();
   }, []);
 
