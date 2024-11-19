@@ -110,7 +110,7 @@ export default function Home() {
         
         const response = await loginCometChatUser(userIdAsString, user.nombre1 + ' ' + user.apellido1, user.imagen);
         
-        if (response && 'authToken' in response) {
+        if (response && 'authToken' in response && typeof response.authToken === 'string') {
           localStorage.setItem('authToken', response.authToken);
         }
       } catch (error) {
@@ -120,7 +120,7 @@ export default function Home() {
   
     loginCometChat();
   }, []);
-
+  
   useLayoutEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
