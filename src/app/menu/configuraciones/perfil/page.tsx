@@ -11,6 +11,7 @@ import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft } from "@fortawesome/free-solid-svg-icons";
 import { PhotoIcon } from "@heroicons/react/24/solid";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
 
 const ProfilePage = () => {
   const [nombre1, setNombre1] = useState("");
@@ -187,7 +188,7 @@ const ProfilePage = () => {
         </div>
         <div className="absolute top-4 left-4 rounded-full w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center cursor-pointer hover:scale-110" onClick={() => { router.push('/menu/perfil') }}>
           <button className="ml-[20px] lg:ml-[30px]">
-            <FontAwesomeIcon icon={faAngleLeft} className="text-red-500 text-[24px] lg:text-[32px]" />
+            <FontAwesomeIcon icon={faAngleLeft as IconProp} className="text-red-500 text-[24px] lg:text-[32px]" />
           </button>
         </div>
       </header>
