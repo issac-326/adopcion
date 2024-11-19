@@ -12,7 +12,7 @@ import InputFieldSmall from '@/components/ui/InputFieldSmall';
 import Departamentos from '@/types/Departamentos';
 import InputFieldFull from '@/components/ui/InputFieldFull';
 import { Textarea } from "@/components/ui/textarea"
-import { getPet, updatePet } from './actions';
+import { getPet, updatePet,getUserProfile } from './actions';
 import { useRouter } from 'next/navigation';
 import { toast } from "react-toastify";
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
@@ -70,7 +70,7 @@ export default function AnimalFormEdit({ params }: { params: Params }) {
     const [text, setText] = useState('');
     const [isEditing, setIsEditing] = useState(false);
     const [image, setImage] = useState(''); // Estado para manejar la imagen
-    const userId = localStorage.getItem('userId');
+    const userId =  getUserProfile();
 
     const router = useRouter();
 
