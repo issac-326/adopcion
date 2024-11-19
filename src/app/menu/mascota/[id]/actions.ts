@@ -102,12 +102,20 @@ interface Publicacion {
   ciudad: string;
   sexo: string;
   descripcion: string;
-  departamentos: { descripcion: string };
-  usuarios: { nombre1: string; imagen: string };
-  categorias: { tipo_mascotas: string };
+  departamentos: { descripcion: string }[]; // Ahora es un array
+  usuarios: {
+    nombre1: string;
+    apellido1: string;
+    imagen: string;
+    id_usuario: number;
+  }[]; // También es un array
+  categorias: { 
+    tipo_mascotas: string 
+  }[]; // También es un array
   estado_adopcion: string;
   visible: boolean;
 }
+
 
 const supabase = createClient();
 

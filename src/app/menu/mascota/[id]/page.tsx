@@ -5,7 +5,11 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getAuthenticatedUserIdForPage } from './actions';
 
-export default function MascotaPage({ params }) {
+interface Params {
+  id: string;
+}
+
+export default function MascotaPage({ params }: { params: Params }) {
   const router = useRouter();
   const { id } = params; // Obtenemos el ID de la mascota desde la URL
    // Obtiene el ID del usuario autenticado desde el servidor

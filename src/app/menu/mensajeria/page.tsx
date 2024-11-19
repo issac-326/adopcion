@@ -91,7 +91,7 @@ const Chat = () => {
 
     setLoadingMessages(true);
 
-    const obtenerUsuarioPorUID = (uid) => {
+    const obtenerUsuarioPorUID = (uid: string) => {
       return new Promise((resolve, reject) => {
         CometChat.getUser(uid).then(
           (user) => {
@@ -129,7 +129,7 @@ const Chat = () => {
       return;
     }
 
-    var mediaMessage = new CometChat.MediaMessage(
+    const mediaMessage = new CometChat.MediaMessage(
       receiverUID,
       file,
       CometChat.MESSAGE_TYPE.FILE,
@@ -150,6 +150,10 @@ const Chat = () => {
   }
 
   const fetchMessages = () => {
+    if (!receiverUID) {
+      console.log("Error: receiverUID is null or undefined");
+      return; // No hacemos la solicitud si receiverUID es null o undefined
+    }
     setLoadingMessages(true);
     const limit = 30;
     const messagesRequest = new CometChat.MessagesRequestBuilder()

@@ -146,7 +146,7 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }:
       return;
     }
 
-    var mediaMessage = new CometChat.MediaMessage(
+    const mediaMessage = new CometChat.MediaMessage(
       receiverUIDParam,
       file,
       CometChat.MESSAGE_TYPE.FILE,

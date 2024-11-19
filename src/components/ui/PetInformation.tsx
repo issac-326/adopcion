@@ -224,7 +224,7 @@ export default function PetInformation({ id, id_usuario, isMyPet = false, isInic
         {/* Información */}
         <div className="flex-1 flex flex-col justify-between p-8">
           {/* Botón para regresar */}
-          <div className="rounded-full w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center cursor-pointer hover:scale-110" onClick={() => { isInicio ? router.push('/menu/inicio') : router.push('/menu/perfil') }}>
+          <div className="rounded-full w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center cursor-pointer hover:scale-110" onClick={() => isInicio ? router.push('/menu/inicio') : router.push('/menu/perfil')}>
             <button className="ml-[20px] lg:ml-[30px]">
               <FontAwesomeIcon icon={faAngleLeft as IconProp} className="text-red-500 text-[24px] lg:text-[32px]" />
             </button>

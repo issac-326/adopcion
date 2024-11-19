@@ -266,7 +266,7 @@ const handlePrev = () => {
         Historias de Adopción
       </h2>
       <blockquote className="italic text-gray-600 text-lg mb-6">
-        "{testimonios[testimonioIndex].texto}"
+       {testimonios[testimonioIndex].texto}
       </blockquote>
       <hr className="w-1/3 border-orange-500 mb-6" />
       {/* Foto de perfil e información del usuario */}

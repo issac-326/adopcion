@@ -3,7 +3,7 @@ interface Publicaciones {
     fecha_creacion?: string;
     id_usuario?: string;
     nombre: string;
-    sexo: Boolean;
+    sexo: boolean;
     tipo_animal: number;
     anos: number;
     meses: number;
