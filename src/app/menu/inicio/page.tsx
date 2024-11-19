@@ -69,6 +69,7 @@ const colors = ["#f39893", "#7d86a5", "#f5a473", "#acd094"];
 const colorsPaws = ["#9e4f4a", "#4a6079", "#a95b3c", "#6f8e65"];
 
 export default function Home() {
+  const [isBrowser, setIsBrowser] = useState(false);
   localStorage.setItem('selectedIndex', '0');
   const depa = localStorage.getItem('depaSelectedIndex') ? localStorage.getItem('depaSelectedIndex') : localStorage.setItem('depaSelectedIndex', '0');
   const [selectedMascotas, setSelectedMascotas] = useState<Pet[]>([]);
@@ -86,7 +87,6 @@ export default function Home() {
     id: number;
     descripcion: string;
   }
-  const [isBrowser, setIsBrowser] = useState(false);
   const [departamentos, setDepartamentos] = useState<Departamento[]>([]);
   const [page, setPage] = useState(0); // Controla la página actual para la paginación
   const observerRef = useRef(null); // Referencia al sentinela
