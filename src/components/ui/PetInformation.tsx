@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { getMascotaEspecifica } from '@/app/menu/mascota/[id]/actions';
+import { getMascotaEspecifica,reportarUsuario } from '@/app/menu/mascota/[id]/actions';
 import { verificacionFavoritos, favorito } from '@/app/menu/favoritos/actions';
 import Image from 'next/image';
 import { faHeart, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleLeft, faLocationDot, faPaw } from '@fortawesome/free-solid-svg-icons';
+import { faAngleLeft, faLocationDot, faPaw, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from "next/navigation";
 import PetInformationSkeleton from '@/components/ui/PetInformationSkeleton';
 import { faCircleCheck, faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
@@ -15,6 +15,8 @@ import { deleteMascota, markAsAdopted } from '@/app/menu/perfil/mascotas/[id]/ac
 import confetti from 'canvas-confetti';
 import { toast } from 'react-toastify';
 import Chat from '@/components/Chat';
+import PetInfoModal from './PetInfoModal';
+
 
 import {
   Dialog,
@@ -27,6 +29,12 @@ import {
 export default function PetInformation({ id, id_usuario, isMyPet = false, isInicio = true }: { id: string, id_usuario: string, isMyPet?: boolean, isInicio?: boolean }) {
   const [isLiked, setIsLiked] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [descripcion, setDescripcion] = useState('');
+  const [error, setError] = useState('');
+  const [reportSuccess, setReportSuccess] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  localStorage.setItem('selectedIndex', 'null');
 
   interface Mascota {
     nombre: string;
@@ -91,6 +99,41 @@ export default function PetInformation({ id, id_usuario, isMyPet = false, isInic
       startVelocity: 45,
     });
   };
+
+  const handleUserReportSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setError('');
+    setReportSuccess('');
+    setIsLoading(true);
+  
+    if (!descripcion.trim()) {
+      setError('La descripción no puede estar vacía.');
+      setIsLoading(false);
+      return;
+    }
+  
+    if (!mascota?.usuarios.id_usuario) {
+      setError('No se pudo identificar al propietario de la mascota.');
+      setIsLoading(false);
+      return;
+    }
+  
+    try {
+      const formData = new FormData();
+      formData.append('descripcion', descripcion);
+  
+      await reportarUsuario(Number(mascota.usuarios.id_usuario), formData); // Sin conversión a número
+      toast.success('Usuario reportado con éxito.');
+      setDescripcion('');
+      setIsReportModalOpen(false); // Limpia y cierra el modal
+    } catch (error) {
+      console.error('Error al reportar usuario:', error);
+      setError('Error al reportar al usuario.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
 
   useEffect(() => {
     const fetchMascota = async () => {
@@ -160,9 +203,11 @@ export default function PetInformation({ id, id_usuario, isMyPet = false, isInic
   return (
     isChatOpen ? 
     <>
+      <PetInfoModal mascota={mascota} />
       <Chat receiverUIDParam={String(mascota.usuarios.id_usuario)} mascota={mascota.nombre} onRetroceder={() => setIsChatOpen(false)}/>
     </> :
-      <div className="bg-white min-h-screen flex flex-col lg:flex-row-reverse p-5">
+    <>
+      <div className="bg-white min-h-screen flex flex-col lg:flex-row-reverse p-5 rounded-lg">
         {/* Imagen de la mascota */}
         <div className="flex-1 flex justify-center items-center rounded-br-[50px] mt-8 lg:mt-0">
           <Image
@@ -191,7 +236,7 @@ export default function PetInformation({ id, id_usuario, isMyPet = false, isInic
                 <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2">{mascota.nombre}</h1>
                 <div className="text-gray-500 flex items-center">
                   <FontAwesomeIcon icon={faLocationDot} className="text-blue-500 mr-2 sm:text-sm" />
-                  {mascota.ciudad}, {mascota.departamentos[0]?.descripcion}
+                  {mascota.departamentos.descripcion}
                 </div>
               </div>
               {!isMyPet && (<button className="w-8 h-8 sm:w-10 sm:h-10 lg:w-14 lg:h-14 rounded-full bg-white shadow-[0_0px_7px_rgba(0,0,0,0.6)]  cursor-pointer" onClick={handleLike}>
@@ -228,35 +273,95 @@ export default function PetInformation({ id, id_usuario, isMyPet = false, isInic
 
             {/* Descripción general */}
             <div className="mt-8 mb-8 text-sm sm:text-base">
-              <div><span className="font-semibold">Color:</span> {mascota.color || 'Indefinido'}</div>
-              {mascota.vacunas !== null && (
-                <div><span className="font-semibold">Vacunas:</span> {mascota.vacunas ? 'Sí' : 'No'}</div>
-              )}
-              {mascota.condicion_medica && (
-                <div><span className="font-semibold">Condición Médica:</span> {mascota.condicion_medica}</div>
-              )}
-              <div><span className="font-semibold">Especie:</span> {mascota.categorias[0]?.tipo_mascotas || 'Indefinido'}</div>
+              
+              <div><span className="font-semibold">Especie:</span> {mascota.categorias.tipo_mascotas || 'Indefinido'}</div>
               <div className="text-base mt-4"><span className="font-semibold">Descripción:</span> {mascota.descripcion || 'Indefinido'}</div>
             </div>
 
             {/* Dueño */}
             {!isMyPet && (
-              <div className="flex items-center mb-6">
-                <div className="w-[30px] h-[30px] sm:w-[40px] sm:h-[40px] lg:w-[60px] lg:h-[60px] overflow-hidden rounded-full">
-                  <Image
-                    src={mascota.usuarios.imagen}
-                    alt="Propietario"
-                    width={60}
-                    height={60}
-                    className="object-cover"
-                  />
-                </div>
-                <div className="ml-4">
-                  <p className="font-bold">{mascota.usuarios.nombre1}</p>
-                  <p className="text-gray-500">Propietario</p>
-                </div>
-              </div>
+             <div className="flex items-center">
+             <div className="flex items-center">
+               <div className="w-[30px] h-[30px] sm:w-[40px] sm:h-[40px] lg:w-[60px] lg:h-[60px] overflow-hidden rounded-full">
+                 <Image
+                   src={mascota.usuarios.imagen}
+                   alt="Propietario"
+                   width={60}
+                   height={60}
+                   className="object-cover"
+                 />
+               </div>
+               <div className="ml-4">
+                 <p className="font-bold">{mascota.usuarios.nombre1}</p>
+                 <p className="text-gray-500">Propietario</p>
+               </div>
+             </div>
+{/* Botón de Reporte */}
+<button
+  className="ml-auto w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full bg-white shadow-[0_0px_7px_rgba(0,0,0,0.6)] flex items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors"
+  onClick={() => {
+    setIsReportModalOpen(true);
+    setError('');
+    setReportSuccess('');
+    setDescripcion('');
+  }}
+>
+  <FontAwesomeIcon
+    icon={faExclamationCircle}
+    className="text-[28px] sm:text-[32px] lg:text-[40px] text-red-500"
+    style={{ textShadow: '0 0 5px rgba(255, 0, 0, 0.3)' }}
+  />
+</button>
+
+
+
+           </div>
+           
             )}
+
+              {/* Modal de Reporte */}
+        <Dialog open={isReportModalOpen} onOpenChange={(open) => {
+                setIsReportModalOpen(open);
+                if (!open) {
+                  setError('');
+                  setReportSuccess('');
+                  setDescripcion('');
+                }
+              }}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Reportar Propietario</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleUserReportSubmit} className="flex flex-col gap-4">
+              <label className="text-sm font-medium text-gray-700">Razón del reporte:</label>
+              <textarea
+                className="p-2 rounded-lg border"
+                name="descripcion"
+                rows={4}
+                maxLength={300}
+                placeholder="Describe el motivo del reporte (máximo 300 caracteres)"
+                value={descripcion}
+                onChange={(e) => setDescripcion(e.target.value)}
+                disabled={isLoading} // Deshabilita mientras carga
+              ></textarea>
+              {error && <p className="text-red-600 text-sm">{error}</p>}
+              {reportSuccess && <p className="text-green-600 text-sm">{reportSuccess}</p>}
+              <DialogFooter>
+                <Button
+                  type="submit"
+                  disabled={isLoading || !descripcion.trim()}
+                  className={`py-2 px-4 font-semibold rounded-lg ${
+                    descripcion.trim()
+                      ? 'bg-[#ffa07a] text-white hover:bg-[#ff9060]'
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  }`}
+                >
+                  {isLoading ? 'Enviando...' : 'Reportar'}
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+      </Dialog>
 
             {/* Botón de Adoptar */}
             {!isMyPet && mascota.estado_adopcion && (
@@ -336,5 +441,7 @@ export default function PetInformation({ id, id_usuario, isMyPet = false, isInic
 
 
       </div>
+    </>
+      
   );
 }

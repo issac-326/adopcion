@@ -23,7 +23,7 @@ export const initializeCometChat = () => {
   );
 };
 
-export const loginCometChatUser = (UID: string, name : string) => {
+export const loginCometChatUser = (UID: string, name : string, imagen : string) => {
   if (typeof window !== 'undefined') {
     return initializeCometChat().then(() => {
       return CometChat.login(UID, authKey).then(
@@ -38,6 +38,7 @@ export const loginCometChatUser = (UID: string, name : string) => {
             const newUser = new CometChat.User(UID);
             newUser.setUid(UID); // Puedes asignar cualquier nombre
             newUser.setName(name);
+            newUser.setAvatar(imagen);
 
             console.log("Creating new user:", newUser);
 
