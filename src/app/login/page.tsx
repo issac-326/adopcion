@@ -34,9 +34,17 @@ export default function Login() {
     }
 
     try {
-      // Llama a la función de autenticación y redirige en caso de éxito
-      await loginUser(formData);
+      // Llama a la función de autenticación y obtiene los datos del usuario
+    const userData = await loginUser(formData); // `loginUser` retorna { id_usuario, id_tipo_usuario }
+
+    // Redirige según el rol del usuario
+    if (userData.id_tipo_usuario === 1) {
+      // Redirige al panel de administración si es administrador
+      router.push('/admin');
+    } else {
+      // Redirige al inicio si es usuario normal
       router.push('/menu/inicio');
+    }
     } catch (error) {
       // Maneja errores de autenticación y muestra mensajes apropiados
       if (error instanceof Error) {

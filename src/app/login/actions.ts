@@ -28,7 +28,7 @@ export const loginUser = async (formData: FormData) => {
   // Realiza una consulta en la tabla `usuarios` para encontrar el usuario por correo
   const { data, error } = await supabase
     .from('usuarios')
-    .select('id_usuario, correo, contrasena')
+    .select('id_usuario, correo, contrasena,id_tipo_usuario')
     .eq('correo', email)
     .single();
 
