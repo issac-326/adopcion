@@ -134,6 +134,7 @@ export default function Register() {
 
     if (pageIndex === 0 && response.errors.firstName === '' && response.errors.lastName1 === '') {
       {
+        setErrors({})
         setPageIndex((prevIndex) => (prevIndex + 1) % 3);
       }
     } else if (pageIndex === 1 && response.errors.email === '' && response.errors.phone === '' && response.errors.password === '' && response.errors.confirmPassword === '') {
@@ -265,10 +266,11 @@ export default function Register() {
 
         {/* Imagen de perfil y área de arrastrar y soltar */}
         {showAvatarInputs && (
-          <div className="flex flex-col items-center justify-center mb-6">
+          <div className="flex flex-col items-center justify-center mb-6 w-[40%] gap-2">
             <img src={imagen} alt="Imagen de perfil" className="w-40 h-40 rounded-full mb-4 object-cover" />
+            <p className="text-xs text-center"><span className="font-medium">¡Personaliza tu perfil</span>! Elige una foto que te represente. Si no seleccionas una, asignaremos una predeterminada, y siempre podrás cambiarla más adelante.</p>
 
-            <div className=" flex items-center justify-center w-full">
+            <div className="flex items-center justify-center w-full mt-5">
               <div
                 {...getRootProps()}
                 className={` rounded-full px-4 py-2 transition duration-300 ease-in-out flex flex-col justify-center items-center border ${isDragActive ? "border-blue-500 bg-blue-100" : "border-gray-300"

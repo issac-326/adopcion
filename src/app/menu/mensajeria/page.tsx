@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import { useState, useEffect, useRef, use } from "react";
+import { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane, faPaperclip } from "@fortawesome/free-solid-svg-icons";
 import { CometChat } from "@cometchat-pro/chat";
@@ -50,6 +50,8 @@ const Chat = () => {
   //conexion con cometChat
   useEffect(() => {
     const initCometChat = async () => {
+      if (typeof window === 'undefined') return;
+
       const appID = process.env.NEXT_PUBLIC_COMETCHAT_APP_ID;
       const region = process.env.NEXT_PUBLIC_COMETCHAT_REGION;
 
@@ -68,6 +70,8 @@ const Chat = () => {
     };
 
     const loginToCometChat = () => {
+      if (typeof window === 'undefined') return;
+
       const authToken = localStorage.getItem('authToken');
       if (!authToken) {
         console.error("No se encontró el authToken.");

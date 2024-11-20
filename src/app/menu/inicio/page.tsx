@@ -6,7 +6,7 @@ import Pet from "@/types/Pet";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { faChevronDown, faBell, faPaw } from '@fortawesome/free-solid-svg-icons';
+import { faChevronDown, faBell, faPaw, faMoon } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getCategorias, getCategoriaEspecifica, getDepartamentos } from "@/app/menu/inicio/actions"; // Corrige según la ruta correcta de tus acciones
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
@@ -106,11 +106,11 @@ export default function Home() {
       let greetingMessage = '';
 
       if (currentHour < 12) {
-        greetingMessage = `¡Hola, buenos días ${user.nombre1}!`;
+        greetingMessage = `¡Hola, buenos días ${user.nombre1}! ☀️`;
       } else if (currentHour < 18) {
-        greetingMessage = `¡Hola, buenas tardes ${user.nombre1}!`;
+        greetingMessage = `¡Hola, buenas tardes ${user.nombre1}! ☀️`;
       } else {
-        greetingMessage = `¡Hola, buenas noches ${user.nombre1}!`;
+        greetingMessage = `¡Hola, buenas noches ${user.nombre1}!🌙`;
       }
 
       setGreeting(greetingMessage); // Guarda el saludo en el estado
@@ -341,7 +341,7 @@ export default function Home() {
       <div id="encabezado" className="mb-2 flex justify-between text-[#03063a]">
         {/* esta renderiza toda la parte de arriba del home */}
         <h1 className="text-2xl font-normal text-center text-gray-700">
-          {greeting || 'Cargando saludo...'} {/* Muestra un texto mientras carga */}
+          {greeting} {/* Muestra un texto mientras carga */}
         </h1>
 
         <div className="flex gap-2">
