@@ -150,7 +150,7 @@ const handlePrev = () => {
     {/* Imagen */}
     <div className="w-full md:w-1/2 mb-8 md:mb-0">
       <Image
-        src="/perro-2.png"
+        src="/Perro-2.png"
         alt="Perro feliz"
         width={600}
         height={500}
