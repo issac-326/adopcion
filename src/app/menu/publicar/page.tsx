@@ -31,8 +31,8 @@ import {
 import { useRouter } from 'next/navigation';
 
 export default function AnimalForm() {
-  if (typeof window !== 'undefined'){
-    localStorage.setItem('selectedIndex', '4'); 
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('selectedIndex', '4');
   }
 
   const router = useRouter();
@@ -43,6 +43,7 @@ export default function AnimalForm() {
   const [selectedSexo, setSelectedSexo] = useState("");
   const [selectedDepartamento, setSelectedDepartamento] = useState("");
   const [departamentos, setDepartamentos] = useState<Departamentos[]>([]);
+  const [sending, setSending] = useState(false);
   const [formData, setFormData] = useState({
     nombre: '',
     sexo: '',
@@ -60,7 +61,7 @@ export default function AnimalForm() {
   };
 
   const handleRefresh = () => {
-    if(typeof window !== 'undefined') {
+    if (typeof window !== 'undefined') {
       window.location.reload();
     }
   };
@@ -88,6 +89,7 @@ export default function AnimalForm() {
 
   // Función para manejar el envío del formulario y crear una nueva publicación
   const handleSignUp = async (formData: FormData) => {
+    setSending(true);
     formData.append('sexo', selectedSexo);
     formData.append('tipoAnimal', selectedTipoAnimal);
     formData.append('departamento', selectedDepartamento);
@@ -122,10 +124,15 @@ export default function AnimalForm() {
           console.error("Error al crear publicación:", error);
           toast.error("Error al crear la publicación.");
         }
+        finally{
+          setSending(false);
+        }
       });
     } else {
       setErrors(formResult.errors);
     }
+
+    setSending(false);
   };
 
   // Carga de departamentos al montar el componente
@@ -202,59 +209,66 @@ export default function AnimalForm() {
         </div>
 
         <div className='grid gap-4 grid-cols-2'>
-          <InputFieldSmall
-            id="anos"
-            name="anos"
-            type="text"
-            placeholder="Años"
-            value={formData.anos}
-            onChange={handleInputChange}
-            required
-          />
-          {errors.anos && <div className="text-red-500 animate-shake pl-5 text-xs mt-2">{errors.anos}</div>}
-
-          <InputFieldSmall
-            id="meses"
-            name="meses"
-            type="text"
-            placeholder="Meses"
-            value={formData.meses}
-            onChange={handleInputChange}
-            required
-          />
-          {errors.meses && <div className="text-red-500 animate-shake pl-5 text-xs mt-2">{errors.meses}</div>}
+          <div>
+            <InputFieldSmall
+              id="anos"
+              name="anos"
+              type="text"
+              placeholder="Años"
+              value={formData.anos}
+              onChange={handleInputChange}
+              required
+            />
+            {errors.anos && <div className="text-red-500 animate-shake pl-5 text-xs mt-2">{errors.anos}</div>}
+          </div>
+          <div>
+            <InputFieldSmall
+              id="meses"
+              name="meses"
+              type="text"
+              placeholder="Meses"
+              value={formData.meses}
+              onChange={handleInputChange}
+              required
+            />
+            {errors.meses && <div className="text-red-500 animate-shake pl-5 text-xs mt-2">{errors.meses}</div>}
+          </div>
         </div>
 
         <div className='grid gap-4 grid-cols-2'>
-          <InputFieldSmall
-            id="peso"
-            name="peso"
-            type="text"
-            placeholder="Peso (kg)"
-            value={formData.peso}
-            onChange={handleInputChange}
-            required
-          />
-          {errors.peso && <p className="text-red-500 animate-shake pl-5 text-xs mt-2">{errors.peso}</p>}
+          <div>
+            <InputFieldSmall
+              id="peso"
+              name="peso"
+              type="text"
+              placeholder="Peso (kg)"
+              value={formData.peso}
+              onChange={handleInputChange}
+              required
+            />
+            {errors.peso && <p className="text-red-500 animate-shake pl-5 text-xs mt-2">{errors.peso}</p>}
+          </div>
 
-          <Select value={selectedDepartamento} onValueChange={setSelectedDepartamento}>
-            <SelectTrigger className="rounded-full shadow-[0_4px_4px_rgba(0,0,0,0.25)] mb-2">
-              <SelectValue placeholder="Selecciona el departamento" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Departamento</SelectLabel>
-                {departamentos.length > 0 ? (
-                  departamentos.map((departamento, index) => (
-                    <SelectItem key={index} value={departamento.id.toString()}>{departamento.descripcion}</SelectItem>
-                  ))
-                ) : (
-                  <SelectItem value="perro">No hay departamentos disponibles</SelectItem>
-                )}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          {errors.departamento && <div className="text-red-500 animate-shake pl-5 text-xs mt-2">{errors.departamento}</div>}
+          <div>
+            <Select value={selectedDepartamento} onValueChange={setSelectedDepartamento}>
+              <SelectTrigger className="rounded-full shadow-[0_4px_4px_rgba(0,0,0,0.25)] mb-2">
+                <SelectValue placeholder="Selecciona el departamento" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Departamento</SelectLabel>
+                  {departamentos.length > 0 ? (
+                    departamentos.map((departamento, index) => (
+                      <SelectItem key={index} value={departamento.id.toString()}>{departamento.descripcion}</SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="perro">No hay departamentos disponibles</SelectItem>
+                  )}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            {errors.departamento && <div className="text-red-500 animate-shake pl-5 text-xs mt-2">{errors.departamento}</div>}
+          </div>
         </div>
 
         <Textarea
@@ -291,7 +305,7 @@ export default function AnimalForm() {
           formAction={handleSignUp}
           className="hover:scale-105 hover:bg-[#ff9060] my-20 w-[270px] h-[40px] bg-[#FFA07A] rounded-[20px] text-sm text-white mx-auto"
         >
-          Dar en adopción
+          {sending ? 'Publicando...' : 'Dar en adopción'}
         </button>
 
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>

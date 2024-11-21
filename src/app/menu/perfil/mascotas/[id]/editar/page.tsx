@@ -267,7 +267,7 @@ export default function AnimalFormEdit({ params }: { params: Params }) {
     }
 
     return (
-        <>
+        <div className='mb-10'>
 
             {pet && formData && (<>
                 <header className='relative w-full'>
@@ -466,7 +466,7 @@ export default function AnimalFormEdit({ params }: { params: Params }) {
                         />
                     )}
 
-                    <button onClick={handleEdit} className="hover:scale-105 hover:bg-[#ff9060] mt-16 mx-auto w-[270px] h-[40px] bg-[#FFA07A] rounded-[20px] text-sm text-white">
+                    <button onClick={handleEdit} className="hover:scale-105 hover:bg-[#ff9060] mt-16 mx-auto w-[270px] h-[40px] bg-[#FFA07A] rounded-[20px] text-sm text-white mb-16">
                         Actualizar
                     </button>
 
@@ -500,6 +500,6 @@ export default function AnimalFormEdit({ params }: { params: Params }) {
                     </Dialog>
 
                 </form></>)}
-        </>
+        </div>
     );
 }
