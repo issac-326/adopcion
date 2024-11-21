@@ -31,7 +31,10 @@ import {
 import { useRouter } from 'next/navigation';
 
 export default function AnimalForm() {
-  localStorage.setItem('selectedIndex', '4'); 
+  if (typeof window !== 'undefined'){
+    localStorage.setItem('selectedIndex', '4'); 
+  }
+
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -57,7 +60,9 @@ export default function AnimalForm() {
   };
 
   const handleRefresh = () => {
-    window.location.reload();
+    if(typeof window !== 'undefined') {
+      window.location.reload();
+    }
   };
 
   const {

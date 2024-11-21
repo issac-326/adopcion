@@ -7,7 +7,9 @@ import { getFavoritos } from './actions';
 import PetCardSkeleton from '@/components/ui/petCardSkeleton';
 
 export default function Home() {
-  localStorage.setItem('selectedIndex', '1'); // Establece la pestaña seleccionada en "Favoritos"
+  if (typeof window !== 'undefined'){
+    localStorage.setItem('selectedIndex', '1');
+  }
 
   const [favoritos, setFavoritos] = useState<Pet[]>([]);
   const [loadingFavorites, setLoadingFavorites] = useState(false);

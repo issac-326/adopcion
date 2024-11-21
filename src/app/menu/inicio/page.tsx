@@ -11,7 +11,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getCategorias, getCategoriaEspecifica, getDepartamentos } from "@/app/menu/inicio/actions"; // Corrige según la ruta correcta de tus acciones
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import PetCardSkeleton from '@/components/ui/petCardSkeleton';
-import { loginCometChatUser } from '@/lib/cometChat';
 import { getUserProfile } from '@/app/menu/configuraciones/action';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
@@ -70,8 +69,13 @@ const colorsPaws = ["#9e4f4a", "#4a6079", "#a95b3c", "#6f8e65"];
 
 export default function Home() {
   const [isBrowser, setIsBrowser] = useState(false);
-  localStorage.setItem('selectedIndex', '0');
-  const depa = localStorage.getItem('depaSelectedIndex') ? localStorage.getItem('depaSelectedIndex') : localStorage.setItem('depaSelectedIndex', '0');
+  let depa = typeof window !== 'undefined' ? localStorage.getItem('depaSelectedIndex') : '0';
+  if (typeof window !== 'undefined') {
+    depa = localStorage.getItem('depaSelectedIndex') ? localStorage.getItem('depaSelectedIndex') : '0';
+    if (!localStorage.getItem('depaSelectedIndex')) {
+      localStorage.setItem('depaSelectedIndex', '0');
+    }
+  }
   const [selectedMascotas, setSelectedMascotas] = useState<Pet[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number>(0);
   const [categories, setCategories] = useState<Categoria[]>([]);
@@ -95,6 +99,10 @@ export default function Home() {
 
   const [greeting, setGreeting] = useState(''); // Estado para almacenar el saludo
 
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('selectedIndex', '0');
+  }
+
   useEffect(() => {
     setIsBrowser(true);
   }, []);
@@ -106,11 +114,11 @@ export default function Home() {
       let greetingMessage = '';
 
       if (currentHour < 12) {
-        greetingMessage = `¡Hola, buenos días ${user.nombre1}! ☀️`;
+        greetingMessage = `¡Buenos días ${user.nombre1}! ☀️`;
       } else if (currentHour < 18) {
-        greetingMessage = `¡Hola, buenas tardes ${user.nombre1}! ☀️`;
+        greetingMessage = `¡Buenas tardes ${user.nombre1}! ☀️`;
       } else {
-        greetingMessage = `¡Hola, buenas noches ${user.nombre1}!🌙`;
+        greetingMessage = `¡Buenas noches ${user.nombre1}!🌙`;
       }
 
       setGreeting(greetingMessage); // Guarda el saludo en el estado
@@ -124,11 +132,15 @@ export default function Home() {
       try {
         const user = await getUserProfile();
         const userIdAsString = user.id_usuario.toString();
+
+        const { loginCometChatUser } = await import("@/lib/cometChat");
         
         const response = await loginCometChatUser(userIdAsString, user.nombre1 + ' ' + user.apellido1, user.imagen);
         
         if (response && 'authToken' in response && typeof response.authToken === 'string') {
-          localStorage.setItem('authToken', response.authToken);
+          if (typeof window !== 'undefined'){
+            localStorage.setItem('authToken', response.authToken);
+          }
         }
       } catch (error) {
         console.error("Error al obtener el perfil del usuario:", error);
@@ -232,7 +244,9 @@ export default function Home() {
       return;
     }
 
-    localStorage.setItem('depaSelectedIndex', (depaSeleccionado ?? 0).toString());
+    if(typeof window !== 'undefined'){
+      localStorage.setItem('depaSelectedIndex', (depaSeleccionado ?? 0).toString());
+    }
     // Reiniciamos la lista de mascotas, el flag de más mascotas y la paginación
     setHasMorePets(true);
     setSelectedMascotas([]);
@@ -264,7 +278,10 @@ export default function Home() {
       return;
     }
 
-    localStorage.setItem('sexoSelectedIndex', (sexoSeleccionado ?? 0).toString());
+    if(typeof window !== 'undefined'){
+      localStorage.setItem('sexoSelectedIndex', (sexoSeleccionado ?? 0).toString());
+    }
+
     // Reiniciamos la lista de mascotas, el flag de más mascotas y la paginación
     setHasMorePets(true);
     setSelectedMascotas([]);
@@ -282,7 +299,10 @@ export default function Home() {
       return;
     }
 
-    localStorage.setItem('edadSelectedIndex', (edadSeleccionada ?? 0).toString());
+    if(typeof window !== 'undefined'){
+      localStorage.setItem('edadSelectedIndex', (edadSeleccionada ?? 0).toString());
+    }
+
     // Reiniciamos la lista de mascotas, el flag de más mascotas y la paginación
     setHasMorePets(true);
     setSelectedMascotas([]);

@@ -81,7 +81,9 @@ export default function AnimalFormEdit({ params }: { params: Params }) {
         console.log('Archivo seleccionado: ', acceptedFiles[0])
     }
     const handleRefresh = () => {
-        window.location.reload()
+        if (typeof window !== 'undefined'){
+            window.location.reload()
+        }
     }
     const {
         getRootProps,

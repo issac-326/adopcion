@@ -98,3 +98,4 @@ export const getDepartamentos = async () => {
 
   return data;
 };
+

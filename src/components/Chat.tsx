@@ -261,7 +261,7 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }:
             ) : (
               //renderiza Mensajes
               <div className="flex-1 overflow-y-auto p-4 space-y-1 scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-gray-500 scrollbar-track-gray-200">
-                <div className="md:w-[60%] sm:w-full mx-auto flex">
+                <div className="md:w-[60%] sm:w-full mx-auto flex flex-col">
                   {messages.map((msg, idx) => {
                     const isSender = msg.sender.uid == userEmisor.id_usuario;
                     console.log("isSender", isSender);
