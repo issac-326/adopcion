@@ -12,6 +12,7 @@ export default function NewPassword() {
     password: '',
     confirmPassword: ''
   });
+  const [sending, setSending] = useState<boolean>(false);
 
   const [isValid, setIsValid] = useState<boolean>(false);
   const [formData, setFormData] = useState({
@@ -28,6 +29,7 @@ export default function NewPassword() {
   };
 
   const handleChangePassword = async (formData: FormData) => {
+    setSending(true);
     setIsValid(true);
     setErrors({
       password: '',
@@ -70,7 +72,12 @@ export default function NewPassword() {
         setIsValid(false);
         console.error(error);
       }
+      finally {
+        setSending(false);
+      }
     }
+
+    setSending(false);
 
     return;
   };
@@ -111,7 +118,7 @@ export default function NewPassword() {
               className="bg-[#FFA07A] text-white rounded-[50px] pt-2 mt-5 w-[330px] h-[35px] shadow-[0_4px_4px_rgba(0,0,0,0.25)]"
               formAction={handleChangePassword}
             >
-              Continue
+              {sending ? 'Enviando...' : 'Confirmar'}
             </button>
           </div>
           <div>

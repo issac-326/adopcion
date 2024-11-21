@@ -38,12 +38,9 @@ export default function Login() {
       await loginUser(formData);
       router.push('/menu/inicio');
     } catch (error) {
-      // Maneja errores de autenticación y muestra mensajes apropiados
-      if (error instanceof Error) {
-        setearError(error.message);
-      } else {
-        setearError('An unknown error occurred');
-      }
+      console.error("Error al iniciar sesión:", error);
+      setearError('Error al iniciar sesión. Por favor, intenta de nuevo.');
+
     } finally {
       setIsSending(false);
     }
