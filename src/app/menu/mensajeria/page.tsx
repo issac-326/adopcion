@@ -40,11 +40,7 @@ const Chat = () => {
   };
 
   fetchUser();
-  fetchConversations();
 }, []);
-
-
-
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -66,7 +62,7 @@ const Chat = () => {
         const { initCometChat } = await import("@/app/menu/mensajeria/actions");
   
         initCometChat(authToken)
-          .then(() => console.log("CometChat inicializado correctamente."))
+          .then(() => {console.log("CometChat inicializado correctamente."); fetchConversations();})
           .catch((error: any) => console.error("Error al inicializar CometChat:", error));
       }
     };
@@ -391,7 +387,7 @@ return (
                     setNewMessage('');
                   }}
                 >
-                  <FontAwesomeIcon icon={faPaperPlane as IconProp} />
+                  <FontAwesomeIcon icon={faPaperPlane as IconProp} className="hover:scale-105"/>
                 </button>
               )}
             </div>

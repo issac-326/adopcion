@@ -11,6 +11,8 @@ export const initCometChat = async (authToken: string): Promise<void> => {
 
     const appID = process.env.NEXT_PUBLIC_COMETCHAT_APP_ID;
     const region = process.env.NEXT_PUBLIC_COMETCHAT_REGION;
+    console.log("appID", appID);
+    console.log("region", region);
 
     try {
       const initialized = await CometChat.init(
@@ -23,7 +25,7 @@ export const initCometChat = async (authToken: string): Promise<void> => {
 
       if (initialized) {
         console.log("CometChat inicializado correctamente.");
-        await loginToCometChat(authToken); // Asegúrate de que loginToCometChat sea una función que retorne una promesa
+        loginToCometChat(authToken); // Asegúrate de que loginToCometChat sea una función que retorne una promesa
       } else {
         throw new Error("Fallo al inicializar CometChat.");
       }
@@ -105,6 +107,7 @@ export async function sendFileAction(receiverUID: string, file: File) {
 }
 
 export async function fetchConversationsAction() {
+   console.log("usuario", await CometChat.getLoggedinUser());
   try {
     const conversationsRequest = new CometChat.ConversationsRequestBuilder()
       .setLimit(30)

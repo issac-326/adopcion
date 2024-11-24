@@ -91,7 +91,7 @@ export default function Register() {
 
   // Función que valida los datos del formulario y envía los datos al servidor
   const handleSignUp = async (formData: FormData) => {
-    const formResult = signupValidator(formData);
+    const formResult = await signupValidator(formData);
 
     // Si hay errores en la validación, se muestran en pantalla; si no, se registra al usuario
     if (formResult.isValid) {
@@ -119,14 +119,14 @@ export default function Register() {
     });
   };
 
-  const handleSiguienteClick = () => {
+  const handleSiguienteClick = async () => {
     console.log(pageIndex);
     const formDataInstance = new FormData();
     Object.entries(formData).forEach(([key, value]) => {
       formDataInstance.append(key, value);
     });
 
-    const response = signupValidator(formDataInstance);
+    const response = await signupValidator(formDataInstance);
     setErrors(response.errors);
     console.log(response.errors);
 
@@ -141,8 +141,14 @@ export default function Register() {
       setPageIndex((prevIndex) => (prevIndex + 1) % 3);
     }
     else if (pageIndex === 2) {
-      handleSignUp(formDataInstance);
+      await handleSignUp(formDataInstance);
     }
+
+    if(Object.keys(errors).length === 0) {
+      toast.error("Por favor, corrija los errores en el formulario")
+    }
+
+
 
     console.log(pageIndex)
   };
@@ -303,7 +309,7 @@ export default function Register() {
         {pageIndex == 0 || pageIndex == 1  && (
           <button
             type="button"
-            className="hover:scale-105 mt-2 w-[270px] h-[40px] bg-[#e4e6eb] rounded-[50px] shadow-[0_4px_4px_rgba(0,0,0,0.25)] text-sm hover:bg-[#ff9060] text-[#4b4f5c]"
+            className="hover:scale-105 mt-2 w-[270px] h-[40px] bg-[#e4e6eb] rounded-[50px] shadow-[0_4px_4px_rgba(0,0,0,0.25)] text-sm text-[#4b4f5c]"
             onClick={() => setPageIndex((prevIndex) => (prevIndex - 1) % 3)}
           >
             Atrás

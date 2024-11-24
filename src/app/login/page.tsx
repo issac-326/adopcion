@@ -39,7 +39,7 @@ export default function Login() {
       router.push('/menu/inicio');
     } catch (error) {
       console.error("Error al iniciar sesión:", error);
-      setearError('Error al iniciar sesión. Por favor, intenta de nuevo.');
+      setearError('Correo o contraseña incorrecto');
 
     } finally {
       setIsSending(false);

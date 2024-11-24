@@ -99,3 +99,23 @@ export async function addUser(formData: FormData, imageUrl: string | null) {
     throw error;
   }
 }
+
+
+export const userExists = async (email: string) => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from('usuarios')
+    .select('correo')
+    .eq('correo', email)
+
+    if (error) {
+      throw error;
+    }
+
+    if (data.length > 0) {
+      return true;
+    }
+
+    return false;
+}

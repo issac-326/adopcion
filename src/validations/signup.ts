@@ -1,4 +1,6 @@
-export function signupValidator(formData: FormData) {
+import { userExists } from "@/app/register/actions";
+
+export async function signupValidator(formData: FormData) {
   const errors: Record<string, string> = {
     email: '',
     password: '',
@@ -39,6 +41,12 @@ export function signupValidator(formData: FormData) {
     if (!emailRegexp.test(email)) {
       errors.email = 'El correo no es válido';
       isValid = false;
+    } else {
+      // Verifica que el correo no esté registrado
+      if (await userExists(email)) {
+        errors.email = 'El correo ya está registrado';
+        isValid = false;
+      }
     }
   }
 
