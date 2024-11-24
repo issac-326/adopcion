@@ -325,6 +325,21 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }:
                   placeholder="Escribe tu mensaje..."
                 />
 
+                {/* Botón para mostrar el selector de emojis */}
+                <button
+                  className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer flex items-center justify-center"
+                  onClick={() => setShowEmojiPicker((prev) => !prev)}
+                >
+                  <FontAwesomeIcon icon={faSmile as IconProp} className="text-lg text-[#FE8A5B]" />
+                </button>
+
+                {/* Selector de emojis */}
+                {showEmojiPicker && (
+                  <div className="absolute bottom-12 right-5 z-50">
+                    <EmojiPicker onEmojiClick={(emoji) => setNewMessage((prev) => prev + emoji.emoji)} />
+                  </div>
+                )}
+
                 {/* Botón para seleccionar archivo dentro del input */}
                 <label className="absolute right-10 top-1/2 -translate-y-1/2 cursor-pointer flex items-center justify-center">
                   <FontAwesomeIcon icon={faPaperclip as IconProp} className="text-lg text-[#FE8A5B]" />
@@ -343,21 +358,6 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }:
                     }}
                   />
                 </label>
-
-                {/* Botón para mostrar el selector de emojis */}
-                <button
-                  className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer flex items-center justify-center"
-                  onClick={() => setShowEmojiPicker((prev) => !prev)}
-                >
-                  <FontAwesomeIcon icon={faSmile as IconProp} className="text-lg text-[#FE8A5B]" />
-                </button>
-
-                {/* Selector de emojis */}
-                {showEmojiPicker && (
-                  <div className="absolute bottom-12 right-5 z-50">
-                    <EmojiPicker onEmojiClick={(emoji) => setNewMessage((prev) => prev + emoji.emoji)} />
-                  </div>
-                )}
               </div>
 
               {/* Botón de enviar mensaje */}
