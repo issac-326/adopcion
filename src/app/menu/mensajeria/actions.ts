@@ -117,15 +117,32 @@ export async function fetchConversationsAction() {
 
     return conversations.map((conversation) => {
       const receiver = conversation.getConversationWith();
+      const lastMessage = conversation.getLastMessage();
+      let lastMessageText = '';
+    
+      if (lastMessage) {
+        if (lastMessage.type === 'text') {
+          lastMessageText = lastMessage.getText ? lastMessage.getText() : ''; // Si el mensaje es de texto
+        } else if (lastMessage.type === 'file') {
+          lastMessageText = 'Archivo enviado'; // O muestra algún texto genérico
+        } else {
+          lastMessageText = 'Otro tipo de mensaje'; // Maneja otros tipos de mensajes según sea necesario
+        }
+      }
+    
       return {
         id: conversation.getConversationId(),
         receiver: receiver instanceof CometChat.User ? receiver.getUid() : receiver.getGuid(),
         receiverNombre: receiver.getName(),
-        receptorImagen: receiver instanceof CometChat.User ? receiver.getAvatar() || 'https://res.cloudinary.com/dvqtkgszm/image/upload/v1731795791/avatar_o9cpas.avif' : 'https://res.cloudinary.com/dvqtkgszm/image/upload/v1731795791/avatar_o9cpas.avif',
-        lastMessage: conversation.getLastMessage()?.getText() || "No message",
-        sentAt: conversation.getLastMessage()?.getSentAt() || 0,
+        receptorImagen:
+          receiver instanceof CometChat.User
+            ? receiver.getAvatar() || 'https://res.cloudinary.com/dvqtkgszm/image/upload/v1731795791/avatar_o9cpas.avif'
+            : 'https://res.cloudinary.com/dvqtkgszm/image/upload/v1731795791/avatar_o9cpas.avif',
+        lastMessage: lastMessageText,
+        sentAt: lastMessage?.getSentAt() || 0,
       };
     });
+    
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(`Error al obtener conversaciones: ${error.message}`);
