@@ -1,3 +1,4 @@
+'use server';
 import { createClient } from '@/utils/supabase/server';
 import { getAuthenticatedUserIdOrThrow } from '@/utils/auth/auth';
 import { redirect } from 'next/navigation';
@@ -23,3 +24,48 @@ export async function validateAdminAccess() {
 
   return true; // Devuelve true si el usuario es administrador
 }
+
+
+export const fetchSupportReports = async () => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from('reportes_soporte')
+    .select(`
+      id_reporte_soporte,
+      descripcion,
+      fecha,
+      usuario:usuarios(nombre1, apellido1)
+    `);
+
+  if (error) {
+    console.error("Error al obtener los reportes de soporte:", error);
+    return [];
+  }
+
+  console.log("Reportes de soporte obtenidos:", data);
+  return data || [];
+};
+
+
+export const fetchUserReports = async () => {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from('reportes_usuarios')
+    .select(`
+      id_reporte_usuario,
+      descripcion,
+      fecha,
+      reportador:usuarios!id_usuario_reportador(nombre1, apellido1),
+      reportado:usuarios!id_usuario_reportado(nombre1, apellido1)
+    `); // Relación con los usuarios reportador y reportado
+
+  if (error) {
+    console.error('Error al obtener los reportes de usuarios:', error);
+    return [];
+  }
+
+  console.log("Reportes a usuarios obtenidos:", data);
+  // Retorna los datos directamente
+  return data;
+};
