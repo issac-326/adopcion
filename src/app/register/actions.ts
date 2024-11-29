@@ -89,7 +89,9 @@ export async function addUser(formData: FormData, imageUrl: string | null) {
         correo: email,
         contrasena: hashedPassword,
         telefono: phone,
-        imagen: imageUrl  || "/usuario-default.jpg", // Imagen predeterminada
+        imagen: imageUrl  || "/usuario-default.webp", // Imagen predeterminada
+        fecha_creacion: new Date().toISOString(), // Fecha actual
+        id_tipo_usuario: 2, // Tipo de usuario por defecto
       }]);
 
     if (insertError) throw insertError;
