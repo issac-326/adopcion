@@ -93,7 +93,7 @@ function ReportList({ data, type }: { data: any[]; type: string }) {
                 : "Usuario no encontrado"}
               <br />
               <strong>Descripción:</strong> {report.descripcion} <br />
-              <strong>Fecha:</strong> {report.fecha}
+              <strong>Fecha:</strong> {report.fecha_reporte}
             </li>
           ) : (
             <li key={report.id_reporte_usuario} className="mb-4 border-b pb-2">
