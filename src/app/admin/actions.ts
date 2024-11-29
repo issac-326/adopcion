@@ -17,7 +17,7 @@ export async function validateAdminAccess() {
     redirect('/login'); // Redirige al login si ocurre un error
   }
   // Verificar si el usuario tiene rol de administrador
-  if (user?.id_tipo_usuario !== 1) {
+  if (!user || ![1, 3].includes(user.id_tipo_usuario)) {
     redirect('/menu/inicio'); // Redirige si no es administrador
   }
 

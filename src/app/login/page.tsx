@@ -37,7 +37,8 @@ export default function Login() {
         // Llama a la función de autenticación y obtiene los datos del usuario
         const userData = await loginUser(formData); // `loginUser` retorna { id_usuario, id_tipo_usuario }
         // Redirige según el rol del usuario
-        if (userData.id_tipo_usuario === 1) {
+        if ([3, 1].includes(userData.id_tipo_usuario)
+        ) {
           // Redirige al panel de administración si es administrador
           router.push('/admin');
         } else {
