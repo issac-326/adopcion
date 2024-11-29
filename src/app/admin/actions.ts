@@ -28,24 +28,24 @@ export async function validateAdminAccess() {
 
 export const fetchSupportReports = async () => {
   const supabase = createClient();
-
   const { data, error } = await supabase
     .from('reportes_soporte')
     .select(`
       id_reporte_soporte,
       descripcion,
       fecha,
-      usuario:usuarios(nombre1, apellido1)
-    `);
+      usuario:usuarios!id_usuario(nombre1, apellido1)
+    `); 
 
   if (error) {
-    console.error("Error al obtener los reportes de soporte:", error);
+    console.error('Error al obtener los reportes de soporte:', error);
     return [];
   }
 
   console.log("Reportes de soporte obtenidos:", data);
-  return data || [];
+  return data;
 };
+
 
 
 export const fetchUserReports = async () => {
