@@ -3,11 +3,8 @@ import { createClient } from '@/utils/supabase/server';
 import { getAuthenticatedUserIdOrThrow } from '@/utils/auth/auth';
 import { redirect } from 'next/navigation';
 export async function validateAdminAccess() {
-  // Obtén el ID del usuario autenticado desde el token JWT
   const userId = await getAuthenticatedUserIdOrThrow();
-  // Crear cliente de Supabase
   const supabase = createClient();
-  // Consultar la información del usuario
   const { data: user, error } = await supabase
     .from('usuarios')
     .select('id_tipo_usuario')
@@ -15,14 +12,14 @@ export async function validateAdminAccess() {
     .single();
   if (error) {
     console.error('Error al obtener datos del usuario:', error);
-    redirect('/login'); // Redirige al login si ocurre un error
-  }
-  // Verificar si el usuario tiene rol de administrador
-  if (!user || ![1, 3].includes(user.id_tipo_usuario)) {
-    redirect('/menu/inicio'); // Redirige si no es administrador
+    redirect('/login'); 
   }
 
-  return true; // Devuelve true si el usuario es administrador
+  if (!user || ![1, 3].includes(user.id_tipo_usuario)) {
+    redirect('/menu/inicio'); 
+  }
+
+  return true; 
 }
 
 
@@ -58,7 +55,7 @@ export const fetchUserReports = async () => {
       fecha,
       reportador:usuarios!id_usuario_reportador(nombre1, apellido1),
       reportado:usuarios!id_usuario_reportado(nombre1, apellido1)
-    `); // Relación con los usuarios reportador y reportado
+    `); 
 
   if (error) {
     console.error('Error al obtener los reportes de usuarios:', error);
@@ -66,6 +63,6 @@ export const fetchUserReports = async () => {
   }
 
   console.log("Reportes a usuarios obtenidos:", data);
-  // Retorna los datos directamente
+
   return data;
 };

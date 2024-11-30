@@ -8,7 +8,6 @@ import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
-// Tipos de datos para definir las propiedades de los componentes y el perfil de usuario
 interface UserProfile {
     imagen: string;
     nombre1: string;
@@ -38,7 +37,6 @@ interface UserProfileInfoProps {
     onEdit: () => void;
 }
 
-// Componente principal para la configuración de usuario
 const Configuracion = () => {
     const [descripcion, setDescripcion] = useState('');
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
@@ -52,11 +50,7 @@ const Configuracion = () => {
     const [loadingUser, setLoadingUser] = useState(true);
 
     const router = useRouter();
-    if (typeof window !== 'undefined') {
-     localStorage.setItem('selectedIndex', '5'); 
-    }
 
-    // Efecto para obtener el perfil del usuario al cargar el componente
     useEffect(() => {
         const fetchUserProfile = async () => {
             setLoadingUser(true);
@@ -72,7 +66,6 @@ const Configuracion = () => {
         fetchUserProfile();
     }, []);
 
-    // Manejar el cambio de contraseña
     const handleChangePassword = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setError('');
@@ -107,7 +100,6 @@ const Configuracion = () => {
         }
     };
 
-    // Manejar el envío de reporte de soporte
     const handleReportSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setError('');
@@ -132,20 +124,18 @@ const Configuracion = () => {
         }
     };
 
-    // Abre el modal para reportar un problema
     const openReportModal = () => {
         setIsReportModalOpen(true);
         setReportSuccess('');
     };
 
     return (
-        <div className='mx-4 my-6' >
+        <div className='mx-4 my-6'>
             <div className="w-full text-center rounded-xl">
                 <FontAwesomeIcon icon={faPaw as IconProp} className="text-[#ffa07a] text-5xl mx-auto" />
                 <h2 className="text-4xl font-bold mt-2">Configuración</h2>
             </div>
 
-            {/* Perfil del usuario */}
             <div className="shadow-lg">
                 {loadingUser ? (
                     <LoadingProfileSkeleton />
@@ -154,7 +144,6 @@ const Configuracion = () => {
                 )}
             </div>
 
-            {/* Opciones de configuración */}
             <div className="flex justify-center mt-2">
                 <div className="bg-white rounded-lg w-full p-6 space-y-4">
                     <button onClick={() => { setIsPasswordModalOpen(true); setError(''); setErrorOldPassword(''); }} className="w-full text-lg font-medium text-gray-800 hover:text-[#ffa07a] py-3 flex items-center">
@@ -168,7 +157,6 @@ const Configuracion = () => {
                 </div>
             </div>
 
-            {/* Modal para cambiar contraseña */}
             {isPasswordModalOpen && (
                 <Modal closeModal={() => setIsPasswordModalOpen(false)} title="Cambiar Contraseña">
                     <PasswordChangeForm
@@ -183,7 +171,6 @@ const Configuracion = () => {
                 </Modal>
             )}
 
-            {/* Modal para enviar reporte */}
             {isReportModalOpen && (
                 <Modal closeModal={() => setIsReportModalOpen(false)} title="Reportar problema">
                     <ReportForm
@@ -199,9 +186,6 @@ const Configuracion = () => {
     );
 };
 
-// Componentes auxiliares
-
-// Skeleton de carga para el perfil de usuario
 const LoadingProfileSkeleton = () => (
     <div className="flex items-center py-2 px-6 my-2">
         <div className="rounded-full w-20 h-20 overflow-hidden bg-gray-300 animate-pulse"></div>
@@ -212,7 +196,6 @@ const LoadingProfileSkeleton = () => (
     </div>
 );
 
-// Muestra la información del perfil del usuario
 const UserProfileInfo = ({ user, onEdit }: UserProfileInfoProps) => (
     <div className="flex items-center px-6 py-2 my-2 relative">
         <div className="rounded-full w-20 h-20 overflow-hidden">
@@ -228,7 +211,6 @@ const UserProfileInfo = ({ user, onEdit }: UserProfileInfoProps) => (
     </div>
 );
 
-// Formulario para cambiar la contraseña
 const PasswordChangeForm = ({ currentPassword, setCurrentPassword, newPassword, setNewPassword, errorOldPassword, error, onSubmit }: PasswordChangeFormProps) => (
     <form onSubmit={onSubmit} className="flex flex-col gap-4">
         <div className="flex flex-col">
@@ -245,7 +227,6 @@ const PasswordChangeForm = ({ currentPassword, setCurrentPassword, newPassword, 
     </form>
 );
 
-// Formulario para enviar reportes
 const ReportForm = ({ descripcion, setDescripcion, error, reportSuccess, onSubmit }: ReportFormProps) => (
     <form onSubmit={onSubmit} className="flex flex-col gap-4">
         <label className="text-sm font-medium text-gray-700">Descripción del problema:</label>
@@ -256,7 +237,6 @@ const ReportForm = ({ descripcion, setDescripcion, error, reportSuccess, onSubmi
     </form>
 );
 
-// Componente genérico para modales
 const Modal = ({ closeModal, title, children }: { closeModal: () => void; title: string; children: React.ReactNode }) => (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
         <div className="relative bg-white w-full max-w-2xl p-6 rounded-lg shadow-lg mx-4">

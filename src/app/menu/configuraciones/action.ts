@@ -44,21 +44,29 @@ export const getUserProfile = async (userId = getAuthenticatedUserIdOrThrow() ) 
  * @throws Error si ocurre algún problema al insertar el reporte.
  */
 export const enviarReporte = async (formData: FormData) => {
-    const userId = getAuthenticatedUserIdOrThrow();
+    const userId = getAuthenticatedUserIdOrThrow(); // Asegúrate de que esta función devuelva el ID del usuario autenticado.
     const { descripcion } = Object.fromEntries(formData);
-    const fecha = new Date().toISOString();
+    const fecha_reporte = new Date().toISOString(); // Fecha actual en formato ISO
+
 
     const { data, error } = await supabase
-        .from('reportes_soporte')
-        .insert([{ descripcion, fecha, id_usuario: userId }]);
+        .from('reportes_soporte_prueba') 
+        .insert([{ 
+            descripcion, 
+            fecha_reporte, 
+            id_usuario_reportador: userId
+        }]);
 
     if (error) {
         console.error("Error al enviar el reporte:", error);
-        throw new Error(error.message);
+        throw new Error(error.message); 
     }
+    console.log("Datos enviados:", { descripcion, fecha_reporte, id_usuario_reportador: userId });
 
-    return data;
+    return data; 
 };
+
+
 
 /**
  * Compara la contraseña proporcionada con la contraseña almacenada en la base de datos para el usuario autenticado.
