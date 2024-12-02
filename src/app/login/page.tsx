@@ -40,7 +40,7 @@ export default function Login() {
         if ([3, 1].includes(userData.id_tipo_usuario)
         ) {
           // Redirige al panel de administración si es administrador
-          router.push('/admin');
+          router.push('/administrator');
         } else {
           // Redirige al inicio si es usuario normal
           router.push('/menu/inicio');
