@@ -572,7 +572,7 @@ const Chat = () => {
               {reportSuccess && <p className="text-green-600 text-sm">{reportSuccess}</p>}
               <Card>
                 <CardHeader>
-                  <CardTitle>Imágenes</CardTitle>
+                  <CardTitle className="text-[16px]">Imágenes</CardTitle>
                   <h2 className="text-gray-500">Puede adjuntar imagenes como pruebas</h2>
                 </CardHeader>
                 <CardContent>
