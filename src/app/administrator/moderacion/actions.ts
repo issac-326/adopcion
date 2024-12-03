@@ -59,3 +59,26 @@ export async function addModerator(formData: FormData, imageUrl: string | null) 
     throw error;
   }
 }
+
+export async function imagenCloudinary(formData: FormData) {
+  const cloudinaryUploadUrl = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`;
+
+  try {
+    formData.append('upload_preset', 'mascotas'); // En este caso estoy usando el preset que se usa en mascotas temporalmente
+
+    const response = await fetch(cloudinaryUploadUrl, {
+      method: 'POST',
+      body: formData
+    });
+
+    const data = await response.json();
+    return { data: data, error: null };
+  } catch (error) {
+    return {
+      data: null,
+      error: {
+        message: 'Error al subir la imagen'
+      }
+    };
+  }
+}
