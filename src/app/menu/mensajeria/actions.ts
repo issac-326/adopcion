@@ -1,8 +1,7 @@
 'use client'
 
-
+import axios from "axios";
 import { CometChat } from "@cometchat-pro/chat";
-
 // Función para inicializar CometChat y login
 
 // Función para inicializar CometChat y login
@@ -103,6 +102,31 @@ export async function sendFileAction(receiverUID: string, file: File) {
     } else {
       throw new Error('Error al enviar archivo: Error desconocido');
     }
+  }
+}
+
+export async function uploadToCloudinary(file: File): Promise<string> {
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append(
+      "upload_preset",
+      process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET ?? ""
+    );
+    formData.append(
+      "cloud_name",
+      process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ?? ""
+    );
+
+    const response = await axios.post(
+      `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`,
+      formData
+    );
+
+    return response.data.secure_url;
+  } catch (error) {
+    console.error("Error al subir las imagenes a cloudinary:", error);
+    throw error;
   }
 }
 

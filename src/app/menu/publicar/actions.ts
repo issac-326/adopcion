@@ -4,6 +4,7 @@ import { createClient } from '@/utils/supabase/server';
 import { getAuthenticatedUserIdOrThrow } from '@/utils/auth/auth';
 import Publicaciones from '@/types/Publicaciones';
 
+
 interface UploadResponse {
   avatarUrl: string;
   asset_id: string;

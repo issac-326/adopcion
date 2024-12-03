@@ -9,6 +9,12 @@ import { faSmile } from '@fortawesome/free-regular-svg-icons';
 import EmojiPicker from "emoji-picker-react";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 export const dynamic = "force-dynamic";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { X, Upload} from 'lucide-react'
+import { useDropzone } from "react-dropzone"
+import Image from "next/image"
+import { Label } from "@/components/ui/label"
+import { uploadToCloudinary} from "./actions";
 
 import {
   Dialog,
@@ -18,7 +24,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button";
-import { reportarUsuario } from "../mascota/[id]/actions";
+import { reportarUsuario, insertarImagenesPorArray} from "../mascota/[id]/actions";
 import { toast } from "react-toastify";
 import { Tooltip } from "@nextui-org/react";
 
@@ -42,6 +48,8 @@ const Chat = () => {
   const [isSendImage, setIsSendImage] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
 
   //trae el usuario emisor y conversaciones
   useEffect(() => {
@@ -212,12 +220,22 @@ const Chat = () => {
     }
   
     try {
+      if (uploadedImages.length === 0) {
+        return
+      }
+      const cloudinaryUrls = await Promise.all(
+        uploadedImages.map((file) => uploadToCloudinary(file))
+      )
       const formData = new FormData();
       formData.append('descripcion', descripcion);
 
       console.log('Reportando usuario:', receiverUID);
   
-      await reportarUsuario(Number(receiverUID), formData); // Sin conversión a número
+      const reporte = await reportarUsuario(Number(receiverUID), formData); 
+      console.log(reporte)
+      if(reporte.data.id_reporte_usuario > 0){
+        const urls = await insertarImagenesPorArray(cloudinaryUrls, reporte.data.id_reporte_usuario)
+      }
       toast.success('Usuario reportado con éxito.');
       setDescripcion('');
       setIsReportModalOpen(false); // Limpia y cierra el modal
@@ -228,6 +246,32 @@ const Chat = () => {
       setIsLoading(false);
     }
   };
+
+  //imagenes 
+  
+  const onDrop = async (acceptedFiles: File[]): Promise<void> => {
+    const remainingSlots = 3 - uploadedImages.length
+    const filesToUpload = acceptedFiles.slice(0, remainingSlots)
+
+    setUploadedImages((prev) => [...prev, ...filesToUpload])
+    const newPreviewUrls = filesToUpload.map((file) => URL.createObjectURL(file))
+    setImageUrls((prev) => [...prev, ...newPreviewUrls])
+  }
+
+  const removeImage = (index: number): void => {
+    URL.revokeObjectURL(imageUrls[index])
+    setUploadedImages((prev) => prev.filter((_, i) => i !== index))
+    setImageUrls((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      'image/*': []
+    },
+    multiple: true,
+    maxSize: 10000000
+  })
 
   return (
     userEmisor && (
@@ -507,12 +551,13 @@ const Chat = () => {
             setDescripcion('');
           }
         }}>
-          <DialogContent>
+          <DialogContent className="max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Reportar Propietario</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleUserReportSubmit} className="flex flex-col gap-4">
               <label className="text-sm font-medium text-gray-700">Razón del reporte:</label>
+
               <textarea
                 className="p-2 rounded-lg border"
                 name="descripcion"
@@ -521,18 +566,74 @@ const Chat = () => {
                 placeholder="Describe el motivo del reporte (máximo 300 caracteres)"
                 value={descripcion}
                 onChange={(e) => setDescripcion(e.target.value)}
-                disabled={isLoading} // Deshabilita mientras carga
-              ></textarea>
+                disabled={isLoading}
+              />
               {error && <p className="text-red-600 text-sm">{error}</p>}
               {reportSuccess && <p className="text-green-600 text-sm">{reportSuccess}</p>}
-              <DialogFooter>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Imágenes</CardTitle>
+                  <h2 className="text-gray-500">Puede adjuntar imagenes como pruebas</h2>
+                </CardHeader>
+                <CardContent>
+                  <Label className="text-sm font-medium text-gray-700 flex items-center mb-2">
+                    <Upload className="w-4 h-4 mr-2" />
+                    Imágenes de prueba
+                  </Label>
+                  <div
+                    {...getRootProps()}
+                    className={`mt-2 flex justify-center cursor-pointer hover:bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 px-6 py-10 transition-colors ${
+                      isDragActive ? 'border-blue-400 bg-blue-50' : ''
+                    }`}
+                  >
+                    <div className="text-center">
+                      <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                      <p className="mt-2 text-sm text-gray-600">
+                        <span className="font-semibold text-blue-600 hover:text-blue-500 cursor-pointer">
+                          Sube un archivo
+                        </span>{' '}
+                        o arrastra y suelta
+                      </p>
+                      <p className="mt-1 text-xs text-gray-500">
+                        PNG, JPG hasta 10MB (máximo 3 imágenes)
+                      </p>
+                      <input {...getInputProps()} />
+                    </div>
+                  </div>
+
+                  <div className="flex justify-center mt-4">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {imageUrls.map((url, index) => (
+                        <div key={url} className="relative h-40 aspect-square">
+                          <img
+                            src={url}
+                            alt={`Preview ${index + 1}`}
+                            className="object-cover rounded-lg shadow-md w-full h-full"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeImage(index)}
+                            className="absolute top-1 right-1 bg-rose-600 rounded-full p-1 shadow-md"
+                            aria-label="Remove image"
+                          >
+                            <X className="h-4 w-4 text-white" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <DialogFooter className="sticky bottom-0 bg-white pt-2">
                 <Button
                   type="submit"
                   disabled={isLoading || !descripcion.trim()}
-                  className={`py-2 px-4 font-semibold rounded-lg ${descripcion.trim()
+                  className={`py-2 px-4 font-semibold rounded-lg ${
+                    descripcion.trim()
                       ? 'bg-[#ffa07a] text-white hover:bg-[#ff9060]'
                       : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    }`}
+                  }`}
                 >
                   {isLoading ? 'Enviando...' : 'Reportar'}
                 </Button>

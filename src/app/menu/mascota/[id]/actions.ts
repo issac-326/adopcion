@@ -62,7 +62,8 @@ export const reportarUsuario = async (
           descripcion,
           fecha,
         },
-      ]);
+      ])
+      .select() // Agregamos .select() para obtener los datos insertados
 
     if (error) {
       console.error("Error al reportar usuario:", error);
@@ -72,7 +73,7 @@ export const reportarUsuario = async (
     return {
       success: true,
       message: "Reporte enviado con éxito.",
-      data,
+      data: data?.[0] // Devolvemos el primer registro insertado
     };
   } catch (error) {
     console.error("Error en la función reportarUsuario:", error);
@@ -153,3 +154,32 @@ if (error) {
 
   return data;
 };
+
+
+export async function insertarImagenesPorArray(urls: string[], idReporte: number) {
+  const supabase = createClient();
+
+  try {
+    // Crear el arreglo de objetos a insertar
+    const imagenes = urls.map((url) => ({
+      url_img: url,
+      id_reporte: idReporte, // Llave foránea
+    }));
+
+    // Realizar el insert en un solo llamado
+    const { data, error } = await supabase
+      .from('report_imagenes')
+      .insert(imagenes);
+
+    if (error) {
+      console.error('Error al insertar imágenes:', error);
+      throw new Error('Error al insertar imágenes en la base de datos');
+    }
+
+    console.log('Imágenes insertadas:', data);
+    return data; // Retorna las filas insertadas
+  } catch (error) {
+    console.error('Error al insertar imágenes:', error);
+    throw error;
+  }
+}
