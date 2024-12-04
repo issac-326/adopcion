@@ -11,8 +11,8 @@ export default function ReportModalHistorical({
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const modalRef = useRef<HTMLDivElement>(null); // Ref para el contenedor del modal
 
-  const handleClickOutside = (event) => {
-    if (modalRef.current && !modalRef.current.contains(event.target)) {
+  const handleClickOutside = (event: MouseEvent) => {
+    if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
       openFunction(false);
     }
   };
@@ -49,7 +49,7 @@ export default function ReportModalHistorical({
         </button>
         <div className="mt-2 text-center">
           <h3 className="text-xl font-bold text-gray-800 dark:text-white">
-            REPORTE {report.id_reporte}
+            HISTORIAL DEL REPORTE ({report.id_reporte_usuario})
 
           </h3>
         </div>
@@ -58,8 +58,8 @@ export default function ReportModalHistorical({
           <p
             className={`mt-2 px-3 py-1 inline-block rounded-full text-sm font-medium ${
               report.aprobado
-                ? "bg-green-100 text-green-800"
-                : "bg-red-100 text-red-800"
+                ? "bg-green-500 text-white"
+                : "bg-red-500 text-white"
             }`}
           >
             {report.aprobado ? "Aceptado" : "Denegado"}
@@ -70,7 +70,7 @@ export default function ReportModalHistorical({
         </div>
 
         {/* moderador */}
-        <div className="rounded-lg p-6 bg-red-50 dark:bg-gray-800 mt-4 bg-[#00a7775c]">
+        <div className="rounded-lg p-6 bg-red-50 dark:bg-gray-800 mt-8 bg-[#a2dfce]">
           <h4 className="text-md font-semibold text-gray-800 dark:text-white">
             Moderador a cargo
           </h4>
@@ -95,7 +95,7 @@ export default function ReportModalHistorical({
         </div>
 
         {/* Usuario Reportado */}
-        <div className="rounded-lg p-6 bg-red-50 dark:bg-gray-800 mt-4 bg-[#a700005c]">
+        <div className="rounded-lg p-6 bg-red-50 dark:bg-gray-800 mt-4 bg-[#dfa3a3]">
           <h4 className="text-md font-semibold text-gray-800 dark:text-white">
             Usuario Reportado
           </h4>
@@ -158,7 +158,7 @@ export default function ReportModalHistorical({
           </h4>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
             {report.imagenes
-              .filter((img) => img !== null)
+              .filter((img : any) => img !== null)
               .map((img: string, index: number) => (
                 <div
                   key={index}

@@ -39,7 +39,7 @@ export const fetchUserReports = async () => {
     const { reportes, imagenes } = data;
 
     // Agrupamos las imágenes por id_reporte
-    const imagenesPorReporte = imagenes.reduce((acc, imagen) => {
+    const imagenesPorReporte = imagenes.reduce((acc : any, imagen : any) => {
       if (!acc[imagen.id_reporte]) {
         acc[imagen.id_reporte] = [];
       }
@@ -48,7 +48,7 @@ export const fetchUserReports = async () => {
     }, {});
 
     // Asociamos las imágenes agrupadas con los reportes de usuarios
-    const reportesConImagenes = reportes.map((reporte) => {
+    const reportesConImagenes = reportes.map((reporte : any) => {
       const imagenesDelReporte = imagenesPorReporte[reporte.id_reporte_usuario] || [];
       return { ...reporte, imagenes: imagenesDelReporte };
     });
@@ -62,14 +62,19 @@ export const fetchUserReports = async () => {
   }
 };
 
-
-
-export const fetchUserReportsHistorical = async () => {
+export const fetchUserReportsHistorical = async (mine = false) => {
   const supabase = createClient();
+  const id_moderador = await getAuthenticatedUserIdOrThrow();
 
   try {
     // Llamar al procedimiento almacenado
-    const { data, error } = await supabase.rpc('get_user_reports_historical');
+    let data, error;
+    if(!mine){
+      ({ data, error } = await supabase.rpc('get_user_reports_historical'));
+    }else{
+      ({ data, error } = await supabase.rpc('obtener_reportes_por_moderador', { paramidmoderador: id_moderador }));
+
+    }
 
     if (error) {
       console.error('Error al obtener el historial de reportes trabajados:', error);
@@ -83,6 +88,47 @@ export const fetchUserReportsHistorical = async () => {
     throw error;
   }
 };
+
+export const fetchUserReportByIdHistorical = async (idReport: number) => {
+  const supabase = createClient();
+console.log("idReport", idReport)
+  try {
+    const { data, error } = await supabase.rpc('fetch_user_report_by_id', { paramidreporte: idReport });
+
+    if (error) {
+      console.error('Error al obtener el reporte de usuario:', error);
+      throw new Error('No se pudo obtener el reporte de usuario.');
+    }
+
+    console.log('Reporte de usuario obtenido:', data);
+    return data;
+  } catch (error) {
+    console.error('Error en fetchUserReportById:', error);
+    throw error;
+  }
+}
+
+export const fetchUserReportById = async (idReport : number) => {
+  const supabase = createClient();
+  try {
+    const { data, error } = await supabase.rpc('fetch_user_report_by_id_all', { paramidreporte: idReport });
+
+    if (error) {
+      console.error('Error al obtener el reporte:', error);
+      return;
+    }
+
+    // Si la respuesta no es un array, la convertimos a uno
+    const reportData = Array.isArray(data) ? data : [data];
+
+    console.log('Reporte de usuario obtenido:', reportData);
+    return reportData;
+  } catch (error) {
+    console.error('Error en fetchUserReportById:', error);
+    throw error;
+  }
+};
+
 
 
 export const denegateReport = async (idReport: number, correo: string, razon: string) => {
