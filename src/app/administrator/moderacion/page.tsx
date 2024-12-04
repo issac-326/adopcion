@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { addModerator } from './actions';
+import { addModerator, imagenCloudinary } from './actions';
 import { useRouter } from 'next/navigation';
 import { useDropzone } from 'react-dropzone';
 import { toast } from 'react-toastify';
@@ -45,23 +45,28 @@ export default function RegisterModeratorPage() {
     setFormData({ ...formData, [name]: value });
   };
 
+  
+  // Función para subir la nueva imagen a Cloudinary y actualizar la base de datos
   const handleImageChange = async () => {
+    console.log(newImage)
     if (!newImage) return;
 
-    const formDataInstance = new FormData();
-    formDataInstance.append('file', newImage);
+    const formData = new FormData();
+    formData.append('file', newImage);
 
-    try {
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formDataInstance,
-      });
-      const data = await response.json();
-      setImageUrl(data.secure_url);
-    } catch (error) {
-      toast.error('Error al subir la imagen.');
+    const { data: dataClo, error } = await imagenCloudinary(formData);
+    if (error) {
+      toast.error("Error al subir la imagen");
+      console.error("Error al subir la imagen:", error);
+      return;
     }
+
+    const image1 = dataClo.secure_url;
+    setImageUrl(image1);
+
+    toast.success("Imagen subida con éxito");
   };
+
 
   const handleSiguienteClick = async () => {
     if (pageIndex === 2) {
