@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { fetchSupportReports, fetchUserReports, validateAdminAccess } from './actions';
+import ReportModal from '@/components/ui/ReportModal';
 
 const AdminPage = () => {
   const [isSupportSelected, setIsSupportSelected] = useState(true);
@@ -83,13 +84,24 @@ const AdminPage = () => {
 };
 
 function ReportList({ data, type }: { data: any[]; type: string }) {
+    const [openModal, setOpenModal] = useState(false);
+    const [selectedReport, setSelectedReport] =  useState<any>();
+
+    const handleOnClickReport = (report : any) => {
+        setSelectedReport(report);
+        setOpenModal(true);
+    }
+
+
+
   return (
     <div className="report-list space-y-4">
       {data.map((report) =>
         type === 'support' ? (
           <div
             key={report.id_reporte_soporte}
-            className="relative flex items-start bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition"
+            className="relative flex items-start bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition hover:cursor-pointer"
+            onClick={() => handleOnClickReport(report)}
           >
             <div className="flex-shrink-0 w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center text-orange-500 font-bold text-lg">
               🛠️
@@ -112,7 +124,8 @@ function ReportList({ data, type }: { data: any[]; type: string }) {
         ) : (
           <div
             key={report.id_reporte_usuario}
-            className="relative flex items-start bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition"
+            className="relative flex items-start bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition hover:cursor-pointer"
+            onClick={() => handleOnClickReport(report)}
           >
             <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-500 font-bold text-lg">
               📋
@@ -140,6 +153,7 @@ function ReportList({ data, type }: { data: any[]; type: string }) {
           </div>
         )
       )}
+      {openModal && selectedReport && (<ReportModal openFunction={setOpenModal} report={selectedReport} />)}
     </div>
   );
 }

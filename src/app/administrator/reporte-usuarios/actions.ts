@@ -1,9 +1,9 @@
 'use server';
 import { createClient } from '@/utils/supabase/server';
 import { getAuthenticatedUserIdOrThrow } from '@/utils/auth/auth';
-import { redirect } from 'next/navigation';
 import nodemailer from 'nodemailer';
 import path from 'path';
+import { redirect } from 'next/navigation';
 
 export async function validateAdminAccess() {
   const userId = await getAuthenticatedUserIdOrThrow();
@@ -15,58 +15,75 @@ export async function validateAdminAccess() {
     .single();
   if (error) {
     console.error('Error al obtener datos del usuario:', error);
-    redirect('/login'); 
+    redirect('/login');
   }
 
   if (!user || ![1, 3].includes(user.id_tipo_usuario)) {
-    redirect('/menu/inicio'); 
+    redirect('/menu/inicio');
   }
 
-  return true; 
+  return true;
 }
-
-export const fetchSupportReports = async () => {
-  const supabase = createClient();
-  const { data, error } = await supabase
-    .from('reportes_soporte_prueba')
-    .select(`
-      id_reporte_soporte,
-      descripcion,
-      fecha_reporte,
-      usuario:usuarios!id_usuario_reportador(nombre1, apellido1)
-    `); 
-
-  if (error) {
-    console.error('Error al obtener los reportes de soporte:', error);
-    return [];
-  }
-
-  console.log("Reportes de soporte obtenidos:", data);
-  return data;
-};
 
 export const fetchUserReports = async () => {
   const supabase = createClient();
-  const { data, error } = await supabase
-    .from('reportes_usuarios')
-    .select(`
-      id_reporte_usuario,
-      descripcion,
-      fecha,
-      reportador:usuarios!id_usuario_reportador(nombre1, apellido1, id_usuario, imagen, correo),
-      reportado:usuarios!id_usuario_reportado(nombre1, apellido1, id_usuario, imagen, correo)
-    `)
-    .eq('trabajado', false);
 
-  if (error) {
-    console.error('Error al obtener los reportes de usuarios:', error);
-    return [];
+  try {
+    const { data, error } = await supabase.rpc('fetch_user_reports');
+
+    if (error) {
+      console.error('Error al ejecutar el procedimiento almacenado:', error);
+      throw new Error('No se pudieron obtener los reportes de usuarios.');
+    }
+
+    const { reportes, imagenes } = data;
+
+    // Agrupamos las imágenes por id_reporte
+    const imagenesPorReporte = imagenes.reduce((acc, imagen) => {
+      if (!acc[imagen.id_reporte]) {
+        acc[imagen.id_reporte] = [];
+      }
+      acc[imagen.id_reporte].push(imagen.url_img);
+      return acc;
+    }, {});
+
+    // Asociamos las imágenes agrupadas con los reportes de usuarios
+    const reportesConImagenes = reportes.map((reporte) => {
+      const imagenesDelReporte = imagenesPorReporte[reporte.id_reporte_usuario] || [];
+      return { ...reporte, imagenes: imagenesDelReporte };
+    });
+
+    console.log('Reportes de usuarios con imágenes:', reportesConImagenes);
+
+    return reportesConImagenes;
+  } catch (error) {
+    console.error('Error en fetchUserReports:', error);
+    throw error;
   }
-
-  console.log("Reportes a usuarios obtenidos:", data);
-
-  return data;
 };
+
+
+
+export const fetchUserReportsHistorical = async () => {
+  const supabase = createClient();
+
+  try {
+    // Llamar al procedimiento almacenado
+    const { data, error } = await supabase.rpc('get_user_reports_historical');
+
+    if (error) {
+      console.error('Error al obtener el historial de reportes trabajados:', error);
+      throw new Error('No se pudo obtener el historial de reportes trabajados.');
+    }
+
+    console.log('Historial de reportes trabajados obtenido:', data);
+    return data || [];
+  } catch (error) {
+    console.error('Error en fetchUserReportsHistorical:', error);
+    throw error;
+  }
+};
+
 
 export const denegateReport = async (idReport: number, correo: string, razon: string) => {
   const supabase = createClient();
@@ -152,29 +169,28 @@ export const approveReport = async (idReportedUser: number, idReport: number, co
   }
 };
 
-
 const changeReportStatus = async (idReport: number) => {
   const supabase = createClient();
 
   const { data, error } = await supabase
     .from('reportes_usuarios')
     .update({ trabajado: true })
-    .eq('id_reporte_usuario', idReport) 
-    .select(); 
+    .eq('id_reporte_usuario', idReport)
+    .select();
 
   if (error) {
     console.error("Error al cambiar el estado del reporte:", error.message);
     throw new Error(`Error al cambiar el estado del reporte: ${error.message}`);
   }
 
-  console.log("Reporte actualizado:", data); 
+  console.log("Reporte actualizado:", data);
 }
 
 const sendApprovalEmail = async (email: string) => {
   const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',   
-    port: 465,               
-    secure: true,      
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
     auth: {
       user: 'kennethcontreras2017@gmail.com',
       pass: 'zowf tume qmda mchc',
@@ -188,16 +204,16 @@ const sendApprovalEmail = async (email: string) => {
     subject: 'Confirmación de tu reporte',
     text: `Estimado usuario,\n\nLamentamos mucho la situación que has vivido recientemente en nuestra plataforma. Queremos que sepas que estamos trabajando para hacer de Pet Finder un espacio más seguro y ameno para todos. Nos alegra informarte que tu reporte ha sido aprobado exitosamente y tomaremos las medidas correspondientes para mejorar tu experiencia en nuestra comunidad.\n\nApreciamos tu paciencia y colaboración en este proceso. Gracias por ayudarnos a hacer de Pet Finder un mejor lugar.\n\nAtentamente,\nEl equipo de Pet Finder`,
     html: `<p>Estimado usuario,</p>
-           <p>Lamentamos mucho la situación que has vivido recientemente en nuestra plataforma. Queremos que sepas que estamos trabajando para hacer de Pet Finder un espacio más seguro y ameno para todos. Nos alegra informarte que tu reporte ha sido aprobado exitosamente y tomaremos las medidas correspondientes para mejorar tu experiencia en nuestra comunidad.</p>
-           <p>Apreciamos tu paciencia y colaboración en este proceso. Gracias por ayudarnos a hacer de Pet Finder un mejor lugar.</p>
-           <p>Atentamente,<br/>El equipo de Pet Finder</p>`,
-/*     attachments: [
-            {
-              filename: 'logo.png',
-              path: path.join(__dirname, './public/LOGO_3.png'),
-              cid: 'logo', // ID que usarás en el HTML
-            },
-          ], */
+             <p>Lamentamos mucho la situación que has vivido recientemente en nuestra plataforma. Queremos que sepas que estamos trabajando para hacer de Pet Finder un espacio más seguro y ameno para todos. Nos alegra informarte que tu reporte ha sido aprobado exitosamente y tomaremos las medidas correspondientes para mejorar tu experiencia en nuestra comunidad.</p>
+             <p>Apreciamos tu paciencia y colaboración en este proceso. Gracias por ayudarnos a hacer de Pet Finder un mejor lugar.</p>
+             <p>Atentamente,<br/>El equipo de Pet Finder</p>`,
+    /*     attachments: [
+                {
+                  filename: 'logo.png',
+                  path: path.join(__dirname, './public/LOGO_3.png'),
+                  cid: 'logo', // ID que usarás en el HTML
+                },
+              ], */
   };
 
   // Enviar el correo
@@ -227,15 +243,15 @@ const sendDenegateEmail = async (email: string) => {
     subject: 'Reporte Denegado',
     text: `Estimado usuario,\n\nLamentamos informarte que tu reporte no ha sido aprobado tras una revisión exhaustiva. Agradecemos tu comprensión y te animamos a seguir contribuyendo a nuestra comunidad.\n\nAtentamente,\nEl equipo de Pet Finder`,
     html: `<p>Estimado usuario,</p>
-           <p>Lamentamos informarte que tu reporte no ha sido aprobado tras una revisión exhaustiva. Agradecemos tu comprensión y te animamos a seguir contribuyendo a nuestra comunidad.</p>
-           <p>Atentamente,<br/>El equipo de Pet Finder</p>`,
-/*     attachments: [
-      {
-        filename: 'logo.png',
-        path: path.join(__dirname, './public/LOGO_3.png'),
-        cid: 'logo',
-      },
-    ], */
+             <p>Lamentamos informarte que tu reporte no ha sido aprobado tras una revisión exhaustiva. Agradecemos tu comprensión y te animamos a seguir contribuyendo a nuestra comunidad.</p>
+             <p>Atentamente,<br/>El equipo de Pet Finder</p>`,
+    /*     attachments: [
+          {
+            filename: 'logo.png',
+            path: path.join(__dirname, './public/LOGO_3.png'),
+            cid: 'logo',
+          },
+        ], */
   };
 
   try {
@@ -246,5 +262,3 @@ const sendDenegateEmail = async (email: string) => {
     throw new Error("No se pudo enviar el correo de denegación.");
   }
 };
-
-
