@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import { approveReport, denegateReport } from "@/app/admin/actions";
+import { approveReport, denegateReport } from "@/app/administrator/reporte-usuarios/actions";
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
 
 export default function ReportModal({
   openFunction,
@@ -18,8 +19,8 @@ export default function ReportModal({
   const [actionType, setActionType] = useState<"approve" | "deny" | null>(null);
   const modalRef = useRef<HTMLDivElement>(null); // Ref para el contenedor del modal
 
-  const handleClickOutside = (event) => {
-    if (modalRef.current && !modalRef.current.contains(event.target)) {
+  const handleClickOutside = (event: MouseEvent) => {
+    if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
       openFunction(false);
     }
   };
@@ -219,14 +220,14 @@ export default function ReportModal({
                   onClick={() => handleAction("deny")}
                   className="px-4 py-2 text-sm font-medium text-gray-700 bg-[#e4e6eb] border border-gray-300 rounded-md hover:bg-gray-300 focus:outline-none focus:ring focus:ring-gray-300 dark:text-gray-200 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800"
                 >
-                  <FontAwesomeIcon icon={faTimes} className="mr-2" />
+                  <FontAwesomeIcon icon={faTimes as IconProp} className="mr-2" />
                   Denegar
                 </button>
                 <button
                   onClick={() => handleAction("approve")}
                   className="px-4 py-2 text-sm font-medium text-white bg-[#fe8a5b] rounded-md hover:bg-orange-500 focus:outline-none focus:ring focus:ring-blue-300"
                 >
-                  <FontAwesomeIcon icon={faCheck} className="mr-2" />
+                  <FontAwesomeIcon icon={faCheck as IconProp} className="mr-2" />
                   Aprobar
                 </button>
               </div>

@@ -1,16 +1,17 @@
 'use client';
 
 import React, { useState, useEffect } from "react";
-import { fetchUserReports, validateAdminAccess, fetchUserReportsHistorical } from '@/app/administrator/reporte-usuarios/actions';
+import { fetchUserReports, validateAdminAccess, fetchUserReportsHistorical, fetchUserReportById, fetchUserReportByIdHistorical } from '@/app/administrator/reporte-usuarios/actions';
 import ReportModal from '@/components/ui/ReportModal';
 import ReportModalHistorical from "@/components/ui/ReportModalHistorical";
-import { report } from "process";
+import { toast } from 'react-toastify';
 
 const AdminPage = () => {
   const [loadingReports, setLoadingReports] = useState(false);
   const [reports, setReports] = useState<any[]>([]);
   const [isHisorialSelected, setIsHistorialSelected] = useState(false);
   const [reportType, setReportType] = useState('')
+  const [isOnlyMineSelected, setIsOnlyMineSelected] = useState(false);
 
   const initPage = async () => {
     try {
@@ -26,7 +27,7 @@ const AdminPage = () => {
     setLoadingReports(true);
     try {
       const data = isHisorialSelected
-        ? await fetchUserReportsHistorical()
+        ? await fetchUserReportsHistorical(isOnlyMineSelected)
         : await fetchUserReports();
       console.log("data", data);
       setReports(data || []);
@@ -46,7 +47,38 @@ const AdminPage = () => {
   useEffect(() => {
     console.log("ejecutando")
     fetchReports();
-  }, [isHisorialSelected]);
+  }, [isHisorialSelected, isOnlyMineSelected]);
+
+  function handleChangeMine(event: React.ChangeEvent<HTMLInputElement>): void {
+    setIsOnlyMineSelected(event.target.checked);
+  }
+  async function handleSearchReport(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): Promise<void> {
+    const reportId = (document.getElementById('inp-reporte') as HTMLInputElement).value;
+    if (!reportId) {
+      return;
+    }
+
+    if (isNaN(Number(reportId))) {
+      toast.error("El ID del reporte debe ser un número.");
+      return;
+    }
+
+    setLoadingReports(true);
+    try {
+      const report = reportType === 'historical' ? await fetchUserReportByIdHistorical(Number(reportId)) : await fetchUserReportById(Number(reportId));
+      if (report && report.length !== 0) {
+        setReports(report);
+      } else {
+        toast.error("No se encontró el reporte con el ID proporcionado.");
+        setReports([]);
+      }
+    } catch (error) {
+      console.error("Error al buscar el reporte:", error);
+      toast.error("Ocurrió un error al buscar el reporte.");
+    } finally {
+      setLoadingReports(false);
+    }
+  }
 
   return (
     <div className="admin-dashboard p-6 bg-gray-100 min-h-screen">
@@ -71,6 +103,43 @@ const AdminPage = () => {
         </div>
       </section>
 
+      <div className="flex flex-col space-y-4 items-end">
+        {/* Input de búsqueda */}
+        <div className="flex items-center space-x-2">
+          <input
+            type="text"
+            placeholder="Buscar reporte por id"
+            id="inp-reporte"
+            className="form-input w-52 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FE8A5B] focus:border-[#FE8A5B] text-gray-700 placeholder-gray-400"
+          />
+          <button
+            className="bg-[#FE8A5B] text-white text-sm px-4 py-2 rounded-lg shadow-sm hover:bg-[#f67d59] transition duration-300"
+            onClick={handleSearchReport}
+          >
+            Buscar
+          </button>
+        </div>
+
+        {/* Filtro de checkbox */}
+        {isHisorialSelected && (<div className="flex items-center space-x-2">
+          <label htmlFor="mines" className="text-sm text-gray-700">
+            Filtrar por:
+          </label>
+          <input
+            type="checkbox"
+            id="mines"
+            name="mines"
+            onChange={handleChangeMine}
+            checked={isOnlyMineSelected}
+            className="form-checkbox h-4 w-4 text-[#FE8A5B] border-gray-300 rounded-lg focus:ring-[#FE8A5B] focus:border-[#FE8A5B]"
+          />
+          <label htmlFor="mines" className="text-sm text-gray-700">
+            Trabajados por mí
+          </label>
+        </div>)}
+
+      </div>
+
 
       {loadingReports ? (
         <div className="flex justify-center items-center mt-10 h-10">
@@ -79,7 +148,7 @@ const AdminPage = () => {
       ) : (
         <div className="mt-6">
           {reports.length === 0 ? (
-            <p className="text-center text-gray-500">No hay reportes disponibles.</p>
+            <p className="text-center text-gray-500">No hay reportes por mostrar.</p>
           ) : (
             <ReportList data={reports} type={reportType} />
           )}
@@ -98,12 +167,9 @@ function ReportList({ data, type }: { data: any[]; type: string }) {
     setOpenModal(true);
   }
 
-  console.log(type)
-  console.log(data, "reportes")
-
   return (
     <div className="report-list grid grid-cols-2 gap-2 gap-x-4">
-      {data.map((report) =>
+      {data.length !== 0 && data.map((report) =>
         type === 'historical' ? (
           <div
             key={`${report.reportado_nombre}-${report.fecha}`}
@@ -114,7 +180,6 @@ function ReportList({ data, type }: { data: any[]; type: string }) {
             <div className="flex-shrink-0 w-12 h-12 bg-[#b0c5e7] rounded-full flex items-center justify-center text-blue-500 font-bold text-lg">
               📋
             </div>
-
 
             {/* Información del reporte */}
             <div className="ml-4 flex-1">
@@ -182,6 +247,8 @@ function ReportList({ data, type }: { data: any[]; type: string }) {
 
         )
       )}
+
+
       {openModal && selectedReport && (type === 'historical' ? (<ReportModalHistorical openFunction={setOpenModal} report={selectedReport} />) : (<ReportModal openFunction={setOpenModal} report={selectedReport} />))}
     </div>
   );
