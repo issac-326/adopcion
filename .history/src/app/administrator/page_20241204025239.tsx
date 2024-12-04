@@ -14,10 +14,10 @@ export default function AdministratorDashboard() {
                 objectFit="contain"
               />
             </div>
-            <h1 className="text-4xl font-bold text-[#5a617c] text-center">
+            <h1 className="text-5xl font-bold text-[#5a617c] text-center">
               Bienvenido
             </h1>
-            <p className="text-center text-lg text-[#5a617c] font-medium max-w-md">
+            <p className="text-center text-4 text-[#5a617c] font-medium max-w-md">
               Gracias por tu dedicación en conectar a las personas con sus compañeros de vida perfectos.
             </p>
           </div>
