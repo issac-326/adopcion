@@ -43,7 +43,8 @@ export const getCategoriaEspecifica = async (
 ) => {
   const idUsuario = getAuthenticatedUserIdOrThrow(); // Obtiene el ID del usuario autenticado
 
-  
+  console.log('ID recibido:', id, idDepartamento, idSexo, limit, offset);
+  console.log('EDAD EDAD EDAD EDAD EDAD EDAD EDAD EDAD:', idEdad);
 
   
 
@@ -53,7 +54,6 @@ export const getCategoriaEspecifica = async (
     .select('id_publicacion, nombre, estado_adopcion, anios, meses, ciudad, imagen, departamentos (descripcion)')
     .eq('estado_adopcion', true)
     .eq('visible', true)
-    .eq('confirmacion', 1)
     .neq('id_usuario', idUsuario)
     .range(offset, offset + limit - 1); // Paginación
 
