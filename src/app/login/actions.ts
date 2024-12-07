@@ -28,7 +28,7 @@ export const loginUser = async (formData: FormData) => {
   // Realiza una consulta en la tabla `usuarios` para encontrar el usuario por correo
   const { data, error } = await supabase
     .from('usuarios')
-    .select('id_usuario, correo, contrasena,id_tipo_usuario')
+    .select('id_usuario, correo, contrasena,id_tipo_usuario, habilitado')
     .eq('correo', email)
     .single();
 
@@ -43,6 +43,10 @@ export const loginUser = async (formData: FormData) => {
     throw new Error('Credenciales incorrectas');
   }
 
+
+  if(!data.habilitado){
+    throw new Error('Usuario deshabilitado');
+  }
   // Genera un token JWT con el `id_usuario` como payload y una expiración de 1 hora
   const token = jwt.sign({ id_usuario: data.id_usuario }, process.env.JWT_SECRET!, { expiresIn: '1h' });
 

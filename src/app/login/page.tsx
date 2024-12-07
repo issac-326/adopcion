@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { loginValidator } from "@/validations/login";
+import { toast } from 'react-toastify';
 import InputField from "@/components/ui/InputField";
 import React, { useState } from 'react';
 import { useRouter } from "next/navigation";
@@ -9,6 +10,8 @@ import { loginUser } from "./actions";
 
 export default function Login() {
   const router = useRouter();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
   const [isSending, setIsSending] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [formData, setFormData] = useState({
@@ -34,27 +37,33 @@ export default function Login() {
     }
 
     try {
-        // Llama a la función de autenticación y obtiene los datos del usuario
-        const userData = await loginUser(formData); // `loginUser` retorna { id_usuario, id_tipo_usuario }
-        // Redirige según el rol del usuario
-        if ([3, 1].includes(userData.id_tipo_usuario)
-        ) {
-          // Redirige al panel de administración si es administrador
-          router.push('/administrator');
-        } else {
-          // Redirige al inicio si es usuario normal
-          router.push('/menu/inicio');
+      // Llama a la función de autenticación y obtiene los datos del usuario
+      const userData = await loginUser(formData); // `loginUser` retorna { id_usuario, id_tipo_usuario }
+      // Redirige según el rol del usuario
+      if ([3, 1].includes(userData.id_tipo_usuario)
+      ) {
+        // Redirige al panel de administración si es administrador
+        router.push('/administrator');
+      } else {
+        // Redirige al inicio si es usuario normal
+        router.push('/menu/inicio');
+      }
+    } catch (error) {
+      // Maneja errores de autenticación y muestra mensajes apropiados
+      if (error instanceof Error) {
+        if (error.message === 'Usuario deshabilitado') {
+          setModalMessage(
+            'Usuario deshabilitado, contacte al administrador a través de petfinder@gmail.com'
+          );
+          setIsModalOpen(true);
         }
-        } catch (error) {
-          // Maneja errores de autenticación y muestra mensajes apropiados
-          if (error instanceof Error) {
-            setearError(error.message);
-          } else {
-            setearError('An unknown error occurred');
-          }
-        } finally {
-          setIsSending(false);
-        }
+        setearError(error.message);
+      } else {
+        setearError('An unknown error occurred');
+      }
+    } finally {
+      setIsSending(false);
+    }
   }
 
   /**
@@ -83,77 +92,119 @@ export default function Login() {
   }
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center">
-      {/* Formulario de inicio de sesión */}
-      <form>
-        <div className="flex items-center flex-col">
-          <p className="text-[24px] font-bold text-black">¡Bienvenido de vuelta!</p>
-          <p className="text-[12px] text-black">Entra a tu cuenta</p>
-        </div>
+    <>
+      <div className="relative min-h-screen flex items-center justify-center">
+        {/* Formulario de inicio de sesión */}
+        <form>
+          <div className="flex items-center flex-col">
+            <p className="text-[24px] font-bold text-black">¡Bienvenido de vuelta!</p>
+            <p className="text-[12px] text-black">Entra a tu cuenta</p>
+          </div>
 
-        <div className="flex flex-col items-center flex-wrap mt-10">
-          {/* Campo de correo electrónico */}
-          <InputField
-            id="email"
-            name="email"
-            type="text"
-            placeholder="Correo"
-            value={formData.email}
-            onChange={handleInputChange}
-          />
+          <div className="flex flex-col items-center flex-wrap mt-10">
+            {/* Campo de correo electrónico */}
+            <InputField
+              id="email"
+              name="email"
+              type="text"
+              placeholder="Correo"
+              value={formData.email}
+              onChange={handleInputChange}
+            />
 
-          {/* Campo de contraseña */}
-          <InputField
-            id="password"
-            name="password"
-            type="password"
-            placeholder="Contraseña"
-            value={formData.password}
-            onChange={handleInputChange}
-          />
-          <div className="text-right">
-            <Link href="/reset-password" className="text-right text-xs pl-2 text-[#fe8a5b]">
-              Olvidé mi contraseña
+            {/* Campo de contraseña */}
+            <InputField
+              id="password"
+              name="password"
+              type="password"
+              placeholder="Contraseña"
+              value={formData.password}
+              onChange={handleInputChange}
+            />
+            <div className="text-right">
+              <Link href="/reset-password" className="text-right text-xs pl-2 text-[#fe8a5b]">
+                Olvidé mi contraseña
+              </Link>
+            </div>
+
+            {/* Muestra el mensaje de error si existe */}
+            <div className="mt-5">
+              {errorMessage && <div className="text-red-500 text-xs animate-shake mt-2 text-left">{errorMessage}</div>}
+            </div>
+
+            {/* Botón de inicio de sesión */}
+            <button
+              formAction={handleLogin}
+              className="mt-8 w-[270px] h-[40px] hover:scale-105 bg-[#FE8A5B] rounded-[20px] text-sm text-white hover:bg-[#ff9060]"
+            >
+              {isSending ? 'Cargando...' : 'Iniciar sesión'}
+            </button>
+          </div>
+
+          {/* Enlace de registro */}
+          <div className="flex mt-8 justify-center">
+            <p className="text-xs text-black">No tienes una cuenta</p>
+            <Link href="/register" className="text-xs text-[#fe8a5b] pl-2">
+              ¡Registrate aquí!
             </Link>
           </div>
+        </form>
 
-          {/* Muestra el mensaje de error si existe */}
-          <div className="mt-5">
-            {errorMessage && <div className="text-red-500 text-xs animate-shake mt-2 text-left">{errorMessage}</div>}
-          </div>
+        {/* Logo en el fondo */}
+        <div className="absolute bottom-0 right-0 flex items-center justify-center">
+          <img
+            src="/Logo.svg"
+            alt="Descripción del logo"
+            style={{
+              color: "#ffa07a",
+              width: '20rem',// Cambia a un ancho adecuado
+              height: '20rem',// Cambia a un alto adecuado
+              objectFit: 'contain',// Asegura que la imagen se ajuste sin distorsión
+              opacity: 0.4,
+            }}
+          />
+        </div>
+      </div>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        message={modalMessage}
+      />
+    </>
+  );
+}
 
-          {/* Botón de inicio de sesión */}
+
+interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  message: string;
+}
+
+const Modal = ({ isOpen, onClose, message }: ModalProps) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <div className="relative bg-white rounded-[20px] shadow-lg w-[320px] px-6 py-8">
+        {/* Encabezado */}
+        <div className="flex flex-col items-center">
+          <h2 className="text-[24px] font-bold text-black">Atención</h2>
+          <p className="text-[12px] text-black text-center mt-2">{message}</p>
+        </div>
+
+        {/* Botón de acción */}
+        <div className="flex justify-center mt-6">
           <button
-            formAction={handleLogin}
-            className="mt-8 w-[270px] h-[40px] hover:scale-105 bg-[#FE8A5B] rounded-[20px] text-sm text-white hover:bg-[#ff9060]"
+            onClick={onClose}
+            className="w-[270px] h-[40px] bg-[#FE8A5B] text-white rounded-[20px] text-sm hover:scale-105 hover:bg-[#ff9060]"
           >
-            {isSending ? 'Cargando...' : 'Iniciar sesión'}
+            Cerrar
           </button>
         </div>
-
-        {/* Enlace de registro */}
-        <div className="flex mt-8 justify-center">
-          <p className="text-xs text-black">No tienes una cuenta</p>
-          <Link href="/register" className="text-xs text-[#fe8a5b] pl-2">
-            ¡Registrate aquí!
-          </Link>
-        </div>
-      </form>
-
-      {/* Logo en el fondo */}
-      <div className="absolute bottom-0 right-0 flex items-center justify-center">
-        <img
-          src="/Logo.svg"
-          alt="Descripción del logo"
-          style={{
-            color: "#ffa07a",
-            width: '20rem',// Cambia a un ancho adecuado
-            height: '20rem',// Cambia a un alto adecuado
-            objectFit: 'contain',// Asegura que la imagen se ajuste sin distorsión
-            opacity: 0.4,
-          }}
-        />
       </div>
     </div>
   );
-}
+};
+
+
