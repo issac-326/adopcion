@@ -15,7 +15,8 @@ import { X, Upload} from 'lucide-react'
 import { useDropzone } from "react-dropzone"
 import Image from "next/image"
 import { Label } from "@/components/ui/label"
-
+/* import { uploadToCloudinary} from "./actions";
+ */
 import {
   Dialog,
   DialogContent,
@@ -120,6 +121,7 @@ const Chat = () => {
       return () => {
         // Eliminar listener al desmontar el componente
         removeMessageListener(listenerID);
+        console.log("Listener de mensajes eliminado.");
       };
     };
 
@@ -184,7 +186,7 @@ const Chat = () => {
     console.log("Obteniendo conversaciones...");
 
     fetchConversationsAction()
-      .then((data: any) => { setConversations(data); })
+      .then((data: any) => { setConversations(data); console.log("Conversaciones obtenidas:", data); })
       .catch((error) => console.error(error.message));
   };
 
@@ -198,49 +200,6 @@ const Chat = () => {
     if (typeof window == 'undefined') return '';
     const date = new Date(timestamp * 1000); // Convertir el timestamp a milisegundos
     return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  };
-
-  const handleUserReportSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setError('');
-    setReportSuccess('');
-    setIsLoading(true);
-  
-    if (!descripcion.trim()) {
-      setError('La descripción no puede estar vacía.');
-      setIsLoading(false);
-      return;
-    }
-  
-    if (!userReceptor) {
-      setError('No se pudo identificar al propietario de la mascota.');
-      setIsLoading(false);
-      return;
-    }
-  
-    try {
-      if (uploadedImages.length === 0) {
-        return
-      }
-      const cloudinaryUrls = await Promise.all(
-        uploadedImages.map((file) => uploadToCloudinary(file))
-      )
-      const formData = new FormData();
-      formData.append('descripcion', descripcion);
-  
-      const reporte = await reportarUsuario(Number(receiverUID), formData); 
-      if(reporte.data.id_reporte_usuario > 0){
-        const urls = await insertarImagenesPorArray(cloudinaryUrls, reporte.data.id_reporte_usuario)
-      }
-      toast.success('Usuario reportado con éxito.');
-      setDescripcion('');
-      setIsReportModalOpen(false); // Limpia y cierra el modal
-    } catch (error) {
-      console.error('Error al reportar usuario:', error);
-      setError('Error al reportar al usuario.');
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   async function uploadToCloudinary(file: File): Promise<string> {
@@ -271,6 +230,52 @@ const Chat = () => {
       throw new Error('No se puede subir a Cloudinary en un entorno no browser.');
     }
   }
+
+  const handleUserReportSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setError('');
+    setReportSuccess('');
+    setIsLoading(true);
+  
+    if (!descripcion.trim()) {
+      setError('La descripción no puede estar vacía.');
+      setIsLoading(false);
+      return;
+    }
+  
+    if (!userReceptor) {
+      setError('No se pudo identificar al propietario de la mascota.');
+      setIsLoading(false);
+      return;
+    }
+  
+    try {
+      if (uploadedImages.length === 0) {
+        return
+      }
+      const cloudinaryUrls = await Promise.all(
+        uploadedImages.map((file) => uploadToCloudinary(file))
+      )
+      const formData = new FormData();
+      formData.append('descripcion', descripcion);
+
+      console.log('Reportando usuario:', receiverUID);
+  
+      const reporte = await reportarUsuario(Number(receiverUID), formData); 
+      console.log(reporte)
+      if(reporte.data.id_reporte_usuario > 0){
+        const urls = await insertarImagenesPorArray(cloudinaryUrls, reporte.data.id_reporte_usuario)
+      }
+      toast.success('Usuario reportado con éxito.');
+      setDescripcion('');
+      setIsReportModalOpen(false); // Limpia y cierra el modal
+    } catch (error) {
+      console.error('Error al reportar usuario:', error);
+      setError('Error al reportar al usuario.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   //imagenes 
   
@@ -307,7 +312,7 @@ const Chat = () => {
           <div className="flex-1 overflow-y-auto">
             {conversations.map((conversation) => {
               const receiverImage = conversation.receptorImagen;
-              const receiverName = conversation.receiverNombre;              ;
+              const receiverName = conversation.name;
               const lastMessage = conversation.lastMessage;
               const sentAt = conversation.sentAt;
               // Función para formatear la hora de envío
@@ -335,7 +340,7 @@ const Chat = () => {
                       className="w-10 h-10 rounded-full object-cover"
                     />
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium truncate">{receiverName}</p>
+                      <p className="font-semibold truncate">{receiverName}</p>
                       <p className="text-xs text-[#aed3df] truncate">
                         {lastMessage}
                       </p>
