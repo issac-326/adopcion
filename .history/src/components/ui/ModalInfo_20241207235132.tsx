@@ -51,8 +51,8 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onAccept, onReject, id }
     return (
         <>
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-                <div className="bg-white w-[90%] h-[95%] p-4 rounded-lg shadow-lg overflow-y-auto">
-                    <div className="flex flex-col lg:flex-row ">
+                <div className="bg-white w-[90%] h-[95%] p-6 rounded-lg shadow-lg overflow-y-auto">
+                    <div className="flex flex-col lg:flex-row h-full p-5">
                         {/* Imagen de la mascota */}
                         <div className="flex-1 flex justify-center items-center rounded-br-[50px] mt-8 lg:mt-0">
                             <Image
@@ -105,7 +105,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onAccept, onReject, id }
                                 </div>
 
                                 {/* Descripción general */}
-                                <div className="mt-5 mb-8 text-sm sm:text-base  overflow-y-auto max-h-[200px]">
+                                <div className="mt-5 mb-8 text-sm sm:text-base">
 
                                     <div><span className="font-semibold">Especie:</span> {mascota?.categorias.tipo_mascotas || 'Indefinido'}</div>
                                     <div className="text-base mt-3"><span className="font-semibold">Descripción:</span> {mascota?.descripcion}</div>
@@ -113,7 +113,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onAccept, onReject, id }
 
                                 {/* Dueño */}
 
-                                <div className="flex items-center mb-8">
+                                <div className="flex items-center">
                                     <div className="flex items-center">
                                         <div className="w-[30px] h-[30px] sm:w-[40px] sm:h-[40px] lg:w-[60px] lg:h-[60px] overflow-hidden rounded-full">
                                             <Image

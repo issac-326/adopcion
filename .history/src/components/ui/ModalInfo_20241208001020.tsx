@@ -51,7 +51,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onAccept, onReject, id }
     return (
         <>
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-                <div className="bg-white w-[90%] h-[95%] p-4 rounded-lg shadow-lg overflow-y-auto">
+                <div className="bg-white w-[90%] h-[95%] p-10 rounded-lg shadow-lg overflow-y-auto">
                     <div className="flex flex-col lg:flex-row ">
                         {/* Imagen de la mascota */}
                         <div className="flex-1 flex justify-center items-center rounded-br-[50px] mt-8 lg:mt-0">
