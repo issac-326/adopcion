@@ -1,13 +1,13 @@
 'use server';
 
 import { createClient } from '@/utils/supabase/server';
-import { getAuthenticatedUserIdOrThrow } from '@/utils/auth/auth';
+/* import { getAuthenticatedUserIdOrThrow } from '@/utils/auth/auth';
 import { getAuthenticatedUserIdForPage } from '@/app/menu/mascota/[id]/actions';
-
+ */
 const supabase = createClient();
 
 export const getValidaciones = async (): Promise<any[]> => {
-  const id_usuario = getAuthenticatedUserIdOrThrow();
+  const id_usuario = 22;
   try {
 
     // Obtener detalles de las publicaciones favoritas
@@ -15,7 +15,8 @@ export const getValidaciones = async (): Promise<any[]> => {
       .from('publicaciones')
       .select('id_publicacion, nombre, estado_adopcion, anios, meses, ciudad, imagen, departamentos (descripcion)')
       .eq('estado_adopcion', true)
-      .eq('confirmacion', 3);
+      .eq('confirmacion', 3)
+      .eq('visible', true);
 
     if (publicacionesError) {
       console.error('Error al obtener publicaciones para validar:', publicacionesError);
@@ -30,7 +31,7 @@ export const getValidaciones = async (): Promise<any[]> => {
 };
 
 export const actualizarConfirmacion = async (id_publicacion: number, nuevoEstado: number): Promise<void> => {
-  const userId = getAuthenticatedUserIdForPage();
+  const userId = 22;
   const resolvedUserId = await userId;
   try {
     // Actualizar el estado de confirmación

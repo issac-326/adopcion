@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from "react";
+import axios from 'axios';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane, faPaperclip, faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 import { CometChat } from "@cometchat-pro/chat";
@@ -14,8 +15,8 @@ import { X, Upload} from 'lucide-react'
 import { useDropzone } from "react-dropzone"
 import Image from "next/image"
 import { Label } from "@/components/ui/label"
-import { uploadToCloudinary} from "./actions";
-
+/* import { uploadToCloudinary} from "./actions";
+ */
 import {
   Dialog,
   DialogContent,
@@ -200,6 +201,35 @@ const Chat = () => {
     const date = new Date(timestamp * 1000); // Convertir el timestamp a milisegundos
     return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
+
+  async function uploadToCloudinary(file: File): Promise<string> {
+    if (typeof window !== 'undefined') {
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append(
+          "upload_preset",
+          process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET ?? ""
+        );
+        formData.append(
+          "cloud_name",
+          process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ?? ""
+        );
+  
+        const response = await axios.post(
+          `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`,
+          formData
+        );
+  
+        return response.data.secure_url;
+      } catch (error) {
+        console.error("Error al subir las imagenes a cloudinary:", error);
+        throw error;
+      }
+    } else {
+      throw new Error('No se puede subir a Cloudinary en un entorno no browser.');
+    }
+  }
 
   const handleUserReportSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

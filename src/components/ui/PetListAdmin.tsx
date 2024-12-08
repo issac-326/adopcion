@@ -5,6 +5,8 @@ import PetCard from "./PetCardAdmin";
 import Pet from "@/types/Pet";
 import Modal from "./ModalInfo";
 import { actualizarConfirmacion } from "@/app/administrator/validaciones/actions";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const colorPairs = [
@@ -33,8 +35,10 @@ const PetList: React.FC<PetListProps> = ({ pets, areMyPets = false, isInicio = t
     if (selectedPet?.id_publicacion !== undefined) {
       try {
         await actualizarConfirmacion(selectedPet.id_publicacion, 1);
+        toast.success('Mascota aceptada exitosamente');
 
       } catch (error) {
+        toast.error('Error al actualizar confirmación:');
         console.error('Error al actualizar confirmación:', error);
       }
     } else {
@@ -48,9 +52,11 @@ const PetList: React.FC<PetListProps> = ({ pets, areMyPets = false, isInicio = t
     if (selectedPet?.id_publicacion !== undefined) {
       try {
         await actualizarConfirmacion(selectedPet.id_publicacion, 2);
+        toast.success('Mascota rechazada exitosamente');
 
         console.log('Confirmación actualizada exitosamente');
       } catch (error) {
+        toast.error('Error al actualizar confirmación:');
         console.error('Error al actualizar confirmación:', error);
       }
       console.log("Rechazaste a:", selectedPet?.nombre);

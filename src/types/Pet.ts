@@ -9,6 +9,7 @@ interface Pet {
   departamentos: {
     descripcion: string;  // Asegúrate de que esto coincida con tu tipo Pet
   }[];
+  confirmacion: number;
 }
 
 

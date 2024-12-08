@@ -43,7 +43,7 @@ export const getMyPets = async () => {
   try {
     const { data, error } = await supabase
       .from('publicaciones')
-      .select('id_publicacion, nombre, anios, meses, ciudad, estado_adopcion, imagen , departamentos (descripcion)')
+      .select('id_publicacion, nombre, anios, meses, ciudad, estado_adopcion, imagen , departamentos (descripcion), confirmacion')
       .eq('id_usuario', userId)
       .eq('visible', true)
       .order('fecha_creacion', { ascending: false });

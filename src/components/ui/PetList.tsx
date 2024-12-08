@@ -52,6 +52,7 @@ const PetList: React.FC<PetListProps> = ({ pets, areMyPets = false, isInicio = t
               isInicio={isInicio}
               onDislike={onDislike}
               isLikedP={isLikedP}
+              confirmacion={pet.confirmacion}
             />
           );
         })}

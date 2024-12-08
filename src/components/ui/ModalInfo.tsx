@@ -14,8 +14,6 @@ interface ModalProps {
 }
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onAccept, onReject, id }) => {
-    if (!isOpen) return null;
-
     interface Mascota {
         nombre: string;
         anios: number;
@@ -29,10 +27,10 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onAccept, onReject, id }
         departamentos: { descripcion: string };
         usuarios: { id_usuario: string; nombre1: string; imagen: string };
         categorias: { tipo_mascotas: string };
-
     }
-
+    
     const [mascota, setMascota] = useState<Mascota | null>(null);
+    
     useEffect(() => {
         const fetchMascota = async () => {
             try {
@@ -43,10 +41,14 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onAccept, onReject, id }
                 console.error('Error al cargar la mascota:', error);
             }
         };
-
+    
         fetchMascota();
     }, [id]);
-
+    
+    if (!isOpen) {
+        return null;
+    }
+        
     return (
         <>
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">

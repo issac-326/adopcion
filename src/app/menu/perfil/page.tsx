@@ -67,6 +67,7 @@ const ProfilePage = () => {
                 departamentos: pet.departamentos ? { descripcion: String(pet.departamentos.descripcion) } : null,
             })) as Pet[];
             setMyPets(formattedPets);
+            console.log("Mascotas:", myPets);
         } catch (error) {
             console.error("Error al obtener mascotas:", error);
             toast.error("Error al obtener las mascotas.");

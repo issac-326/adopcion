@@ -105,30 +105,34 @@ export async function sendFileAction(receiverUID: string, file: File) {
   }
 }
 
-export async function uploadToCloudinary(file: File): Promise<string> {
-  try {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append(
-      "upload_preset",
-      process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET ?? ""
-    );
-    formData.append(
-      "cloud_name",
-      process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ?? ""
-    );
+/* export async function uploadToCloudinary(file: File): Promise<string> {
+  if (typeof window !== 'undefined') {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append(
+        "upload_preset",
+        process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET ?? ""
+      );
+      formData.append(
+        "cloud_name",
+        process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ?? ""
+      );
 
-    const response = await axios.post(
-      `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`,
-      formData
-    );
+      const response = await axios.post(
+        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`,
+        formData
+      );
 
-    return response.data.secure_url;
-  } catch (error) {
-    console.error("Error al subir las imagenes a cloudinary:", error);
-    throw error;
+      return response.data.secure_url;
+    } catch (error) {
+      console.error("Error al subir las imagenes a cloudinary:", error);
+      throw error;
+    }
+  } else {
+    throw new Error('No se puede subir a Cloudinary en un entorno no browser.');
   }
-}
+} */
 
 export async function fetchConversationsAction() {
    console.log("usuario", await CometChat.getLoggedinUser());

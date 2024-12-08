@@ -8,12 +8,20 @@ const AdminPage = () => {
   const [reports, setReports] = useState<any[]>([]);
   const [selectedReport, setSelectedReport] = useState<any | null>(null);
   const [openModal, setOpenModal] = useState(false);
+  const [loadingReports, setLoadingReports] = useState(true);
 
   // Obtener los reportes cuando el componente se monta
   useEffect(() => {
     const getReports = async () => {
-      const fetchedReports = await fetchSupportReports();
-      setReports(fetchedReports);
+      try {
+        const fetchedReports = await fetchSupportReports();
+        setReports(fetchedReports);
+      } catch (error) {
+        console.log(error)
+      }
+      finally {
+        setLoadingReports(false);
+      }
     };
     getReports();
   }, []);
@@ -31,38 +39,44 @@ const AdminPage = () => {
   return (
     <div className="admin-dashboard p-6 bg-gray-100 min-h-screen">
       <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
-        Panel de Administración
+        Reportes de soporte
       </h1>
 
-      <div className="report-list grid grid-cols-2 gap-2 gap-x-4">
-        {reports.length > 0 ? (
-          reports.map((report) => (
-            <div
-              key={report.id_reporte_soporte}
-              className="relative flex items-start bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition hover:scale-[1.02] cursor-pointer"
-              onClick={() => handleOnClickReport(report)}
-            >
-              {/* Icono */}
-              <div className="flex-shrink-0 w-12 h-12 bg-[#b0c5e7] rounded-full flex items-center justify-center text-blue-500 font-bold text-lg">
-                📋
-              </div>
+      {loadingReports ? (<div className="flex justify-center items-center mt-10 h-10">
+        <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>) : (
+        reports.length > 0 ? (
+          <div className="report-list grid grid-cols-2 gap-2 gap-x-4">
+            {reports.map((report) => (
+              <div
+                key={report.id_reporte_soporte}
+                className="relative flex items-start bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition hover:scale-[1.02] cursor-pointer"
+                onClick={() => handleOnClickReport(report)}
+              >
+                {/* Icono */}
+                <div className="flex-shrink-0 w-12 h-12 bg-[#b0c5e7] rounded-full flex items-center justify-center text-blue-500 font-bold text-lg">
+                  📋
+                </div>
 
-              {/* Información del reporte */}
-              <div className="ml-4 flex-1">
-                <h3 className="text-sm font-semibold text-gray-800">
-                  Reportador: {`${report.usuario.nombre1} ${report.usuario.apellido1}`}
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Descripción: {report.descripcion}
-                </p>
-                <p className="text-xs text-gray-400 mt-1">Fecha: {report.fecha_reporte}</p>
+                {/* Información del reporte */}
+                <div className="ml-4 flex-1">
+                  <h3 className="text-sm font-semibold text-gray-800">
+                    Reportador: {`${report.usuario.nombre1} ${report.usuario.apellido1}`}
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    Descripción: {report.descripcion}
+                  </p>
+                  <p className="text-xs text-gray-400 mt-1">Fecha: {report.fecha_reporte}</p>
+                </div>
               </div>
-            </div>
-          ))
+            ))}
+          </div>
         ) : (
-          <p>No hay reportes disponibles.</p>
-        )}
-      </div>
+          <p>No hay reportes por mostrar.</p>
+        )
+      )
+      }
+
 
       {openModal && selectedReport && (
         <ReportModal report={selectedReport} onClose={handleCloseModal} />

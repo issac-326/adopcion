@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/dialog"
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
-export default function PetInformation({ id, id_usuario, isMyPet = false, isInicio = true }: { id: string, id_usuario: string, isMyPet?: boolean, isInicio?: boolean }) {
+export default function PetInformation({ id, id_usuario, isMyPet = false, isInicio = true, confirmacion }: { id: string, id_usuario: string, isMyPet?: boolean, isInicio?: boolean, confirmacion?: number }) {
   const [isLiked, setIsLiked] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
   localStorage.setItem('selectedIndex', 'null');
@@ -49,6 +49,7 @@ export default function PetInformation({ id, id_usuario, isMyPet = false, isInic
     categorias: { tipo_mascotas: string }[];
     estado_adopcion: boolean;
     visible: boolean;
+    confirmacion: number;
   }
 
   const [mascota, setMascota] = useState<Mascota | null>(null);
@@ -277,7 +278,7 @@ export default function PetInformation({ id, id_usuario, isMyPet = false, isInic
                 </div>
               )}
 
-              {isMyPet && mascota.estado_adopcion && (<div className='flex flex-col sm:flex-row justify-around items-center gap-4 py-4'>
+              {isMyPet && mascota.estado_adopcion && confirmacion == 1 && (<div className='flex flex-col sm:flex-row justify-around items-center gap-4 py-4'>
                 <div
                   className='flex flex-1 justify-center items-center py-2 px-4 gap-2 rounded-lg bg-[#f8c96e] text-[#00] hover:text-white transition-colors cursor-pointer hover:scale-105 transition-scale'
                   onClick={() => router.push(`/menu/perfil/mascotas/${id}/editar`)}
@@ -303,7 +304,7 @@ export default function PetInformation({ id, id_usuario, isMyPet = false, isInic
                 </div>
               </div>)}
 
-              {isMyPet && !mascota.estado_adopcion && (<div
+              {isMyPet && (!mascota.estado_adopcion || (mascota.confirmacion == 3 || mascota.confirmacion == 2)) && (<div
                 className='flex flex-1 justify-center items-center max-h-16 py-2 px-4 gap-2 rounded-lg bg-[#f5a2a4] text-[#000] hover:bg-[#DA627D] hover:text-white transition-colors cursor-pointer hover:scale-105 transition-scale'
                 onClick={() => { setIsModalOpen(true); setIsAdopted(false) }}
               >

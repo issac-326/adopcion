@@ -140,7 +140,8 @@ export const getMascotaEspecifica = async (id: number) => {
     usuarios (nombre1, apellido1, imagen, id_usuario),
     categorias (tipo_mascotas),
     estado_adopcion,
-    visible
+    visible,
+    confirmacion
   `)
   .eq('id_publicacion', id)
   .single(); // Obtener un solo registro
