@@ -4,35 +4,33 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot, faPaw } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { getMascotaEspecifica } from "@/app/menu/mascota/[id]/actions";
-import Link from 'next/link';
+
+interface Mascota {
+    nombre: string;
+    anios: number;
+    meses: number;
+    color: string;
+    peso: number;
+    imagen: string;
+    ciudad: string;
+    sexo: boolean;
+    descripcion: string;
+    departamentos: { descripcion: string };
+    usuarios: { id_usuario: string; nombre1: string; imagen: string };
+    categorias: { tipo_mascotas: string };
+}
+
 interface ModalProps {
     isOpen: boolean;
     onClose: () => void;
     onAccept: () => void;
     onReject: () => void;
-    id: number; // Debe ser un número
+    id: number;
 }
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onAccept, onReject, id }) => {
-    if (!isOpen) return null;
-
-    interface Mascota {
-        nombre: string;
-        anios: number;
-        meses: number;
-        color: string;
-        peso: number;
-        imagen: string;
-        ciudad: string;
-        sexo: boolean;
-        descripcion: string;
-        departamentos: { descripcion: string };
-        usuarios: { id_usuario: string; nombre1: string; imagen: string };
-        categorias: { tipo_mascotas: string };
-
-    }
-
     const [mascota, setMascota] = useState<Mascota | null>(null);
+
     useEffect(() => {
         const fetchMascota = async () => {
             try {
@@ -46,6 +44,9 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onAccept, onReject, id }
 
         fetchMascota();
     }, [id]);
+
+    if (!isOpen) return null;
+
 
     return (
         <>
