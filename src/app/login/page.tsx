@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { loginValidator } from "@/validations/login";
-import { toast } from 'react-toastify';
 import InputField from "@/components/ui/InputField";
 import React, { useState } from 'react';
 import { useRouter } from "next/navigation";
@@ -57,7 +56,7 @@ export default function Login() {
           );
           setIsModalOpen(true);
         }
-        setearError(error.message);
+        setearError('Credenciales incorrectas');
       } else {
         setearError('An unknown error occurred');
       }

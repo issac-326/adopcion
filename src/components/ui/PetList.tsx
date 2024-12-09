@@ -22,7 +22,6 @@ const PetList: React.FC<PetListProps> = ({ pets, areMyPets = false, isInicio = t
   const [pet, setPet] = useState<Pet[]>([]);
 
   useEffect(() => {
-    console.log("Pets:", pets);
     setPet(pets);
   }, [pets]);
 

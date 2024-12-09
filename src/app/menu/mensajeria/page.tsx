@@ -104,12 +104,10 @@ const Chat = () => {
       // Configurar handlers para los mensajes
       const callbackHandlers = {
         onTextMessageReceived: (message: CometChat.TextMessage) => {
-          console.log("Nuevo mensaje recibido:", message);
           setMessages((prevMessages) => [...prevMessages, message]);
           scrollToBottom();
         },
         onMediaMessageReceived: (message: CometChat.MediaMessage) => {
-          console.log("Nuevo mensaje de media recibido:", message);
           setMessages((prevMessages) => [...prevMessages, message]);
           scrollToBottom();
         },
@@ -180,8 +178,6 @@ const Chat = () => {
 
   const fetchConversations = async () => {
     const { fetchConversationsAction } = await import("@/app/menu/mensajeria/actions");
-
-    console.log("Obteniendo conversaciones...");
 
     fetchConversationsAction()
       .then((data: any) => { setConversations(data); })

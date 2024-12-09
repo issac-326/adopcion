@@ -206,12 +206,10 @@ export default function Home() {
 
   const seleccionarMascotasPorIdCatIdDepa = async (id: number = 0, id_sexo: number | null, id_departamento: number | null, id_edad: number| null, page: number = 0): Promise<void> => {
     if (!hasMorePets) {
-      console.log("No hay más mascotas para cargar.");
       return; // Si no hay más mascotas, detenemos la ejecución
     }
 
     try {
-      console.log("Seleccionando mascotas por categoría, sexo y departamento:", id, id_sexo, id_departamento, page);
       setLoadingPets(true);
       const limit = 10;
       const offset = page * limit;
@@ -330,7 +328,6 @@ export default function Home() {
 
       const obtenerDepartamentos = async () => {
         const data = await getDepartamentos();
-        console.log("Departamentos obtenidos:", data);
         setDepartamentos(data);
       };
 

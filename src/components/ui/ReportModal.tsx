@@ -104,7 +104,6 @@ export default function ReportModal({
       );
     }
   };
-  console.log(report);
 
   return (
     <>

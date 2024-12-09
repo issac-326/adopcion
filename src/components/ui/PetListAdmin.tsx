@@ -54,12 +54,10 @@ const PetList: React.FC<PetListProps> = ({ pets, areMyPets = false, isInicio = t
         await actualizarConfirmacion(selectedPet.id_publicacion, 2);
         toast.success('Mascota rechazada exitosamente');
 
-        console.log('Confirmación actualizada exitosamente');
       } catch (error) {
         toast.error('Error al actualizar confirmación:');
         console.error('Error al actualizar confirmación:', error);
       }
-      console.log("Rechazaste a:", selectedPet?.nombre);
     } else {
       console.error('ID de publicación no encontrado');
     }
@@ -67,7 +65,6 @@ const PetList: React.FC<PetListProps> = ({ pets, areMyPets = false, isInicio = t
   };
 
   useEffect(() => {
-    console.log("Pets:", pets);
     setPet(pets);
   }, [pets]);
 

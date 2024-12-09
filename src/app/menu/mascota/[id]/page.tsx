@@ -15,12 +15,10 @@ export default function MascotaPage({ params }: { params: Params }) {
    // Obtiene el ID del usuario autenticado desde el servidor
    const userId = getAuthenticatedUserIdForPage();
   const [isInicio, setIsInicio] = useState(false);
-console.log(userId);
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const queryParams = new URLSearchParams(window.location.search);
       setIsInicio(Boolean(queryParams.get('inicio')));
-      console.log('isInicio:', isInicio);
     }
   }, []);
 

@@ -122,7 +122,6 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }:
 
         await CometChat.login(authToken); // Asegura la autenticación
         const user = await CometChat.getUser(receiverUIDParam);
-        console.log("Usuario receptor encontrado:", user);
         setUserReceptor(user);
 
         fetchMessages();
@@ -140,7 +139,6 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }:
 
 
   const sendFile = () => {
-    console.log("Send File Called")
     if (!receiverUIDParam) {
       console.error("receiverUID is null or undefined.");
       return;
@@ -154,7 +152,6 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }:
     );
     CometChat.sendMediaMessage(mediaMessage).then(
       message => {
-        console.log("file sent", message)
         setMessages([...messages, message]);
         setFile(null);
         setOpenImageModal(false);
@@ -179,7 +176,6 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }:
         setMessages(messages);
         setLoadingMessages(false);
         scrollToBottom();
-        console.log("Messages fetched:", messages);
       },
       (error) => {
         console.log("Message fetching failed with error:", error);
@@ -264,7 +260,6 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }:
                 <div className="md:w-[60%] sm:w-full mx-auto flex flex-col">
                   {messages.map((msg, idx) => {
                     const isSender = msg.sender.uid == userEmisor.id_usuario;
-                    console.log("isSender", isSender);
                     const previousMessage = messages[idx - 1];
                     const showAvatar = !previousMessage || previousMessage.sender.uid !== msg.sender.uid;
 
@@ -276,7 +271,7 @@ const Chat = ({ receiverUIDParam, mascota, onRetroceder }:
                       <div key={idx} className={`flex ${isSender ? 'justify-end' : 'justify-start'} items-start space-x-2`}>
                         {/* Contenedor del mensaje */}
                         {msg.type === 'text' ? (<div
-                          className={`relative rounded-lg ml-${showAvatar ? '0' : '12'} text-white ${isSender
+                          className={`relative mt-1 rounded-lg ml-${showAvatar ? '0' : '12'} text-white ${isSender
                             ? 'bg-[#3b3a3acf]'
                             : 'bg-[#6D9C8E]'
                             } ${additionalPadding} p-3`}
