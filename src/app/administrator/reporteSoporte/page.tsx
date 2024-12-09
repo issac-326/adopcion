@@ -97,7 +97,7 @@ const AdminPage = () => {
 function ReportModal({ report, onClose, removeReportFromUI }: { report: any; onClose: () => void; removeReportFromUI: (id: number) => void }) {
   const handleApprove = async () => {
     if (!report?.id_reporte_soporte) {
-      toast.error('ID del reporte no válido');
+      toast.error('ID del reporte invalido');
       return;
     }
 

@@ -82,7 +82,7 @@ export const fetchSupportReports = async () => {
         return { success: false, error: insertError.message };
       }
  
-      console.log('Reporte aprobado correctamente');
+      console.log('Reporte aprobado');
       return { success: true };
     } catch (error) {
       console.error('Error desconocido al aprobar el reporte', error);
@@ -111,7 +111,7 @@ export const fetchSupportReports = async () => {
         return { success: false, error: error.message };
       }
  
-      console.log('Reporte denegado correctamente');
+      console.log('Reporte denegado');
       return { success: true };
     } catch (error) {
       console.error('Error desconocido al denegar el reporte', error);
