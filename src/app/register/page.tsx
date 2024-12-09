@@ -5,7 +5,6 @@ import { signupValidator } from "@/validations/signup";
 import React, { useEffect, useState } from 'react';
 import InputField from "@/components/ui/InputField";
 import { addUser, imagenCloudinary } from "./actions";
-import SuccessNotification from "@/components/ui/SuccesNotification";
 import { useRouter } from "next/navigation";
 import { useDropzone } from "react-dropzone";
 import { toast } from "react-toastify";
@@ -80,7 +79,7 @@ export default function Register() {
 
     const { data: dataClo, error } = await imagenCloudinary(formData);
     if (error) {
-      toast.error("Error al subir la imagen");
+ 
       console.error("Error al subir la imagen:", error);
       return;
     }
@@ -143,14 +142,7 @@ export default function Register() {
     else if (pageIndex === 2) {
       await handleSignUp(formDataInstance);
     }
-
-    if(Object.keys(errors).length === 0) {
-      toast.error("Por favor, corrija los errores en el formulario")
-    }
-
-
-
-    console.log(pageIndex)
+ 
   };
 
   return (
