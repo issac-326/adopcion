@@ -278,7 +278,7 @@ export default function PetInformation({ id, id_usuario, isMyPet = false, isInic
                 </div>
               )}
 
-              {isMyPet && mascota.estado_adopcion && confirmacion == 1 && (<div className='flex flex-col sm:flex-row justify-around items-center gap-4 py-4'>
+              {isMyPet && mascota.estado_adopcion && (<div className='flex flex-col sm:flex-row justify-around items-center gap-4 py-4'>
                 <div
                   className='flex flex-1 justify-center items-center py-2 px-4 gap-2 rounded-lg bg-[#f8c96e] text-[#00] hover:text-white transition-colors cursor-pointer hover:scale-105 transition-scale'
                   onClick={() => router.push(`/menu/perfil/mascotas/${id}/editar`)}

@@ -62,7 +62,7 @@ export default function ResetPassword() {
 
         <div className="mt-5">
           <InputField id="email" name="email" type="email" placeholder="" value={formData.email} onChange={handleInputChange} />
-          {errorMessage && <p className="mt-2 pl-5 animate-shake text-red-500 text-xs">{errorMessage}</p>}
+          {errorMessage && <p className="mt-2 pl-5 animate-shake text-center text-red-500 text-xs">{errorMessage}</p>}
         </div>
         <div className="mt-5">
           <button className="bg-[#FFA07A] text-white rounded-[50px] pl-5 pt-2 mt-5 w-[330px] h-[35px] shadow-[0_4px_4px_rgba(0,0,0,0.25)]" formAction={handleSearchUser}>Buscar</button>
