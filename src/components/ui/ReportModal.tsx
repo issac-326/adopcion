@@ -133,7 +133,7 @@ export default function ReportModal({
               </div>
 
               <div className="flex ml-auto flex-col mt-5 space-y-4">
-                <div className="rounded-lg p-6 bg-red-50 dark:bg-gray-800">
+                <div className="rounded-lg p-6 bg-[#d11a1a4d] dark:bg-gray-800">
                   <h4 className="text-md font-semibold text-gray-800 dark:text-white">
                     Usuario Reportado
                   </h4>
@@ -155,7 +155,7 @@ export default function ReportModal({
                   </div>
                 </div>
 
-                <div className="rounded-lg p-6 bg-gray-50 dark:bg-gray-900 shadow-md mt-6">
+                <div className="rounded-lg p-6 bg-[#5de1ff] dark:bg-gray-900 shadow-md mt-6">
                   <h4 className="text-md font-semibold text-gray-800 dark:text-white mb-2">
                     Descripción del Reporte
                   </h4>
@@ -252,8 +252,8 @@ export default function ReportModal({
                       onClick={handleSubmit}
                       className={`px-4 py-2 text-sm font-mediumflex-end  rounded-md ml-auto focus:outline-none focus:ring ${
                         actionType === "approve"
-                          ? "text-white bg-[#58f558] hover:bg-orange focus:ring-green-300"
-                          : "text-white bg-[#f5a2a4] hover:bg-red-500 focus:ring-red-300"
+                          ? "text-white bg-[#43f343] hover:bg-orange focus:ring-green-300"
+                          : "text-white bg-[#cf6264] hover:bg-red-500 focus:ring-red-300"
                       }`}
                     >
                       Enviar
