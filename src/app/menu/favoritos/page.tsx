@@ -50,7 +50,10 @@ export default function Home() {
             <PetCardSkeleton />
           </>
         ) : (
-          <PetList pets={favoritos} onDislike={obtenerFavoritosUsuario} isLikedP={true} />
+          <>
+            {favoritos.length === 0 && (<p className="text-center text-gray-500">No has agregado mascotas a favoritos aún 😿</p>)}
+            <PetList pets={favoritos} onDislike={obtenerFavoritosUsuario} isLikedP={true} />
+          </>
         )}
       </div>
     </div>
