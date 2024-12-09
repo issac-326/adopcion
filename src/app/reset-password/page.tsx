@@ -24,6 +24,11 @@ export default function ResetPassword() {
   };
 
   const handleSearchUser = async (formData: FormData) => {
+    if(formData.get('email') === '') {
+      handleErrorNotification('El correo es requerido');
+      return;
+    }
+    
     setErrorMessage('');
     try {
       await searchUser(formData);
@@ -31,7 +36,7 @@ export default function ResetPassword() {
       router.push('/reset-password/code');
     } catch (error) {
       if (error instanceof Error) {
-        handleErrorNotification(error.message);
+        handleErrorNotification('No se encontró el usuario');
       } else {
         handleErrorNotification('An unknown error occurred');
       }

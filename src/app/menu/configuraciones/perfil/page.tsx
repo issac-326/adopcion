@@ -193,7 +193,7 @@ const ProfilePage = () => {
         </div>
       </header>
 
-      <form className="space-y-4 mx-auto items-center w-[60%] grid grid-cols-1" onSubmit={submitHandler}>
+      <form className="space-y-4 mx-auto items-center w-[60%] grid grid-cols-1 pb-3" onSubmit={submitHandler}>
         <div className="grid gap-4 grid-cols-2">
           <InputField id="nombre1" name="nombre1" type="text" placeholder="Primer Nombre" value={nombre1} onChange={(e) => setNombre1(e.target.value)} />
           <InputField id="nombre2" name="nombre2" type="text" placeholder="Segundo Nombre (opcional)" value={nombre2} onChange={(e) => setNombre2(e.target.value)} />

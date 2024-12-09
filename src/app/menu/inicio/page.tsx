@@ -480,11 +480,12 @@ export default function Home() {
             </svg>
           </button>
         </div>
-        <div className="p-4">
+        <div className="flex flex-col justify-center items-center p-4 text-center gap-4 h-[90%]">
           <p className="text-gray-800 dark:text-neutral-400">
-            Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.
+            Estamos trabajando en esta parte, agradecemos tu paciencia 
           </p>
-        </div>
+          <img src="\img\logos\mensajeria.png" alt="Logo" className="max-w-[70%] object-contain" />
+          </div>
       </div>
 
       <div className={`py-2 w-full sticky z-20 top-0 bg-white transition-shadow duration-300}`} >
