@@ -23,6 +23,7 @@ const AdminPage = () => {
       const sortedReports = filteredReports.sort((a, b) => {
         const dateA = new Date(a.fecha_reporte);
         const dateB = new Date(b.fecha_reporte);
+        //@ts-expect-error
         return dateB - dateA; // Orden descendente
       });
   
